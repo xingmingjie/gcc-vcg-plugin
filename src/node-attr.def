@@ -1,0 +1,282 @@
+/* Node attributes defination.
+
+   Copyright (C) 2009, 2010 Eric Fisher, joefoxreal@gmail.com. 
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
+/* DEF_ATTR (OBJ, NAME, TYPE) */
+
+/* bordercolor: Color Entry,
+default is the value of the textcolor attribute for nodes
+Specifies the color for node borders. For the available Color Entries, see
+section Colors. See also node attributes color and textcolor.
+
+borderstyle: Style, default is solid
+Specifies the line style used for drawing the borders of a node. The
+following Styles are available:
+
+    * solid
+    * continuous
+    * dashed
+    * dotted
+    * double
+    * triple */
+DEF_ATTR (node, bordercolor, enum gdl_color)
+
+/* borderwidth: Int, default is 2
+Specifies the width of the border of a node in pixels. */
+DEF_ATTR (node, borderwidth, int)
+
+/* color: Color Entry,
+default is white
+Specifies the background color of a node. For the available Color Entries,
+see section Colors. See also node attributes textcolor and bordercolor. */
+DEF_ATTR (node, color, enum gdl_color)
+
+/* focus, no value, no default value
+Sets the focus for the node for which it is specified. After startup this
+node is centered in the graph window. The focus can also be specified for
+summary nodes. It goes without saying that the focus attribute should appear
+only once in a graph specification. */
+
+/* fontname: "Font File",
+default is the default vector font drawn by turtle graphics routines
+Specifies a pixel font different from the default vector font and used for
+drawing the node labels. This font is given by the name of the aiSee Font
+File containing the font description, e.g. a 12-point Helvetica Bold font
+can be specified via fontname: "helvB12". Note: If the font file is not in
+the current directory the environment variable AISEEFONTS has to be set to
+the directory containing the font description files. For the available Font
+Files, see additional fonts. */
+
+/* height: Int
+default is (node label height) pixels
+specifies the height of a node including the border. See also width. */
+DEF_ATTR (node, height, int)
+
+/* horizontal_order: Int, default is -1 (i.e. no default)
+In a hierarchical layout, this attribute specifies the horizontal position
+of a node within a level (see vertical_order). Nodes specified by horizontal
+positions are ordered according to these positions within levels. Nodes
+without this attribute are inserted into this ordering by the crossing
+reduction mechanism (see crossing reduction).
+
+Note: Connected components are handled separately during crossing reduction,
+thus it is not possible to intermix nodes of different connected components
+in one ordering sequence. For example, one connected component consists of
+nodes A, B, C and another of nodes D, E, all nodes being positioned at the
+same level. Then, for instance, it is not possible to specify the following
+horizontal order at level 0: A, D, C, E.
+Note further: If the algorithm for downward laid-out trees is used the
+specified horizontal order is retained only within nodes that are children
+of the same node, i.e. in case of downward laid-out trees it is not possible
+to specify a horizontal order for the entire level. */
+
+/* iconfile: "File",
+no default value
+Specifies the bitmap file (in PNG, PBM, PPM, or raw PPM format) to be
+displayed in the node. If the bitmap file to be displayed is not in the
+current directory the environment variable AISEEICONS can be set to the
+directory containing the bitmap file. For details, see icons. */
+
+/* importance: Int, default is 0 (which actually means infinity)
+This is the central attribute when it comes to filtering in fish-eye views
+as it enables the importance of a node to be specified via an integer. Low
+integers signify less important nodes which are filtered out first by a
+filtering fish-eye view. High integer numbers signify nodes that are
+important, their being rarely filtered out. A value of 0 represents an
+infinite importance, the result being that these nodes are never filtered
+out. This attribute also exists for summary nodes of folded subgraphs, see
+importance. */
+DEF_ATTR (node, importance, int)
+
+/* info1: "String", default is "" (empty string)
+info2: "String", default is "" (empty string)
+info3: "String", default is "" (empty string)
+Enable three additional text fields to be specified for a node. The same set
+of attributes exists for subgraphs/summary nodes (see graph attribute
+info1). These additional information fields can be selected interactively
+from the Information submenu.
+
+When exporting graphs to SVG format, a URL can be specified in the info3
+field of a node that is visited when the user clicks on that node in the SVG
+image. The URL specification has to be in the format info3: "href:URL",
+meaning that if the content of an info3 field does not start with href:, it
+will be interpreted as a normal information field rather than as a
+hyperlink. See example.
+
+aiSee supports the following optional hyperlink attributes:
+
+    * target
+    * onMouseOver
+    * onMouseOut
+    * onClick
+    * onMouseMove as of aiSee 2.1.96
+    * onMouseDown as of aiSee 2.1.96
+    * onMouseUp as of aiSee 2.1.96
+
+These attributes can be specified in any order after the URL specification
+in the info3 field of a node (as of aiSee 2.1.96, the URL specification is
+optional). The specifications must be separated by semicolons. Examples:
+
+info3: "href:http://www.aisee.com/svg/"
+info3: "href:javascript:blabla(42,'Hello world!')"
+info3: "href:http://www.absint.com;
+        target:_blank; onClick:foo('bar')"
+info3: "href:#;
+        onMouseOver:showInfo('humpty dumpty');
+        onMouseOut:showInfo('')"
+// as of aiSee 2.1.96:
+info3: "onMouseOver:showInfo('humpty dumpty');
+        onMouseOut:showInfo('')"
+info3: "onMouseDown:foo(1);onMouseUp:bar(2)"
+
+If the URL and/or the values of the hyperlink attributes themselves contain
+semicolons, they must be escaped by using the special character \fi059
+instead. If the URL contains ampersands, they may not be escaped. aiSee will
+automatically convert them to &amp; when exporting the graph to SVG.
+Examples:
+
+GDL specification
+	
+
+SVG output
+... example.asp?a=b&x=y ... 	... example.asp?a=b&amp;x=y ...
+... example.asp?a=b&amp;x=y ... 	... example.asp?a=b&amp;amp;x=y ...
+... example.asp?a=b\fi059x=y ... 	... example.asp?a=b;x=y ...
+... example.asp?a=b;x=y ... 	... example.asp?a=b
+
+If aiSee spots a mouse event handler specification in the GDL source of a
+graph, it automatically includes a reference to an external JavaScript file
+when exporting the graph to SVG:
+
+<svg:script xlink:href="SVGFileName.js" language="JavaScript">
+</svg:script>
+
+This allows JavaScript functions and global variables to be conveniently
+specified in the external JS file rather than in the SVG file itself. Thanks
+to this approach, you can easily make changes to your graphs and re-export
+them to SVG without having to copy & paste JavaScript code from old SVG
+files into new ones each time.
+
+See our SVG gallery for example graphs. */
+
+/* invisible: yes or no, as of aiSee 2.1.94,
+default is no
+yes forces a node to be hidden after the layout calculation. This attribute
+becomes useful when specifying dummy nodes. */
+
+/* label: "String", default is "" (empty string)
+Specifies the text to be displayed inside the node. This text may contain
+control characters, e.g. \n (newline character), that influence the size of
+the node. See character set for more details. If no label is specified, the
+value of the node attribute title is used. */
+DEF_ATTR (node, label, char *)
+
+/* level: Int, default is -1 (i.e. no default)
+This is a synonym for vertical_order. */
+
+/* loc: { x: Int y: Int }, no default value
+Specifies the location of a node, i.e. the x and y coordinates in relation
+to the coordinate system of the graph. The origin is in the upper left
+corner. For example, the specification loc:{x:100 y:200} places a node at
+location (100, 200) in the coordinate system.
+
+The location specification is not valid unless locations are specified for
+all nodes, otherwise aiSee calculates appropriate x and y coordinates
+according to the layout algorithm chosen. */
+
+/* margin: Int, as of aiSee 2.1.89,
+default is 3 if the value of borderwidth is > 0,
+0 if the value of borderwidth is 0
+Specifies the horizontal and vertical offset between the border of a node
+and its label in pixels. Useful for rectangular nodes only. */
+
+/* scaling: Float, default is 1.0
+Specifies the scaling factor of a node. This attribute is normally used to
+change the node text size. See also shrink / stretch. */
+
+/* shape: Shape, default is box
+Specifies the Shape of a node. The following Shapes are available:
+
+    * box
+    * triangle
+    * circle
+    * ellipse
+    * rhomb
+    * hexagon
+    * trapeze
+    * uptrapeze
+    * lparallelogram
+    * rparallelogram
+
+Please note that drawing ellipses is slower than drawing other shapes. */
+DEF_ATTR (node, shape, enum gdl_shape)
+
+/* shrink: Int, default is 1
+stretch: Int, default is 1
+Specify the shrinking and stretching factor of a node. The values of the
+node attributes width, height, borderwidth and the size of the label is
+scaled by ((stretch / shrink) * 100) percent. The scale value can also be
+specified by the node attribute scaling.
+
+The actual scaling factor of a node is determined by the scale factor of a
+node in relation to the scale factor of the graph, i.e. if the scaling
+factors are 2.0 for the graph and 1.5 for the node, the node is scaled by a
+factor of 3.0 as compared to normal size. */
+DEF_ATTR (node, shrink, int)
+
+/* textcolor: Color Entry, default is black
+Specifies the color for text labels of nodes. If no bordercolor is
+specified, then this attribute also specifies the color for node border. For
+the available Color Entries, see section Colors. See also node attribute
+color. */
+DEF_ATTR (node, textcolor, enum gdl_color)
+
+/* textmode: center, or left_justify, or right_justify, default is center
+Specifies the alignment of text within a node. */
+
+/* title: "String", no default value
+Specifies the unique string identifying the node. This attribute is
+mandatory for the node specification. */
+DEF_ATTR (node, title, char *)
+
+/* useractioncmd3: "String", default is "" (empty string)
+As of aiSee 3.beta, enables a command to be specified that can be executed
+by clicking on the node in the User Actions Mode. */
+
+/* vertical_order: maxlevel or Int, default is -1 (i.e. no default)
+In a hierarchical layout, this attribute specifies the vertical position of
+a node. maxlevel tries to position the node at the maximum calculated level.
+Generally speaking, the vertical position of a node is called level or rank
+(see rank assignment), with the node attribute level being a synonym for the
+attribute vertical_order.
+
+All nodes of level 0 form the uppermost layer (if the graph orientation is
+top_to_bottom). Nodes of level 1 form the second layer, etc. The level
+specification is not in effect unless automatic layout is being calculated.
+Layout is calculated automatically if there is at least one node without a
+specified location (see loc attribute for nodes and loc attribute for
+summary nodes).
+
+The level specification may conflict with a near edge specification, because
+the source and target node of a near edge have to have the same level. In
+this case, the level specification of the source or the target node of the
+near edge is ignored. */
+DEF_ATTR (node, vertical_order, int)
+
+/* width: Int
+default is (node label width) pixels
+specifies the width of a node including the border. See also height. */
+DEF_ATTR (node, width, int)

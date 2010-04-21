@@ -1,0 +1,120 @@
+/* Edge attributes defination.
+
+   Copyright (C) 2009, 2010 Eric Fisher, joefoxreal@gmail.com. 
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
+  /* anchor: Int, no default value
+     An anchor point describes the vertical position in a node where an edge
+     starts. This is useful if node labels are several lines long and outgoing
+     edges are related to label lines. (For instance, this allows a nice
+     visualization of structs containing pointers as fields). A node with
+     anchored edges can only have one near edge at maximum. Further, if
+     anchored edges occur, the graph orientation is always top_to_bottom. */
+     
+     
+  /* arrowcolor: Color Entry, default is the value of color
+     backarrowcolor: Color Entry, default is the value of color
+     Specify the color of the arrow head or back arrow head respectively. For
+     the avilable Color Entries, see section Colors. */
+     
+     
+  /* arrowsize: Int, default is 10
+     backarrowsize: Int, default is 0
+     Specify the length of the cathetuses of the arrow head or back arrow head
+     respectively, the arrow head being a right-angled, isosceles triangle. */
+     
+  /* class: Int, default is 1
+     Specifies the edge class to which an edge belongs. For details, see
+     Expose/hide edges. See also graph attribute classname. */
+     
+  /* color: Color Entry, default is black
+     Specifies the color of an edge. For the available Color Entries, see
+     section Colors. See also edge attributes textcolor and arrowcolor. */
+     
+  /* fontname: "Font File", as of aiSee 2.1.88,
+     default is the default vector font drawn by turtle graphics routines
+     Specifies a pixel font to be used for drawing the edge labels. This font
+     is given by the name of the aiSee Font File containing the font
+     description, e.g. a 12-point Helvetica Bold font can be specified via
+     fontname: "helvB12". Note: If the font file is not in the current
+     directory the environment variable AISEEFONTS has to be set to the
+     directory containing the font description files. For the available Font
+     Files, see additional fonts. */
+     
+  /* horizontal_order: Int, default is -1 (i.e. no default)
+     In a hierarchical layout, this attribute specifies the horizontal position
+     of long edges. This is only of interest if an edge crosses several levels
+     (see node attribute horizontal_order). This attribute specifies the point
+     where the edge crosses the level.
+     
+     The nodes specified by horizontal positions are ordered according to these
+     positions within a level. The horizontal position of a long edge crossing
+     a level specifies the two nodes of the level between which the edge has to
+     be drawn. Other edges not possessing this attribute are inserted in this
+     ordering by the crossing reduction mechanism (see crossing reduction). */
+     
+  /* label: "String", default is "" (empty string)
+     Specifies the text label of an edge. It is drawn if the graph attribute
+     display_edge_labels is set to yes. The label string may contain control
+     characters, e.g. \n (newline character), that influence the size of the
+     label, font color or style. See character set for more details. */
+  DEF_ATTR (edge, label, char *)
+     
+  /* linestyle: Style, default is solid
+     Specifies the style in which an edge is drawn. The following Styles are
+     available:
+     
+         * solid
+           The edge is drawn as a solid line
+         * continuous
+           Same as solid
+         * invisible
+           The edge is not drawn and attributes such as color and thickness are
+     ignored
+         * dashed
+           The edge consists of single dashes
+         * dotted
+           The edge consists of single dots
+         * double
+           The edge consists of a solid double line
+         * triple
+           The edge consists of a solid triple line */
+  DEF_ATTR (edge, linestyle, enum gdl_linestyle)
+     
+  /* priority: Int, default is 1
+     Depending on the layout algorithm selected, the positions of the nodes may
+     be mainly determined by the incoming and outgoing edges. In such case, the
+     edges can be imagined as rubberbands pulling a node to its position. The
+     priority of an edge corresponds to the strength of the imaginary
+     rubberband. */
+     
+  /* source: "String", no default value
+     Specifies the title of the source (node or subgraph) of an edge. This
+     attribute is mandatory for the edge specification. */
+  DEF_ATTR (edge, source, char *)
+     
+  /* target: "String", no default value
+     Specifies the title of the target (node or subgraph) of an edge. This
+     attribute is mandatory for the edge specification. */
+  DEF_ATTR (edge, target, char *)
+     
+  /* textcolor: Color Entry, default is black
+     Specifies the color of the text labels of an edge. For the available Color
+     Entries, see section Colors. See also color and arrowcolor. */
+     
+  /* thickness: Int, default is 2
+     Specifies the thickness of an edge. */
+  DEF_ATTR (edge, thickness, int)
+
