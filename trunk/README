@@ -1,0 +1,66 @@
+# This package includes a gcc plugin, which can be loaded when debugging gcc,
+# to show cfg graphicailly.
+#
+# Copyright (C) 2009, 2010 Eric Fisher, joefoxreal@gmail.com. 
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+##########
+# Source #
+##########
+
+The source code can be downloaded from http://code.google.com/p/toolbox-of-eric.
+
+###########
+# Install #
+###########
+
+The plugin requires gcc-4.5.0 version or later, which supports the plugin
+features. To install it, run the following commands,
+
+mkdir build-vcg-plugin 
+cd build-vcg-plugin
+/path/to/gcc-vcg-plugin/configure --prefix=/path/to/install
+make
+make install
+
+#########
+# Usage #
+#########
+
+First, a vcg viewer tool is required. See http://code.google.com/p/vcgviewer
+or http://www.absint.com/aisee. 
+
+The pre-defined vcg plugin commands can be used. Rename file "vcg.gdbinit" to
+".gdbinit" or add "source vcg.gdbinit" in your original ".gdbinit".
+
+Use one term as output screen, suppose /dev/pts/2.
+
+Here's an example about how to use vcg-plugin in gdb: 
+
+  gdb -tty /dev/pts/2 -q -args /path/to/cc1 test.c -fplugin=/path/to/vcg.so -O2 
+
+  gdb) b a_point_of_gimple_pass 
+  gdb) r 
+  gdb) view_cfg 
+
+Also, you can use -fplugin-arg-vcg-viewer=vcgview (xvcg, or aisee3) to select vcg
+viewer, default is vcgview. 
+
+##############
+# Bug report #
+##############
+
+Welcom any suggestion or bug report. You can send a mail to
+joefoxreal@gmail.com.
