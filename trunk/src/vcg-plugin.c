@@ -69,3 +69,18 @@ plugin_init (struct plugin_name_args *plugin_info,
   return 0;
 }
 
+void
+vcg_plugin_view (char *filename)
+{
+  char *cmd;
+  pid_t pid;
+
+  cmd = concat (vcg_viewer, " ", filename, NULL);
+  pid = fork ();
+  if (pid == 0)
+    {
+      system (cmd);
+      exit (0);
+    }
+}
+
