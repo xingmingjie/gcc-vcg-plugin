@@ -4,123 +4,432 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-DEFTREESTRUCT	view-tree.c	51;"	d	file:
-DEFTREESTRUCT	view-tree.c	52;"	d	file:
-PRINT_GRAPH_BEGIN	view-tree.c	63;"	d	file:
-TMP_VCG	view-cfg.c	43;"	d	file:
-TMP_VCG	view-cfg.c	46;"	d	file:
-TMP_VCG	view-tree.c	44;"	d	file:
-TMP_VCG	view-tree.c	47;"	d	file:
-TMP_VCG_BASE	view-cfg.c	510;"	d	file:
+CFG_H	./cfg.h	19;"	d
+CFG_H	cfg.h	19;"	d
+DEFTREESTRUCT	./dump-tree.c	51;"	d	file:
+DEFTREESTRUCT	./dump-tree.c	52;"	d	file:
+DEFTREESTRUCT	dump-tree.c	51;"	d	file:
+DEFTREESTRUCT	dump-tree.c	52;"	d	file:
+DEF_ATTR	./libgdl/gdl.h	106;"	d
+DEF_ATTR	./libgdl/gdl.h	117;"	d
+DEF_ATTR	./libgdl/gdl.h	119;"	d
+DEF_ATTR	./libgdl/gdl.h	130;"	d
+DEF_ATTR	./libgdl/gdl.h	59;"	d
+DEF_ATTR	./libgdl/gdl.h	74;"	d
+ELSE	./except.h	47;"	d
+ELSE	except.h	47;"	d
+END_TRY	./except.h	60;"	d
+END_TRY	except.h	60;"	d
+EXCEPT_H	./except.h	2;"	d
+EXCEPT_H	except.h	2;"	d
+Except_Frame	./except.h	/^struct Except_Frame$/;"	s
+Except_Frame	./except.h	/^typedef struct Except_Frame Except_Frame;$/;"	t	typeref:struct:Except_Frame
+Except_Frame	except.h	/^struct Except_Frame$/;"	s
+Except_Frame	except.h	/^typedef struct Except_Frame Except_Frame;$/;"	t	typeref:struct:Except_Frame
+Except_entered	./except.h	/^  Except_entered,$/;"	e	enum:__anon1
+Except_entered	except.h	/^  Except_entered,$/;"	e	enum:__anon2
+Except_finalized	./except.h	/^  Except_finalized$/;"	e	enum:__anon1
+Except_finalized	except.h	/^  Except_finalized$/;"	e	enum:__anon2
+Except_handled	./except.h	/^  Except_handled,$/;"	e	enum:__anon1
+Except_handled	except.h	/^  Except_handled,$/;"	e	enum:__anon2
+Except_raise	./except.c	/^Except_raise (const T *e, const char *file, int line)$/;"	f
+Except_raise	except.c	/^Except_raise (const T *e, const char *file, int line)$/;"	f
+Except_raised	./except.h	/^  Except_raised,$/;"	e	enum:__anon1
+Except_raised	except.h	/^  Except_raised,$/;"	e	enum:__anon2
+Except_stack	./except.c	/^Except_Frame *Except_stack = NULL;$/;"	v
+Except_stack	except.c	/^Except_Frame *Except_stack = NULL;$/;"	v
+FINALLY	./except.h	53;"	d
+FINALLY	except.h	53;"	d
+GDL_BLACK	./libgdl/gdl.h	/^  GDL_BLACK,$/;"	e	enum:gdl_color
+GDL_BLUE	./libgdl/gdl.h	/^  GDL_BLUE,$/;"	e	enum:gdl_color
+GDL_BOX	./libgdl/gdl.h	/^  GDL_BOX,$/;"	e	enum:gdl_shape
+GDL_COLOR_DEFAULT	./libgdl/gdl.h	/^  GDL_COLOR_DEFAULT$/;"	e	enum:gdl_color
+GDL_CONTINUOUS	./libgdl/gdl.h	/^  GDL_CONTINUOUS,$/;"	e	enum:gdl_linestyle
+GDL_DASHED	./libgdl/gdl.h	/^  GDL_DASHED,$/;"	e	enum:gdl_linestyle
+GDL_DOTTED	./libgdl/gdl.h	/^  GDL_DOTTED,$/;"	e	enum:gdl_linestyle
+GDL_ELLIPSE	./libgdl/gdl.h	/^  GDL_ELLIPSE,$/;"	e	enum:gdl_shape
+GDL_GREEN	./libgdl/gdl.h	/^  GDL_GREEN,$/;"	e	enum:gdl_color
+GDL_H	./libgdl/gdl.h	19;"	d
+GDL_INVISIBLE	./libgdl/gdl.h	/^  GDL_INVISIBLE,$/;"	e	enum:gdl_linestyle
+GDL_LAYOUT_ALGORITHM_DEFAULT	./libgdl/gdl.h	/^  GDL_LAYOUT_ALGORITHM_DEFAULT$/;"	e	enum:gdl_layout_algorithm
+GDL_LIGHTBLUE	./libgdl/gdl.h	/^  GDL_LIGHTBLUE,$/;"	e	enum:gdl_color
+GDL_LIGHTGREY	./libgdl/gdl.h	/^  GDL_LIGHTGREY,$/;"	e	enum:gdl_color
+GDL_LINESTYLE_DEFAULT	./libgdl/gdl.h	/^  GDL_LINESTYLE_DEFAULT$/;"	e	enum:gdl_linestyle
+GDL_MAX_DEPTH	./libgdl/gdl.h	/^  GDL_MAX_DEPTH,$/;"	e	enum:gdl_layout_algorithm
+GDL_RED	./libgdl/gdl.h	/^  GDL_RED,$/;"	e	enum:gdl_color
+GDL_RHOMB	./libgdl/gdl.h	/^  GDL_RHOMB,$/;"	e	enum:gdl_shape
+GDL_SHAPE_DEFAULT	./libgdl/gdl.h	/^  GDL_SHAPE_DEFAULT$/;"	e	enum:gdl_shape
+GDL_TREE	./libgdl/gdl.h	/^  GDL_TREE,$/;"	e	enum:gdl_layout_algorithm
+GDL_TRIANGLE	./libgdl/gdl.h	/^  GDL_TRIANGLE,$/;"	e	enum:gdl_shape
+GDL_WHITE	./libgdl/gdl.h	/^  GDL_WHITE,$/;"	e	enum:gdl_color
+GDL_YELLOW	./libgdl/gdl.h	/^  GDL_YELLOW,$/;"	e	enum:gdl_color
+PRINT_GRAPH_BEGIN	./dump-tree.c	63;"	d	file:
+PRINT_GRAPH_BEGIN	dump-tree.c	63;"	d	file:
+PRINT_IDENTIFIER	./dump-tree.c	237;"	d	file:
+PRINT_IDENTIFIER	dump-tree.c	237;"	d	file:
+PRINT_INT_VALUE	./dump-tree.c	115;"	d	file:
+PRINT_INT_VALUE	dump-tree.c	115;"	d	file:
+PRINT_NODE	./dump-tree.c	73;"	d	file:
+PRINT_NODE	dump-tree.c	73;"	d	file:
+PRINT_REAL_VALUE	./dump-tree.c	142;"	d	file:
+PRINT_REAL_VALUE	dump-tree.c	142;"	d	file:
+RAISE	./except.h	34;"	d
+RAISE	except.h	34;"	d
+RERAISE	./except.h	36;"	d
+RERAISE	except.h	36;"	d
+T	./except.c	6;"	d	file:
+T	./except.h	/^typedef struct T$/;"	s
+T	./except.h	/^} T;$/;"	t	typeref:struct:T
+T	./except.h	67;"	d
+T	./except.h	6;"	d
+T	except.c	6;"	d	file:
+T	except.h	/^typedef struct T$/;"	s
+T	except.h	/^} T;$/;"	t	typeref:struct:T
+T	except.h	67;"	d
+T	except.h	6;"	d
+TMP_VCG	./dump-function.c	104;"	d	file:
+TMP_VCG	./dump-function.c	107;"	d	file:
+TMP_VCG	./dump-tree.c	44;"	d	file:
+TMP_VCG	./dump-tree.c	47;"	d	file:
+TMP_VCG	dump-function.c	104;"	d	file:
+TMP_VCG	dump-function.c	107;"	d	file:
+TMP_VCG	dump-tree.c	44;"	d	file:
+TMP_VCG	dump-tree.c	47;"	d	file:
+TREE2VCG_H	./tree2vcg.h	19;"	d
+TREE2VCG_H	tree2vcg.h	19;"	d
+TRY	./except.h	39;"	d
+TRY	except.h	39;"	d
+VCG_PLUGIN_ADVANCING_EDGE	./cfg.h	/^  VCG_PLUGIN_ADVANCING_EDGE,$/;"	e	enum:vcg_plugin_edge_type
+VCG_PLUGIN_ADVANCING_EDGE	cfg.h	/^  VCG_PLUGIN_ADVANCING_EDGE,$/;"	e	enum:vcg_plugin_edge_type
+VCG_PLUGIN_CROSS_EDGE	./cfg.h	/^  VCG_PLUGIN_CROSS_EDGE$/;"	e	enum:vcg_plugin_edge_type
+VCG_PLUGIN_CROSS_EDGE	cfg.h	/^  VCG_PLUGIN_CROSS_EDGE$/;"	e	enum:vcg_plugin_edge_type
+VCG_PLUGIN_DFST_EDGE	./cfg.h	/^  VCG_PLUGIN_DFST_EDGE,$/;"	e	enum:vcg_plugin_edge_type
+VCG_PLUGIN_DFST_EDGE	cfg.h	/^  VCG_PLUGIN_DFST_EDGE,$/;"	e	enum:vcg_plugin_edge_type
+VCG_PLUGIN_H	./vcg-plugin.h	2;"	d
+VCG_PLUGIN_H	vcg-plugin.h	2;"	d
+VCG_PLUGIN_RETREATING_EDGE	./cfg.h	/^  VCG_PLUGIN_RETREATING_EDGE,$/;"	e	enum:vcg_plugin_edge_type
+VCG_PLUGIN_RETREATING_EDGE	cfg.h	/^  VCG_PLUGIN_RETREATING_EDGE,$/;"	e	enum:vcg_plugin_edge_type
+VCG_PLUGIN_UNKNOWN_EDGE	./cfg.h	/^  VCG_PLUGIN_UNKNOWN_EDGE,$/;"	e	enum:vcg_plugin_edge_type
+VCG_PLUGIN_UNKNOWN_EDGE	cfg.h	/^  VCG_PLUGIN_UNKNOWN_EDGE,$/;"	e	enum:vcg_plugin_edge_type
+attr	./libgdl/gdl.h	/^  struct gdl_edge_attr attr;$/;"	m	struct:gdl_edge	typeref:struct:gdl_edge::gdl_edge_attr
+attr	./libgdl/gdl.h	/^  struct gdl_graph_attr attr;$/;"	m	struct:gdl_graph	typeref:struct:gdl_graph::gdl_graph_attr
+attr	./libgdl/gdl.h	/^  struct gdl_node_attr attr;$/;"	m	struct:gdl_node	typeref:struct:gdl_node::gdl_node_attr
+bb	./cfg.h	/^  struct vcg_plugin_basic_block *bb;$/;"	m	struct:vcg_plugin_control_flow_graph	typeref:struct:vcg_plugin_control_flow_graph::vcg_plugin_basic_block
+bb	cfg.h	/^  struct vcg_plugin_basic_block *bb;$/;"	m	struct:vcg_plugin_control_flow_graph	typeref:struct:vcg_plugin_control_flow_graph::vcg_plugin_basic_block
+bb_num	./cfg.h	/^  int bb_num;$/;"	m	struct:vcg_plugin_control_flow_graph
+bb_num	cfg.h	/^  int bb_num;$/;"	m	struct:vcg_plugin_control_flow_graph
+calc_max_distance	./fine-tune.c	/^calc_max_distance (void)$/;"	f	file:
 calc_max_distance	fine-tune.c	/^calc_max_distance (void)$/;"	f	file:
+calc_max_distance_recursive	./fine-tune.c	/^calc_max_distance_recursive (struct vcg_plugin_basic_block *bb)$/;"	f	file:
 calc_max_distance_recursive	fine-tune.c	/^calc_max_distance_recursive (struct vcg_plugin_basic_block *bb)$/;"	f	file:
+cfg	./cfg.h	/^  struct vcg_plugin_control_flow_graph *cfg;$/;"	m	struct:vcg_plugin_function	typeref:struct:vcg_plugin_function::vcg_plugin_control_flow_graph
+cfg	./fine-tune.c	/^static struct vcg_plugin_control_flow_graph *cfg;$/;"	v	typeref:struct:vcg_plugin_control_flow_graph	file:
+cfg	cfg.h	/^  struct vcg_plugin_control_flow_graph *cfg;$/;"	m	struct:vcg_plugin_function	typeref:struct:vcg_plugin_function::vcg_plugin_control_flow_graph
 cfg	fine-tune.c	/^static struct vcg_plugin_control_flow_graph *cfg;$/;"	v	typeref:struct:vcg_plugin_control_flow_graph	file:
+cfg_add_bb	./cfg.c	/^cfg_add_bb (struct vcg_plugin_function *func, struct vcg_plugin_basic_block *bb)$/;"	f	file:
 cfg_add_bb	cfg.c	/^cfg_add_bb (struct vcg_plugin_function *func, struct vcg_plugin_basic_block *bb)$/;"	f	file:
+cfg_add_edge	./cfg.c	/^cfg_add_edge (struct vcg_plugin_function *func, struct vcg_plugin_edge *e)$/;"	f	file:
 cfg_add_edge	cfg.c	/^cfg_add_edge (struct vcg_plugin_function *func, struct vcg_plugin_edge *e)$/;"	f	file:
+cfg_add_pred_vec_edge	./cfg.c	/^cfg_add_pred_vec_edge (struct vcg_plugin_basic_block *bb,$/;"	f	file:
 cfg_add_pred_vec_edge	cfg.c	/^cfg_add_pred_vec_edge (struct vcg_plugin_basic_block *bb,$/;"	f	file:
+cfg_add_succ_vec_edge	./cfg.c	/^cfg_add_succ_vec_edge (struct vcg_plugin_basic_block *bb,$/;"	f	file:
 cfg_add_succ_vec_edge	cfg.c	/^cfg_add_succ_vec_edge (struct vcg_plugin_basic_block *bb,$/;"	f	file:
+cfg_new_bb	./cfg.c	/^cfg_new_bb (char *name)$/;"	f	file:
 cfg_new_bb	cfg.c	/^cfg_new_bb (char *name)$/;"	f	file:
+cfg_new_cfg	./cfg.c	/^cfg_new_cfg (void)$/;"	f	file:
 cfg_new_cfg	cfg.c	/^cfg_new_cfg (void)$/;"	f	file:
+cfg_new_edge	./cfg.c	/^cfg_new_edge (struct vcg_plugin_basic_block *source,$/;"	f	file:
 cfg_new_edge	cfg.c	/^cfg_new_edge (struct vcg_plugin_basic_block *source,$/;"	f	file:
+cfg_new_vec_edge	./cfg.c	/^cfg_new_vec_edge (struct vcg_plugin_edge *e)$/;"	f	file:
 cfg_new_vec_edge	cfg.c	/^cfg_new_vec_edge (struct vcg_plugin_edge *e)$/;"	f	file:
-clean_graph_dump_file	view-cfg.c	/^clean_graph_dump_file (const char *base)$/;"	f	file:
+clean_graph_dump_file	./dump-function.c	/^clean_graph_dump_file (const char *base)$/;"	f	file:
+clean_graph_dump_file	dump-function.c	/^clean_graph_dump_file (const char *base)$/;"	f	file:
+count	./fine-tune.c	/^static int count;$/;"	v	file:
 count	fine-tune.c	/^static int count;$/;"	v	file:
+current_function_name	./dump-function.c	/^static const char *current_function_name;$/;"	v	file:
+current_function_name	dump-function.c	/^static const char *current_function_name;$/;"	v	file:
+depth_first_search	./fine-tune.c	/^depth_first_search (void)$/;"	f	file:
 depth_first_search	fine-tune.c	/^depth_first_search (void)$/;"	f	file:
-draw_edge	view-cfg.c	/^draw_edge (FILE *fp, int from, int to, int bb_edge, int color_class)$/;"	f	file:
-dump_cfg_rtl	view-cfg.c	/^dump_cfg_rtl (char *filename)$/;"	f	file:
-dump_cfg_tree	view-cfg.c	/^dump_cfg_tree (char *filename)$/;"	f	file:
-dump_tree	view-tree.c	/^dump_tree (tree t, int id)$/;"	f	file:
-dump_tree_base	view-tree.c	/^dump_tree_base (struct tree_base s, int id)$/;"	f	file:
-dump_tree_binfo	view-tree.c	/^dump_tree_binfo (struct tree_binfo s, int id)$/;"	f	file:
-dump_tree_block	view-tree.c	/^dump_tree_block (struct tree_block s, int id)$/;"	f	file:
-dump_tree_common	view-tree.c	/^dump_tree_common (struct tree_common s, int id)$/;"	f	file:
-dump_tree_complex	view-tree.c	/^dump_tree_complex (struct tree_complex s, int id)$/;"	f	file:
-dump_tree_const_decl	view-tree.c	/^dump_tree_const_decl (struct tree_const_decl s, int id)$/;"	f	file:
-dump_tree_constructor	view-tree.c	/^dump_tree_constructor (struct tree_constructor s, int id)$/;"	f	file:
-dump_tree_decl_common	view-tree.c	/^dump_tree_decl_common (struct tree_decl_common s, int id)$/;"	f	file:
-dump_tree_decl_minimal	view-tree.c	/^dump_tree_decl_minimal (struct tree_decl_minimal s, int id)$/;"	f	file:
-dump_tree_decl_non_common	view-tree.c	/^dump_tree_decl_non_common (struct tree_decl_non_common s, int id)$/;"	f	file:
-dump_tree_decl_with_rtl	view-tree.c	/^dump_tree_decl_with_rtl (struct tree_decl_with_rtl s, int id)$/;"	f	file:
-dump_tree_decl_with_vis	view-tree.c	/^dump_tree_decl_with_vis (struct tree_decl_with_vis s, int id)$/;"	f	file:
-dump_tree_exp	view-tree.c	/^dump_tree_exp (struct tree_exp s, int id)$/;"	f	file:
-dump_tree_field_decl	view-tree.c	/^dump_tree_field_decl (struct tree_field_decl s, int id)$/;"	f	file:
-dump_tree_fixed_cst	view-tree.c	/^dump_tree_fixed_cst (struct tree_fixed_cst s, int id)$/;"	f	file:
-dump_tree_function_decl	view-tree.c	/^dump_tree_function_decl (struct tree_function_decl s, int id)$/;"	f	file:
-dump_tree_identifier	view-tree.c	/^dump_tree_identifier (struct tree_identifier s, int id)$/;"	f	file:
-dump_tree_int_cst	view-tree.c	/^dump_tree_int_cst (struct tree_int_cst s, int id)$/;"	f	file:
-dump_tree_label_decl	view-tree.c	/^dump_tree_label_decl (struct tree_label_decl s, int id)$/;"	f	file:
-dump_tree_list	view-tree.c	/^dump_tree_list (struct tree_list s, int id)$/;"	f	file:
-dump_tree_omp_clause	view-tree.c	/^dump_tree_omp_clause (struct tree_omp_clause s, int id)$/;"	f	file:
-dump_tree_optimization_option	view-tree.c	/^dump_tree_optimization_option (struct tree_optimization_option s, int id)$/;"	f	file:
-dump_tree_parm_decl	view-tree.c	/^dump_tree_parm_decl (struct tree_parm_decl s, int id)$/;"	f	file:
-dump_tree_real_cst	view-tree.c	/^dump_tree_real_cst (struct tree_real_cst s, int id)$/;"	f	file:
-dump_tree_result_decl	view-tree.c	/^dump_tree_result_decl (struct tree_result_decl s, int id)$/;"	f	file:
-dump_tree_ssa_name	view-tree.c	/^dump_tree_ssa_name (struct tree_ssa_name s, int id)$/;"	f	file:
-dump_tree_statement_list	view-tree.c	/^dump_tree_statement_list (struct tree_statement_list s, int id)$/;"	f	file:
-dump_tree_string	view-tree.c	/^dump_tree_string (struct tree_string s, int id)$/;"	f	file:
-dump_tree_target_option	view-tree.c	/^dump_tree_target_option (struct tree_target_option s, int id)$/;"	f	file:
-dump_tree_type	view-tree.c	/^dump_tree_type (struct tree_type s, int id)$/;"	f	file:
-dump_tree_type_decl	view-tree.c	/^dump_tree_type_decl (struct tree_type_decl s, int id)$/;"	f	file:
-dump_tree_var_decl	view-tree.c	/^dump_tree_var_decl (struct tree_var_decl s, int id)$/;"	f	file:
-dump_tree_vec	view-tree.c	/^dump_tree_vec (struct tree_vec s, int id)$/;"	f	file:
-dump_tree_vector	view-tree.c	/^dump_tree_vector (struct tree_vector s, int id)$/;"	f	file:
-end_bb	view-cfg.c	/^end_bb (FILE *fp)$/;"	f	file:
-end_fct	view-cfg.c	/^end_fct (FILE *fp)$/;"	f	file:
-finish_graph_dump_file	view-cfg.c	/^finish_graph_dump_file (const char *base)$/;"	f	file:
-fout	view-tree.c	/^static FILE *fout;$/;"	v	file:
-gdl_add_edge	gdl.c	/^gdl_add_edge (struct gdl_graph *graph, struct gdl_edge *edge)$/;"	f	file:
-gdl_add_node	gdl.c	/^gdl_add_node (struct gdl_graph *graph, struct gdl_node *node)$/;"	f	file:
-gdl_add_subgraph	gdl.c	/^gdl_add_subgraph (struct gdl_graph *graph, struct gdl_graph *subgraph)$/;"	f	file:
-gdl_color_s	gdl.c	/^char *gdl_color_s[GDL_COLOR_DEFAULT + 1] =$/;"	v
-gdl_layout_algorithm_s	gdl.c	/^char *gdl_layout_algorithm_s[GDL_LAYOUT_ALGORITHM_DEFAULT + 1] =$/;"	v
-gdl_linestyle_s	gdl.c	/^char *gdl_linestyle_s[GDL_LINESTYLE_DEFAULT + 1] =$/;"	v
-gdl_new_edge	gdl.c	/^gdl_new_edge (char *source, char *target)$/;"	f	file:
-gdl_new_graph	gdl.c	/^gdl_new_graph (char *title)$/;"	f	file:
-gdl_new_node	gdl.c	/^gdl_new_node (char *title)$/;"	f	file:
-gdl_shape_s	gdl.c	/^char *gdl_shape_s[GDL_SHAPE_DEFAULT + 1] =$/;"	v
+dfs_order	./cfg.h	/^  int dfs_order;$/;"	m	struct:vcg_plugin_basic_block
+dfs_order	cfg.h	/^  int dfs_order;$/;"	m	struct:vcg_plugin_basic_block
+draw_edge	./dump-function.c	/^draw_edge (FILE *fp, int from, int to, int bb_edge, int color_class)$/;"	f	file:
+draw_edge	dump-function.c	/^draw_edge (FILE *fp, int from, int to, int bb_edge, int color_class)$/;"	f	file:
+dump_tree	./dump-tree.c	/^dump_tree (tree t, int id, char *name)$/;"	f	file:
+dump_tree	dump-tree.c	/^dump_tree (tree t, int id, char *name)$/;"	f	file:
+dump_tree_base	./dump-tree.c	/^dump_tree_base (struct tree_base *s, int id, char *name)$/;"	f	file:
+dump_tree_base	dump-tree.c	/^dump_tree_base (struct tree_base *s, int id, char *name)$/;"	f	file:
+dump_tree_binfo	./dump-tree.c	/^dump_tree_binfo (struct tree_binfo *s, int id, char *name)$/;"	f	file:
+dump_tree_binfo	dump-tree.c	/^dump_tree_binfo (struct tree_binfo *s, int id, char *name)$/;"	f	file:
+dump_tree_block	./dump-tree.c	/^dump_tree_block (struct tree_block *s, int id, char *name)$/;"	f	file:
+dump_tree_block	dump-tree.c	/^dump_tree_block (struct tree_block *s, int id, char *name)$/;"	f	file:
+dump_tree_common	./dump-tree.c	/^dump_tree_common (struct tree_common *s, int id, char *name)$/;"	f	file:
+dump_tree_common	dump-tree.c	/^dump_tree_common (struct tree_common *s, int id, char *name)$/;"	f	file:
+dump_tree_complex	./dump-tree.c	/^dump_tree_complex (struct tree_complex *s, int id, char *name)$/;"	f	file:
+dump_tree_complex	dump-tree.c	/^dump_tree_complex (struct tree_complex *s, int id, char *name)$/;"	f	file:
+dump_tree_const_decl	./dump-tree.c	/^dump_tree_const_decl (struct tree_const_decl *s, int id, char *name)$/;"	f	file:
+dump_tree_const_decl	dump-tree.c	/^dump_tree_const_decl (struct tree_const_decl *s, int id, char *name)$/;"	f	file:
+dump_tree_constructor	./dump-tree.c	/^dump_tree_constructor (struct tree_constructor *s, int id, char *name)$/;"	f	file:
+dump_tree_constructor	dump-tree.c	/^dump_tree_constructor (struct tree_constructor *s, int id, char *name)$/;"	f	file:
+dump_tree_decl_common	./dump-tree.c	/^dump_tree_decl_common (struct tree_decl_common *s, int id, char *name)$/;"	f	file:
+dump_tree_decl_common	dump-tree.c	/^dump_tree_decl_common (struct tree_decl_common *s, int id, char *name)$/;"	f	file:
+dump_tree_decl_minimal	./dump-tree.c	/^dump_tree_decl_minimal (struct tree_decl_minimal *s, int id, char *name)$/;"	f	file:
+dump_tree_decl_minimal	dump-tree.c	/^dump_tree_decl_minimal (struct tree_decl_minimal *s, int id, char *name)$/;"	f	file:
+dump_tree_decl_non_common	./dump-tree.c	/^dump_tree_decl_non_common (struct tree_decl_non_common *s, int id, char *name)$/;"	f	file:
+dump_tree_decl_non_common	dump-tree.c	/^dump_tree_decl_non_common (struct tree_decl_non_common *s, int id, char *name)$/;"	f	file:
+dump_tree_decl_with_rtl	./dump-tree.c	/^dump_tree_decl_with_rtl (struct tree_decl_with_rtl *s, int id, char *name)$/;"	f	file:
+dump_tree_decl_with_rtl	dump-tree.c	/^dump_tree_decl_with_rtl (struct tree_decl_with_rtl *s, int id, char *name)$/;"	f	file:
+dump_tree_decl_with_vis	./dump-tree.c	/^dump_tree_decl_with_vis (struct tree_decl_with_vis *s, int id, char *name)$/;"	f	file:
+dump_tree_decl_with_vis	dump-tree.c	/^dump_tree_decl_with_vis (struct tree_decl_with_vis *s, int id, char *name)$/;"	f	file:
+dump_tree_exp	./dump-tree.c	/^dump_tree_exp (struct tree_exp *s, int id, char *name)$/;"	f	file:
+dump_tree_exp	dump-tree.c	/^dump_tree_exp (struct tree_exp *s, int id, char *name)$/;"	f	file:
+dump_tree_field_decl	./dump-tree.c	/^dump_tree_field_decl (struct tree_field_decl *s, int id, char *name)$/;"	f	file:
+dump_tree_field_decl	dump-tree.c	/^dump_tree_field_decl (struct tree_field_decl *s, int id, char *name)$/;"	f	file:
+dump_tree_fixed_cst	./dump-tree.c	/^dump_tree_fixed_cst (struct tree_fixed_cst *s, int id, char *name)$/;"	f	file:
+dump_tree_fixed_cst	dump-tree.c	/^dump_tree_fixed_cst (struct tree_fixed_cst *s, int id, char *name)$/;"	f	file:
+dump_tree_function_decl	./dump-tree.c	/^dump_tree_function_decl (struct tree_function_decl *s, int id, char *name)$/;"	f	file:
+dump_tree_function_decl	dump-tree.c	/^dump_tree_function_decl (struct tree_function_decl *s, int id, char *name)$/;"	f	file:
+dump_tree_identifier	./dump-tree.c	/^dump_tree_identifier (struct tree_identifier *s, int id, char *name)$/;"	f	file:
+dump_tree_identifier	dump-tree.c	/^dump_tree_identifier (struct tree_identifier *s, int id, char *name)$/;"	f	file:
+dump_tree_int_cst	./dump-tree.c	/^dump_tree_int_cst (struct tree_int_cst *s, int id, char *name)$/;"	f	file:
+dump_tree_int_cst	dump-tree.c	/^dump_tree_int_cst (struct tree_int_cst *s, int id, char *name)$/;"	f	file:
+dump_tree_label_decl	./dump-tree.c	/^dump_tree_label_decl (struct tree_label_decl *s, int id, char *name)$/;"	f	file:
+dump_tree_label_decl	dump-tree.c	/^dump_tree_label_decl (struct tree_label_decl *s, int id, char *name)$/;"	f	file:
+dump_tree_list	./dump-tree.c	/^dump_tree_list (struct tree_list *s, int id, char *name)$/;"	f	file:
+dump_tree_list	dump-tree.c	/^dump_tree_list (struct tree_list *s, int id, char *name)$/;"	f	file:
+dump_tree_omp_clause	./dump-tree.c	/^dump_tree_omp_clause (struct tree_omp_clause *s, int id, char *name)$/;"	f	file:
+dump_tree_omp_clause	dump-tree.c	/^dump_tree_omp_clause (struct tree_omp_clause *s, int id, char *name)$/;"	f	file:
+dump_tree_optimization_option	./dump-tree.c	/^dump_tree_optimization_option (struct tree_optimization_option *s, int id, char *name)$/;"	f	file:
+dump_tree_optimization_option	dump-tree.c	/^dump_tree_optimization_option (struct tree_optimization_option *s, int id, char *name)$/;"	f	file:
+dump_tree_parm_decl	./dump-tree.c	/^dump_tree_parm_decl (struct tree_parm_decl *s, int id, char *name)$/;"	f	file:
+dump_tree_parm_decl	dump-tree.c	/^dump_tree_parm_decl (struct tree_parm_decl *s, int id, char *name)$/;"	f	file:
+dump_tree_real_cst	./dump-tree.c	/^dump_tree_real_cst (struct tree_real_cst *s, int id, char *name)$/;"	f	file:
+dump_tree_real_cst	dump-tree.c	/^dump_tree_real_cst (struct tree_real_cst *s, int id, char *name)$/;"	f	file:
+dump_tree_result_decl	./dump-tree.c	/^dump_tree_result_decl (struct tree_result_decl *s, int id, char *name)$/;"	f	file:
+dump_tree_result_decl	dump-tree.c	/^dump_tree_result_decl (struct tree_result_decl *s, int id, char *name)$/;"	f	file:
+dump_tree_ssa_name	./dump-tree.c	/^dump_tree_ssa_name (struct tree_ssa_name *s, int id, char *name)$/;"	f	file:
+dump_tree_ssa_name	dump-tree.c	/^dump_tree_ssa_name (struct tree_ssa_name *s, int id, char *name)$/;"	f	file:
+dump_tree_statement_list	./dump-tree.c	/^dump_tree_statement_list (struct tree_statement_list *s, int id, char *name)$/;"	f	file:
+dump_tree_statement_list	dump-tree.c	/^dump_tree_statement_list (struct tree_statement_list *s, int id, char *name)$/;"	f	file:
+dump_tree_string	./dump-tree.c	/^dump_tree_string (struct tree_string *s, int id, char *name)$/;"	f	file:
+dump_tree_string	dump-tree.c	/^dump_tree_string (struct tree_string *s, int id, char *name)$/;"	f	file:
+dump_tree_target_option	./dump-tree.c	/^dump_tree_target_option (struct tree_target_option *s, int id, char *name)$/;"	f	file:
+dump_tree_target_option	dump-tree.c	/^dump_tree_target_option (struct tree_target_option *s, int id, char *name)$/;"	f	file:
+dump_tree_type	./dump-tree.c	/^dump_tree_type (struct tree_type *s, int id, char *name)$/;"	f	file:
+dump_tree_type	dump-tree.c	/^dump_tree_type (struct tree_type *s, int id, char *name)$/;"	f	file:
+dump_tree_type_decl	./dump-tree.c	/^dump_tree_type_decl (struct tree_type_decl *s, int id, char *name)$/;"	f	file:
+dump_tree_type_decl	dump-tree.c	/^dump_tree_type_decl (struct tree_type_decl *s, int id, char *name)$/;"	f	file:
+dump_tree_var_decl	./dump-tree.c	/^dump_tree_var_decl (struct tree_var_decl *s, int id, char *name)$/;"	f	file:
+dump_tree_var_decl	dump-tree.c	/^dump_tree_var_decl (struct tree_var_decl *s, int id, char *name)$/;"	f	file:
+dump_tree_vec	./dump-tree.c	/^dump_tree_vec (struct tree_vec *s, int id, char *name)$/;"	f	file:
+dump_tree_vec	dump-tree.c	/^dump_tree_vec (struct tree_vec *s, int id, char *name)$/;"	f	file:
+dump_tree_vector	./dump-tree.c	/^dump_tree_vector (struct tree_vector *s, int id, char *name)$/;"	f	file:
+dump_tree_vector	dump-tree.c	/^dump_tree_vector (struct tree_vector *s, int id, char *name)$/;"	f	file:
+edge	./cfg.h	/^  struct vcg_plugin_edge *edge;$/;"	m	struct:vcg_plugin_control_flow_graph	typeref:struct:vcg_plugin_control_flow_graph::vcg_plugin_edge
+edge	./cfg.h	/^  struct vcg_plugin_edge *edge;$/;"	m	struct:vcg_plugin_vec_edge	typeref:struct:vcg_plugin_vec_edge::vcg_plugin_edge
+edge	./libgdl/gdl.h	/^  struct gdl_edge *edge;$/;"	m	struct:gdl_graph	typeref:struct:gdl_graph::gdl_edge
+edge	cfg.h	/^  struct vcg_plugin_edge *edge;$/;"	m	struct:vcg_plugin_control_flow_graph	typeref:struct:vcg_plugin_control_flow_graph::vcg_plugin_edge
+edge	cfg.h	/^  struct vcg_plugin_edge *edge;$/;"	m	struct:vcg_plugin_vec_edge	typeref:struct:vcg_plugin_vec_edge::vcg_plugin_edge
+edge_num	./cfg.h	/^  int edge_num;$/;"	m	struct:vcg_plugin_control_flow_graph
+edge_num	cfg.h	/^  int edge_num;$/;"	m	struct:vcg_plugin_control_flow_graph
+end_bb	./dump-function.c	/^end_bb (FILE *fp)$/;"	f	file:
+end_bb	dump-function.c	/^end_bb (FILE *fp)$/;"	f	file:
+end_fct	./dump-function.c	/^end_fct (FILE *fp)$/;"	f	file:
+end_fct	dump-function.c	/^end_fct (FILE *fp)$/;"	f	file:
+entry	./cfg.h	/^  struct vcg_plugin_basic_block *entry; \/* also the first bb *\/$/;"	m	struct:vcg_plugin_control_flow_graph	typeref:struct:vcg_plugin_control_flow_graph::vcg_plugin_basic_block
+entry	cfg.h	/^  struct vcg_plugin_basic_block *entry; \/* also the first bb *\/$/;"	m	struct:vcg_plugin_control_flow_graph	typeref:struct:vcg_plugin_control_flow_graph::vcg_plugin_basic_block
+env	./except.h	/^  jmp_buf env;$/;"	m	struct:Except_Frame
+env	except.h	/^  jmp_buf env;$/;"	m	struct:Except_Frame
+exception	./except.h	/^  const T *exception;$/;"	m	struct:Except_Frame
+exception	except.h	/^  const T *exception;$/;"	m	struct:Except_Frame
+exit	./cfg.h	/^  struct vcg_plugin_basic_block *exit; \/* also  the last bb *\/$/;"	m	struct:vcg_plugin_control_flow_graph	typeref:struct:vcg_plugin_control_flow_graph::vcg_plugin_basic_block
+exit	cfg.h	/^  struct vcg_plugin_basic_block *exit; \/* also  the last bb *\/$/;"	m	struct:vcg_plugin_control_flow_graph	typeref:struct:vcg_plugin_control_flow_graph::vcg_plugin_basic_block
+file	./except.h	/^  const char *file;$/;"	m	struct:Except_Frame
+file	except.h	/^  const char *file;$/;"	m	struct:Except_Frame
+finish_graph_dump_file	./dump-function.c	/^finish_graph_dump_file (const char *base)$/;"	f	file:
+finish_graph_dump_file	dump-function.c	/^finish_graph_dump_file (const char *base)$/;"	f	file:
+fout	./dump-tree.c	/^static FILE *fout;$/;"	v	file:
+fout	dump-tree.c	/^static FILE *fout;$/;"	v	file:
+gdl_add_edge	./libgdl/gdl.c	/^gdl_add_edge (struct gdl_graph *graph, struct gdl_edge *edge)$/;"	f	file:
+gdl_add_node	./libgdl/gdl.c	/^gdl_add_node (struct gdl_graph *graph, struct gdl_node *node)$/;"	f	file:
+gdl_add_subgraph	./libgdl/gdl.c	/^gdl_add_subgraph (struct gdl_graph *graph, struct gdl_graph *subgraph)$/;"	f	file:
+gdl_color	./libgdl/gdl.h	/^enum gdl_color$/;"	g
+gdl_color_s	./libgdl/gdl.c	/^char *gdl_color_s[GDL_COLOR_DEFAULT + 1] =$/;"	v
+gdl_edge	./libgdl/gdl.h	/^struct gdl_edge$/;"	s
+gdl_edge_attr	./libgdl/gdl.h	/^struct gdl_edge_attr$/;"	s
+gdl_get_edge_linestyle_s	./libgdl/gdl.h	/^gdl_get_edge_linestyle_s (struct gdl_edge *edge)$/;"	f
+gdl_get_graph_color_s	./libgdl/gdl.h	/^gdl_get_graph_color_s (struct gdl_graph *graph)$/;"	f
+gdl_get_graph_edge	./libgdl/gdl.h	/^gdl_get_graph_edge (struct gdl_graph *graph)$/;"	f
+gdl_get_graph_layout_algorithm_s	./libgdl/gdl.h	/^gdl_get_graph_layout_algorithm_s (struct gdl_graph *graph)$/;"	f
+gdl_get_graph_node	./libgdl/gdl.h	/^gdl_get_graph_node (struct gdl_graph *graph)$/;"	f
+gdl_get_graph_node_color_s	./libgdl/gdl.h	/^gdl_get_graph_node_color_s (struct gdl_graph *graph)$/;"	f
+gdl_get_graph_shape_s	./libgdl/gdl.h	/^gdl_get_graph_shape_s (struct gdl_graph *graph)$/;"	f
+gdl_get_graph_subgraph	./libgdl/gdl.h	/^gdl_get_graph_subgraph (struct gdl_graph *graph)$/;"	f
+gdl_get_node_color_s	./libgdl/gdl.h	/^gdl_get_node_color_s (struct gdl_node *node)$/;"	f
+gdl_get_node_shape_s	./libgdl/gdl.h	/^gdl_get_node_shape_s (struct gdl_node *node)$/;"	f
+gdl_graph	./libgdl/gdl.h	/^struct gdl_graph$/;"	s
+gdl_graph_attr	./libgdl/gdl.h	/^struct gdl_graph_attr$/;"	s
+gdl_layout_algorithm	./libgdl/gdl.h	/^enum gdl_layout_algorithm$/;"	g
+gdl_layout_algorithm_s	./libgdl/gdl.c	/^char *gdl_layout_algorithm_s[GDL_LAYOUT_ALGORITHM_DEFAULT + 1] =$/;"	v
+gdl_linestyle	./libgdl/gdl.h	/^enum gdl_linestyle$/;"	g
+gdl_linestyle_s	./libgdl/gdl.c	/^char *gdl_linestyle_s[GDL_LINESTYLE_DEFAULT + 1] =$/;"	v
+gdl_new_edge	./libgdl/gdl.c	/^gdl_new_edge (char *source, char *target)$/;"	f	file:
+gdl_new_graph	./libgdl/gdl.c	/^gdl_new_graph (const char *title)$/;"	f	file:
+gdl_new_node	./libgdl/gdl.c	/^gdl_new_node (char *title)$/;"	f	file:
+gdl_node	./libgdl/gdl.h	/^struct gdl_node$/;"	s
+gdl_node_attr	./libgdl/gdl.h	/^struct gdl_node_attr$/;"	s
+gdl_shape	./libgdl/gdl.h	/^enum gdl_shape$/;"	g
+gdl_shape_s	./libgdl/gdl.c	/^char *gdl_shape_s[GDL_SHAPE_DEFAULT + 1] =$/;"	v
+general_init	./tree2vcg.c	/^general_init (void)$/;"	f	file:
 general_init	tree2vcg.c	/^general_init (void)$/;"	f	file:
-graph_ext	view-cfg.c	/^static const char *const graph_ext[] =$/;"	v	file:
-input	tree2vcg-yacc.y	/^input:	\/* empty *\/$/;"	l
+graph_ext	./dump-function.c	/^static const char *const graph_ext[] =$/;"	v	file:
+graph_ext	dump-function.c	/^static const char *const graph_ext[] =$/;"	v	file:
+input	./tree2vcg-yacc.y	/^input:	\/* empty *\/$/;"	l
+is_ancestor	./fine-tune.c	/^is_ancestor (struct vcg_plugin_basic_block *source, struct vcg_plugin_basic_block *target)$/;"	f	file:
 is_ancestor	fine-tune.c	/^is_ancestor (struct vcg_plugin_basic_block *source, struct vcg_plugin_basic_block *target)$/;"	f	file:
-line	tree2vcg-yacc.y	/^line: FN FN_NAME {$/;"	l
+last_bb	./cfg.h	/^  struct vcg_plugin_basic_block *last_bb;$/;"	m	struct:vcg_plugin_control_flow_graph	typeref:struct:vcg_plugin_control_flow_graph::vcg_plugin_basic_block
+last_bb	cfg.h	/^  struct vcg_plugin_basic_block *last_bb;$/;"	m	struct:vcg_plugin_control_flow_graph	typeref:struct:vcg_plugin_control_flow_graph::vcg_plugin_basic_block
+last_edge	./cfg.h	/^  struct vcg_plugin_edge *last_edge;$/;"	m	struct:vcg_plugin_control_flow_graph	typeref:struct:vcg_plugin_control_flow_graph::vcg_plugin_edge
+last_edge	./libgdl/gdl.h	/^  struct gdl_edge *last_edge;$/;"	m	struct:gdl_graph	typeref:struct:gdl_graph::gdl_edge
+last_edge	cfg.h	/^  struct vcg_plugin_edge *last_edge;$/;"	m	struct:vcg_plugin_control_flow_graph	typeref:struct:vcg_plugin_control_flow_graph::vcg_plugin_edge
+last_node	./libgdl/gdl.h	/^  struct gdl_node *last_node;$/;"	m	struct:gdl_graph	typeref:struct:gdl_graph::gdl_node
+last_pred	./cfg.h	/^  struct vcg_plugin_vec_edge *last_pred;$/;"	m	struct:vcg_plugin_basic_block	typeref:struct:vcg_plugin_basic_block::vcg_plugin_vec_edge
+last_pred	cfg.h	/^  struct vcg_plugin_vec_edge *last_pred;$/;"	m	struct:vcg_plugin_basic_block	typeref:struct:vcg_plugin_basic_block::vcg_plugin_vec_edge
+last_subgraph	./libgdl/gdl.h	/^  struct gdl_graph *last_subgraph;$/;"	m	struct:gdl_graph	typeref:struct:gdl_graph::gdl_graph
+last_succ	./cfg.h	/^  struct vcg_plugin_vec_edge *last_succ;$/;"	m	struct:vcg_plugin_basic_block	typeref:struct:vcg_plugin_basic_block::vcg_plugin_vec_edge
+last_succ	cfg.h	/^  struct vcg_plugin_vec_edge *last_succ;$/;"	m	struct:vcg_plugin_basic_block	typeref:struct:vcg_plugin_basic_block::vcg_plugin_vec_edge
+line	./except.h	/^  int line;$/;"	m	struct:Except_Frame
+line	./tree2vcg-yacc.y	/^line: FN FN_NAME {$/;"	l
+line	except.h	/^  int line;$/;"	m	struct:Except_Frame
+mark_edge	./fine-tune.c	/^mark_edge (struct vcg_plugin_edge *e)$/;"	f	file:
 mark_edge	fine-tune.c	/^mark_edge (struct vcg_plugin_edge *e)$/;"	f	file:
+mark_edges	./fine-tune.c	/^mark_edges (void)$/;"	f	file:
 mark_edges	fine-tune.c	/^mark_edges (void)$/;"	f	file:
-nobb	view-cfg.c	/^static int nobb = 0;$/;"	v	file:
-node_data	view-cfg.c	/^node_data (FILE *fp, rtx tmp_rtx)$/;"	f	file:
-noedges	view-cfg.c	/^static int noedges = 0;$/;"	v	file:
-nonodes	view-cfg.c	/^static int nonodes = 0;$/;"	v	file:
+max_distance	./cfg.h	/^  int max_distance;$/;"	m	struct:vcg_plugin_basic_block
+max_distance	cfg.h	/^  int max_distance;$/;"	m	struct:vcg_plugin_basic_block
+name	./cfg.h	/^  char *name;$/;"	m	struct:vcg_plugin_basic_block
+name	./cfg.h	/^  char *name;$/;"	m	struct:vcg_plugin_function
+name	cfg.h	/^  char *name;$/;"	m	struct:vcg_plugin_basic_block
+name	cfg.h	/^  char *name;$/;"	m	struct:vcg_plugin_function
+next	./cfg.h	/^  struct vcg_plugin_basic_block *next;$/;"	m	struct:vcg_plugin_basic_block	typeref:struct:vcg_plugin_basic_block::vcg_plugin_basic_block
+next	./cfg.h	/^  struct vcg_plugin_edge *next;$/;"	m	struct:vcg_plugin_edge	typeref:struct:vcg_plugin_edge::vcg_plugin_edge
+next	./cfg.h	/^  struct vcg_plugin_function *next;$/;"	m	struct:vcg_plugin_function	typeref:struct:vcg_plugin_function::vcg_plugin_function
+next	./cfg.h	/^  struct vcg_plugin_vec_edge *next;$/;"	m	struct:vcg_plugin_vec_edge	typeref:struct:vcg_plugin_vec_edge::vcg_plugin_vec_edge
+next	./libgdl/gdl.h	/^  struct gdl_edge *next;$/;"	m	struct:gdl_edge	typeref:struct:gdl_edge::gdl_edge
+next	./libgdl/gdl.h	/^  struct gdl_graph *next;$/;"	m	struct:gdl_graph	typeref:struct:gdl_graph::gdl_graph
+next	./libgdl/gdl.h	/^  struct gdl_node *next;$/;"	m	struct:gdl_node	typeref:struct:gdl_node::gdl_node
+next	cfg.h	/^  struct vcg_plugin_basic_block *next;$/;"	m	struct:vcg_plugin_basic_block	typeref:struct:vcg_plugin_basic_block::vcg_plugin_basic_block
+next	cfg.h	/^  struct vcg_plugin_edge *next;$/;"	m	struct:vcg_plugin_edge	typeref:struct:vcg_plugin_edge::vcg_plugin_edge
+next	cfg.h	/^  struct vcg_plugin_function *next;$/;"	m	struct:vcg_plugin_function	typeref:struct:vcg_plugin_function::vcg_plugin_function
+next	cfg.h	/^  struct vcg_plugin_vec_edge *next;$/;"	m	struct:vcg_plugin_vec_edge	typeref:struct:vcg_plugin_vec_edge::vcg_plugin_vec_edge
+nobb	./dump-function.c	/^static int nobb = 0;$/;"	v	file:
+nobb	dump-function.c	/^static int nobb = 0;$/;"	v	file:
+node	./libgdl/gdl.h	/^  struct gdl_node *node;$/;"	m	struct:gdl_graph	typeref:struct:gdl_graph::gdl_node
+node_data	./dump-function.c	/^node_data (FILE *fp, rtx tmp_rtx)$/;"	f	file:
+node_data	dump-function.c	/^node_data (FILE *fp, rtx tmp_rtx)$/;"	f	file:
+noedges	./dump-function.c	/^static int noedges = 0;$/;"	v	file:
+noedges	dump-function.c	/^static int noedges = 0;$/;"	v	file:
+nonodes	./dump-function.c	/^static int nonodes = 0;$/;"	v	file:
+nonodes	dump-function.c	/^static int nonodes = 0;$/;"	v	file:
+obstack_chunk_alloc	./tree2vcg.c	32;"	d	file:
 obstack_chunk_alloc	tree2vcg.c	32;"	d	file:
+obstack_chunk_free	./tree2vcg.c	33;"	d	file:
 obstack_chunk_free	tree2vcg.c	33;"	d	file:
+output_edge	./output.c	/^output_edge (FILE *fout, struct gdl_edge *edge)$/;"	f	file:
 output_edge	output.c	/^output_edge (FILE *fout, struct gdl_edge *edge)$/;"	f	file:
+output_graph	./output.c	/^output_graph (FILE *fout, struct gdl_graph *graph)$/;"	f	file:
 output_graph	output.c	/^output_graph (FILE *fout, struct gdl_graph *graph)$/;"	f	file:
+output_graph_attributes	./output.c	/^output_graph_attributes (FILE *fout, struct gdl_graph *graph)$/;"	f	file:
 output_graph_attributes	output.c	/^output_graph_attributes (FILE *fout, struct gdl_graph *graph)$/;"	f	file:
+output_node	./output.c	/^output_node (FILE *fout, struct gdl_node *node)$/;"	f	file:
 output_node	output.c	/^output_node (FILE *fout, struct gdl_node *node)$/;"	f	file:
+plugin_init	./vcg-plugin.c	/^plugin_init (struct plugin_name_args *plugin_info,$/;"	f
 plugin_init	vcg-plugin.c	/^plugin_init (struct plugin_name_args *plugin_info,$/;"	f
+plugin_is_GPL_compatible	./vcg-plugin.c	/^int plugin_is_GPL_compatible;$/;"	v
 plugin_is_GPL_compatible	vcg-plugin.c	/^int plugin_is_GPL_compatible;$/;"	v
-pred_nums	tree2vcg-yacc.y	/^pred_nums:	\/* empty *\/$/;"	l
-print_rtl_graph_with_bb	view-cfg.c	/^print_rtl_graph_with_bb (const char *base, rtx rtx_first)$/;"	f	file:
+pred	./cfg.h	/^  struct vcg_plugin_vec_edge *pred;$/;"	m	struct:vcg_plugin_basic_block	typeref:struct:vcg_plugin_basic_block::vcg_plugin_vec_edge
+pred	cfg.h	/^  struct vcg_plugin_vec_edge *pred;$/;"	m	struct:vcg_plugin_basic_block	typeref:struct:vcg_plugin_basic_block::vcg_plugin_vec_edge
+pred_num	./cfg.h	/^  int pred_num;$/;"	m	struct:vcg_plugin_basic_block
+pred_num	cfg.h	/^  int pred_num;$/;"	m	struct:vcg_plugin_basic_block
+pred_nums	./tree2vcg-yacc.y	/^pred_nums:	\/* empty *\/$/;"	l
+prev	./except.h	/^  Except_Frame *prev;$/;"	m	struct:Except_Frame
+prev	except.h	/^  Except_Frame *prev;$/;"	m	struct:Except_Frame
+print_rtl_graph_with_bb	./dump-function.c	/^print_rtl_graph_with_bb (const char *base, rtx rtx_first)$/;"	f	file:
+print_rtl_graph_with_bb	dump-function.c	/^print_rtl_graph_with_bb (const char *base, rtx rtx_first)$/;"	f	file:
+reason	./except.h	/^  char *reason;$/;"	m	struct:T
+reason	except.h	/^  char *reason;$/;"	m	struct:T
+search	./fine-tune.c	/^search (struct vcg_plugin_basic_block *bb)$/;"	f	file:
 search	fine-tune.c	/^search (struct vcg_plugin_basic_block *bb)$/;"	f	file:
-start_bb	view-cfg.c	/^start_bb (FILE *fp, int bb)$/;"	f	file:
-start_fct	view-cfg.c	/^start_fct (FILE *fp)$/;"	f	file:
-succ_nums	tree2vcg-yacc.y	/^succ_nums:	\/* empty *\/$/;"	l
-title_id	view-tree.c	/^static int title_id = 0;$/;"	v	file:
-tsname	view-tree.c	/^static char *tsname[] =$/;"	v	file:
-vcg_plugin_cfg_to_vcg	gdl.c	/^vcg_plugin_cfg_to_vcg (void)$/;"	f
+source	./cfg.h	/^  struct vcg_plugin_basic_block *source;$/;"	m	struct:vcg_plugin_edge	typeref:struct:vcg_plugin_edge::vcg_plugin_basic_block
+source	cfg.h	/^  struct vcg_plugin_basic_block *source;$/;"	m	struct:vcg_plugin_edge	typeref:struct:vcg_plugin_edge::vcg_plugin_basic_block
+start_bb	./dump-function.c	/^start_bb (FILE *fp, int bb)$/;"	f	file:
+start_bb	dump-function.c	/^start_bb (FILE *fp, int bb)$/;"	f	file:
+start_fct	./dump-function.c	/^start_fct (FILE *fp)$/;"	f	file:
+start_fct	dump-function.c	/^start_fct (FILE *fp)$/;"	f	file:
+subgraph	./libgdl/gdl.h	/^  struct gdl_graph *subgraph;$/;"	m	struct:gdl_graph	typeref:struct:gdl_graph::gdl_graph
+succ	./cfg.h	/^  struct vcg_plugin_vec_edge *succ;$/;"	m	struct:vcg_plugin_basic_block	typeref:struct:vcg_plugin_basic_block::vcg_plugin_vec_edge
+succ	cfg.h	/^  struct vcg_plugin_vec_edge *succ;$/;"	m	struct:vcg_plugin_basic_block	typeref:struct:vcg_plugin_basic_block::vcg_plugin_vec_edge
+succ_num	./cfg.h	/^  int succ_num;$/;"	m	struct:vcg_plugin_basic_block
+succ_num	cfg.h	/^  int succ_num;$/;"	m	struct:vcg_plugin_basic_block
+succ_nums	./tree2vcg-yacc.y	/^succ_nums:	\/* empty *\/$/;"	l
+target	./cfg.h	/^  struct vcg_plugin_basic_block *target;$/;"	m	struct:vcg_plugin_edge	typeref:struct:vcg_plugin_edge::vcg_plugin_basic_block
+target	cfg.h	/^  struct vcg_plugin_basic_block *target;$/;"	m	struct:vcg_plugin_edge	typeref:struct:vcg_plugin_edge::vcg_plugin_basic_block
+text	./cfg.h	/^  char *text;$/;"	m	struct:vcg_plugin_basic_block
+text	cfg.h	/^  char *text;$/;"	m	struct:vcg_plugin_basic_block
+title_id	./dump-tree.c	/^static int title_id = 0;$/;"	v	file:
+title_id	dump-tree.c	/^static int title_id = 0;$/;"	v	file:
+tsname	./dump-tree.c	/^static char *tsname[] =$/;"	v	file:
+tsname	dump-tree.c	/^static char *tsname[] =$/;"	v	file:
+type	./cfg.h	/^  enum vcg_plugin_edge_type type;$/;"	m	struct:vcg_plugin_edge	typeref:enum:vcg_plugin_edge::vcg_plugin_edge_type
+type	cfg.h	/^  enum vcg_plugin_edge_type type;$/;"	m	struct:vcg_plugin_edge	typeref:enum:vcg_plugin_edge::vcg_plugin_edge_type
+vcg_bb_graph	./dump-function.c	/^vcg_bb_graph (basic_block bb, int flag)$/;"	f	file:
+vcg_bb_graph	dump-function.c	/^vcg_bb_graph (basic_block bb, int flag)$/;"	f	file:
+vcg_function_graph	./dump-function.c	/^vcg_function_graph (tree fn, int flag)$/;"	f	file:
+vcg_function_graph	dump-function.c	/^vcg_function_graph (tree fn, int flag)$/;"	f	file:
+vcg_plugin_basic_block	./cfg.h	/^struct vcg_plugin_basic_block$/;"	s
+vcg_plugin_basic_block	cfg.h	/^struct vcg_plugin_basic_block$/;"	s
+vcg_plugin_cfg_to_vcg	./libgdl/gdl.c	/^vcg_plugin_cfg_to_vcg (void)$/;"	f
+vcg_plugin_control_flow_graph	./cfg.h	/^struct vcg_plugin_control_flow_graph$/;"	s
+vcg_plugin_control_flow_graph	cfg.h	/^struct vcg_plugin_control_flow_graph$/;"	s
+vcg_plugin_current_function	./tree2vcg.c	/^struct vcg_plugin_function *vcg_plugin_current_function; $/;"	v	typeref:struct:vcg_plugin_function
 vcg_plugin_current_function	tree2vcg.c	/^struct vcg_plugin_function *vcg_plugin_current_function; $/;"	v	typeref:struct:vcg_plugin_function
-vcg_plugin_dump_cfg	view-cfg.c	/^vcg_plugin_dump_cfg (char *filename)$/;"	f
+vcg_plugin_dump_function	./dump-function.c	/^vcg_plugin_dump_function (tree fn, int flag)$/;"	f
+vcg_plugin_dump_function	dump-function.c	/^vcg_plugin_dump_function (tree fn, int flag)$/;"	f
+vcg_plugin_edge	./cfg.h	/^struct vcg_plugin_edge$/;"	s
+vcg_plugin_edge	cfg.h	/^struct vcg_plugin_edge$/;"	s
+vcg_plugin_edge_type	./cfg.h	/^enum vcg_plugin_edge_type$/;"	g
+vcg_plugin_edge_type	cfg.h	/^enum vcg_plugin_edge_type$/;"	g
+vcg_plugin_fine_tune_cfg	./fine-tune.c	/^vcg_plugin_fine_tune_cfg (void)$/;"	f
 vcg_plugin_fine_tune_cfg	fine-tune.c	/^vcg_plugin_fine_tune_cfg (void)$/;"	f
+vcg_plugin_first_function	./tree2vcg.c	/^struct vcg_plugin_function *vcg_plugin_first_function; $/;"	v	typeref:struct:vcg_plugin_function
 vcg_plugin_first_function	tree2vcg.c	/^struct vcg_plugin_function *vcg_plugin_first_function; $/;"	v	typeref:struct:vcg_plugin_function
+vcg_plugin_function	./cfg.h	/^struct vcg_plugin_function$/;"	s
+vcg_plugin_function	cfg.h	/^struct vcg_plugin_function$/;"	s
+vcg_plugin_insn_obstack	./tree2vcg.c	/^struct obstack vcg_plugin_insn_obstack;$/;"	v	typeref:struct:obstack
 vcg_plugin_insn_obstack	tree2vcg.c	/^struct obstack vcg_plugin_insn_obstack;$/;"	v	typeref:struct:obstack
+vcg_plugin_last_function	./tree2vcg.c	/^struct vcg_plugin_function *vcg_plugin_last_function; $/;"	v	typeref:struct:vcg_plugin_function
 vcg_plugin_last_function	tree2vcg.c	/^struct vcg_plugin_function *vcg_plugin_last_function; $/;"	v	typeref:struct:vcg_plugin_function
+vcg_plugin_lookup_and_add_bb	./cfg.c	/^vcg_plugin_lookup_and_add_bb (struct vcg_plugin_function *func, char *name)$/;"	f
 vcg_plugin_lookup_and_add_bb	cfg.c	/^vcg_plugin_lookup_and_add_bb (struct vcg_plugin_function *func, char *name)$/;"	f
+vcg_plugin_lookup_and_add_edge	./cfg.c	/^vcg_plugin_lookup_and_add_edge (struct vcg_plugin_function *func, $/;"	f
 vcg_plugin_lookup_and_add_edge	cfg.c	/^vcg_plugin_lookup_and_add_edge (struct vcg_plugin_function *func, $/;"	f
+vcg_plugin_new_function	./cfg.c	/^vcg_plugin_new_function (char *name)$/;"	f
 vcg_plugin_new_function	cfg.c	/^vcg_plugin_new_function (char *name)$/;"	f
+vcg_plugin_output_vcg	./output.c	/^vcg_plugin_output_vcg (FILE *fout)$/;"	f
 vcg_plugin_output_vcg	output.c	/^vcg_plugin_output_vcg (FILE *fout)$/;"	f
-vcg_plugin_top_graph	gdl.c	/^struct gdl_graph *vcg_plugin_top_graph;$/;"	v	typeref:struct:gdl_graph
+vcg_plugin_top_graph	./libgdl/gdl.c	/^struct gdl_graph *vcg_plugin_top_graph;$/;"	v	typeref:struct:gdl_graph
+vcg_plugin_tree2vcg	./tree2vcg.c	/^vcg_plugin_tree2vcg (FILE *dump_file, FILE *vcg_file)$/;"	f
 vcg_plugin_tree2vcg	tree2vcg.c	/^vcg_plugin_tree2vcg (FILE *dump_file, FILE *vcg_file)$/;"	f
-vcg_plugin_view	view.c	/^vcg_plugin_view (char *filename)$/;"	f
-vcg_plugin_view_cfg	view-cfg.c	/^vcg_plugin_view_cfg (void)$/;"	f
-vcg_plugin_view_cgraph	view-cgraph.c	/^vcg_plugin_view_cgraph (void)$/;"	f
-vcg_plugin_view_rtx	view-rtx.c	/^vcg_plugin_view_rtx (rtx r)$/;"	f
-vcg_plugin_view_tree	view-tree.c	/^vcg_plugin_view_tree (tree t)$/;"	f
+vcg_plugin_vec_edge	./cfg.h	/^struct vcg_plugin_vec_edge$/;"	s
+vcg_plugin_vec_edge	cfg.h	/^struct vcg_plugin_vec_edge$/;"	s
+vcg_plugin_view	./vcg-plugin.c	/^vcg_plugin_view (char *filename)$/;"	f
+vcg_plugin_view	vcg-plugin.c	/^vcg_plugin_view (char *filename)$/;"	f
+vcg_plugin_view_cgraph	./dump-cgraph.c	/^vcg_plugin_view_cgraph (void)$/;"	f
+vcg_plugin_view_cgraph	dump-cgraph.c	/^vcg_plugin_view_cgraph (void)$/;"	f
+vcg_plugin_view_function	./dump-function.c	/^vcg_plugin_view_function (tree fn, int flag)$/;"	f
+vcg_plugin_view_function	dump-function.c	/^vcg_plugin_view_function (tree fn, int flag)$/;"	f
+vcg_plugin_view_tree	./dump-tree.c	/^vcg_plugin_view_tree (tree t)$/;"	f
+vcg_plugin_view_tree	dump-tree.c	/^vcg_plugin_view_tree (tree t)$/;"	f
+vcg_viewer	./vcg-plugin.c	/^char *vcg_viewer = "vcgview";$/;"	v
 vcg_viewer	vcg-plugin.c	/^char *vcg_viewer = "vcgview";$/;"	v
+visited	./cfg.h	/^  int visited;$/;"	m	struct:vcg_plugin_basic_block
+visited	cfg.h	/^  int visited;$/;"	m	struct:vcg_plugin_basic_block

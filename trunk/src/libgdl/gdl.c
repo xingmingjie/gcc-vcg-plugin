@@ -87,11 +87,11 @@ char *gdl_layout_algorithm_s[GDL_LAYOUT_ALGORITHM_DEFAULT + 1] =
 struct gdl_graph *vcg_plugin_top_graph;
 
 static struct gdl_graph *
-gdl_new_graph (char *title)
+gdl_new_graph (const char *title)
 {
   struct gdl_graph *graph;
 
-  graph = (struct gdl_graph *) xmalloc (sizeof (struct gdl_graph));
+  graph = XNEW(struct gdl_graph);
   gdl_set_graph_title (graph, title);
   gdl_set_graph_label (graph, NULL);
   gdl_set_graph_color (graph, GDL_COLOR_DEFAULT);
