@@ -61,7 +61,7 @@ extern void Except_raise (const T *e, const char *file, int line);
   if (Except_flag == Except_entered) \
     Except_stack = Except_stack->prev; \
   } if (Except_flag == Except_raised) RERAISE; \
-  } while (0)
+  } while (0);
   
 
 #undef T

@@ -503,7 +503,7 @@ vcg_plugin_function_graph (tree fn, int flag)
 {
   gdl_graph *g;
   
-
+  g = gdl_new_graph ();
   return g;
 }
 
