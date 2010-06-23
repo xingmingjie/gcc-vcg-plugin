@@ -32,14 +32,13 @@ EXTRA_DIST = vcg.gdbinit
 
 vcg_la_SOURCES = \
         cfg.c cfg.h \
-        edge-attr.def \
+        dump-function.c dump-tree.c dump-tree.h \
         fine-tune.c \
-        gdl.c gdl.h graph-attr.def \
-        node-attr.def \
         output.c \
         tree2vcg.c tree2vcg.h tree2vcg-lex.l tree2vcg-yacc.y \
-        vcg-plugin.c view.c view-cfg.c view-tree.c view-tree.h
+        vcg-plugin.c vcg-plugin.h
                    
 
 vcg_la_LDFLAGS = -module
 
+vcg_la_LIBADD = libvcg/libvcg.a

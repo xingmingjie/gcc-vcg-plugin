@@ -1,5 +1,4 @@
-#                                               -*- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
+# Process this file with automake to produce Makefile.in
 #
 # Copyright (C) 2009, 2010 Eric Fisher, joefoxreal@gmail.com.
 #
@@ -16,37 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_PREREQ(2.59)
-AC_INIT(gcc-vcg-plugin, 0.4, joefoxreal@gmail.com)
-AC_CONFIG_HEADERS(config.h)
+noinst_LIBRARIES = libvcg.a
 
-# m4
-AC_CONFIG_MACRO_DIR([m4])
-#ACLOCAL_FLAGS="-I m4"
+libvcg_a_SOURCES = \
+        gdl.c gdl.h \
+        edge-attr.def \
+        graph-attr.def \
+        node-attr.def
+                   
 
-# automake
-AM_INIT_AUTOMAKE
-
-# add the m4 dir
-# AC_CONFIG_MACRO_DIR([m4])
-
-# Checks for programs.
-AC_PROG_YACC
-AC_PROG_CC
-AC_PROG_LEX
-
-# libtool
-LT_INIT
-AC_PROG_LIBTOOL
-
-# Checks for header files.
-
-# Checks for typedefs, structures, and compiler characteristics.
-AC_C_CONST
-AC_FUNC_OBSTACK
-
-# Checks for library functions.
-AC_FUNC_ERROR_AT_LINE
-
-AC_CONFIG_FILES([Makefile src/Makefile src/libvcg/Makefile])
-AC_OUTPUT
