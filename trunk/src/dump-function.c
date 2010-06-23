@@ -27,17 +27,7 @@
 #include "plugin.h"
 #include "plugin-version.h"
 
-#include "system.h"
-#include "coretypes.h"
-#include "tm.h"
-#include "toplev.h"
-#include "gimple.h"
-#include "tree-pass.h"
-#include "rtl.h"
-#include "intl.h"
-#include "langhooks.h"
-#include "cfghooks.h"
-#include "version.h" /* for printing gcc version number in graph */
+#include "vcg-plugin.h"
 
 #ifdef TMP_VCG
   #undef TMP_VCG
@@ -507,6 +497,41 @@ dump_cfg_tree (char *filename)
   fclose (vcg_file);
 }
 
+/* Create a graph from the function fn. */
+gdl_graph *
+vcg_plugin_function_graph (tree fn, int flag)
+{
+  gdl_graph *g;
+  
+
+  return g;
+}
+
+/* Dump the function fn into a file. */
+void
+vcg_plugin_dump_function (tree fn, int flag)
+{
+  gdl_graph *g;
+
+  TRY
+    g = vcg_plugin_function_graph (tree fn, int flag);
+  ELSE
+    g = 0;
+  END_TRY
+
+  init_dump ();
+  gdl_dump_graph (vcg_plugin_dump_file, g);
+  finish_dump ();
+}
+
+/* View the function fn in a graph. */
+void
+vcg_plugin_view_function (tree fn, int flag)
+{
+  vcg_plugin_dump_cfg (TMP_VCG);
+  vcg_plugin_view (TMP_VCG);
+}
+
 #define TMP_VCG_BASE "tmp-vcg-plugin-cfg"
 static void
 dump_cfg_rtl (char *filename)
@@ -515,29 +540,5 @@ dump_cfg_rtl (char *filename)
   clean_graph_dump_file (TMP_VCG_BASE);
   print_rtl_graph_with_bb (TMP_VCG_BASE, get_insns());
   finish_graph_dump_file (TMP_VCG_BASE);
-}
-
-void
-vcg_plugin_dump_cfg (char *filename)
-{
-  struct cfg_hooks cfg_hooks;
-  
-  cfg_hooks = get_cfg_hooks ();
-  if (strcmp (cfg_hooks.name, "gimple") == 0)
-    dump_cfg_tree (filename);
-  else if (strcmp (cfg_hooks.name, "rtl") == 0 
-           || strcmp (cfg_hooks.name, "cfglayout mode") == 0)
-    dump_cfg_rtl (filename);
-  else
-    {
-      printf ("vcg-plugin: cfg_hooks.name is %s.\n", cfg_hooks.name);
-    }
-}
-
-void
-vcg_plugin_view_cfg (void)
-{
-  vcg_plugin_dump_cfg (TMP_VCG);
-  vcg_plugin_view (TMP_VCG);
 }
 
