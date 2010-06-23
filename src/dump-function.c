@@ -29,6 +29,113 @@
 
 #include "vcg-plugin.h"
 
+static const char *current_function_name;
+
+/* Gcc pretty printer print content into a file.
+   This is used as a buffer to hold the content.  */
+
+static FILE *print_file;
+
+/* Create a graph from the basic block bb. */
+
+static gdl_graph *
+vcg_bb_graph (basic_block bb, int flag)
+{
+  gdl_graph *g;
+  gdl_node *n;
+  int index;
+  char buf[32]; /* Should be enough. */
+  char *title, *label;
+  gimple_stmt_iterator gsi;
+  gimple stmt;
+
+  /* bb_graph's title: fn_name.bb_index */
+  index = bb->index;
+  sprintf (buf, "%d", index);
+  title = concat (current_function_name, ".", buf);
+  
+  g = gdl_new_graph (title);
+
+  /* bb_graph's label: ENTRY | EXIT | bb bb_index */
+  if (index == 0)
+    gdl_set_graph_label (g, "ENTRY");
+  else if (index == 1)
+    gdl_set_graph_label (g, "EXIT");
+  else
+    gdl_set_graph_label (g, buf);
+
+  /* bb_node's title: ENTRY | EXIT | bb bb_index */
+  if (index == 0)
+    n = gdl_new_node ("ENTRY");
+  else if (index == 1)
+    n = gdl_new_node ("EXIT");
+  else
+    n = gdl_new_node (buf);
+  
+  for (gsi = gsi_start_bb (bb); !gsi_end_p (gdi); gsi_next (&gsi))
+    {
+      stmt = gsi_stmt (gsi);
+      init_print_file ();
+      print_gimple_stmt (print_file, stmt, 2, flag);
+    }
+}
+
+/* Create a graph from the function fn. */
+
+static gdl_graph *
+vcg_function_graph (tree fn, int flag)
+{
+  gdl_graph *g;
+  basic_block bb;
+
+  /* Get the function's name. */
+  current_function_name = lang_hooks.decl_printable_name (fn, 2);
+  
+  g = gdl_new_graph (current_function_name);
+
+  /* Switch CFUN to point to FN. */  
+  push_cfun (DECL_STRUCT_FUNCTION (fn));
+
+  if (cfun && cfun->decl == fn && cfun->cfg && basic_block_info)
+    {
+      FOR_EACH_BB (bb)
+        {
+          bb_graph = vcg_bb_graph (bb, flag);
+          gdl_add_subgraph (g, bb_graph);
+        }
+    }
+
+  return g;
+}
+
+/* Dump the function fn into a file. */
+
+void
+vcg_plugin_dump_function (tree fn, int flag)
+{
+  gdl_graph *g;
+
+  TRY
+    g = vcg_function_graph (tree fn, int flag);
+  ELSE
+    g = 0;
+  END_TRY
+
+  init_dump ();
+  gdl_dump_graph (vcg_plugin_dump_file, g);
+  finish_dump ();
+}
+
+/* View the function fn in a graph. */
+
+void
+vcg_plugin_view_function (tree fn, int flag)
+{
+  vcg_plugin_dump_cfg (TMP_VCG);
+  vcg_plugin_view (TMP_VCG);
+}
+
+///////////////////////////////////////////////////////
 #ifdef TMP_VCG
   #undef TMP_VCG
 #endif
@@ -464,81 +571,3 @@ finish_graph_dump_file (const char *base)
       fatal_error ("can't open %s: %m", buf);
     }
 }
-
-static void
-dump_cfg_tree (char *filename)
-{
-  const char *dname, *aname;
-  FILE *dump_file, *vcg_file;
-  tree fn;
-
-  fn = current_function_decl;
-  if (fn == 0)
-    {
-      printf ("vcg-plugin: function decl is unavailable for now.\n");
-      return;
-    }
-
-  dump_file = fopen ("tmp.dump", "w");
-  vcg_file = fopen (TMP_VCG, "w");
-
-  dname = lang_hooks.decl_printable_name (fn, 2);
-  aname = (IDENTIFIER_POINTER (DECL_ASSEMBLER_NAME (fn)));
-  fprintf (dump_file, "\n;; Function %s (%s)\n\n", dname, aname);
-  
-  dump_function_to_file (fn, dump_file, TDF_BLOCKS);
-
-  fclose (dump_file);
-
-  dump_file = fopen ("tmp.dump", "r");
-  vcg_plugin_tree2vcg (dump_file, vcg_file);
-
-  fclose (dump_file);
-  fclose (vcg_file);
-}
-
-/* Create a graph from the function fn. */
-gdl_graph *
-vcg_plugin_function_graph (tree fn, int flag)
-{
-  gdl_graph *g;
-  
-  g = gdl_new_graph ();
-  return g;
-}
-
-/* Dump the function fn into a file. */
-void
-vcg_plugin_dump_function (tree fn, int flag)
-{
-  gdl_graph *g;
-
-  TRY
-    g = vcg_plugin_function_graph (tree fn, int flag);
-  ELSE
-    g = 0;
-  END_TRY
-
-  init_dump ();
-  gdl_dump_graph (vcg_plugin_dump_file, g);
-  finish_dump ();
-}
-
-/* View the function fn in a graph. */
-void
-vcg_plugin_view_function (tree fn, int flag)
-{
-  vcg_plugin_dump_cfg (TMP_VCG);
-  vcg_plugin_view (TMP_VCG);
-}
-
-#define TMP_VCG_BASE "tmp-vcg-plugin-cfg"
-static void
-dump_cfg_rtl (char *filename)
-{
-  graph_dump_format = 1;
-  clean_graph_dump_file (TMP_VCG_BASE);
-  print_rtl_graph_with_bb (TMP_VCG_BASE, get_insns());
-  finish_graph_dump_file (TMP_VCG_BASE);
-}
-
