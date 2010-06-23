@@ -10,15 +10,7 @@
 #include "plugin.h"
 #include "plugin-version.h"
 
-#include "system.h"
-#include "coretypes.h"
-#include "tm.h"
-#include "toplev.h"
-#include "gimple.h"
-#include "tree-pass.h"
-#include "intl.h"
-#include "langhooks.h"
-#include "cfghooks.h"
+#include "vcg-plugin.h"
 
 extern char *vcg_viewer;
 
