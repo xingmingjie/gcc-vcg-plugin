@@ -1,10 +1,10 @@
 # Define vcg plugin commands used in gdb. #
 
-define view_cfg
-  call vcg_plugin_view_cfg()
+define view_function
+  call vcg_plugin_view_function()
 end
-document view_cfg
-Usage: view_cfg
+document view_function
+Usage: view_function
 Draws the control flow graph of the current function.
 end
 

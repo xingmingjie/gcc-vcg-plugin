@@ -40,9 +40,6 @@
 /* plugin license check */
 int plugin_is_GPL_compatible;
 
-/* vcg viewer tool, default is vcgview */
-char *vcg_viewer = "vcgview";
-
 /* plugin initialization */
 int
 plugin_init (struct plugin_name_args *plugin_info,
@@ -55,32 +52,7 @@ plugin_init (struct plugin_name_args *plugin_info,
   if (!plugin_default_version_check (version, &gcc_version))
     return 1;
 
-  for (i = 0; i < argc; i++)
-    {
-      printf ("key: %s\n", argv[i].key);
-      printf ("value: %s\n", argv[i].value);
-      /* Get the vcg viewer tool, default is "vcgview". */
-      if (strcmp (argv[i].key, "viewer") == 0)
-        {
-          vcg_viewer = argv[i].value;
-        }
-    }
-
-  return 0;
-}
-
-void
-vcg_plugin_view (char *filename)
-{
-  char *cmd;
-  pid_t pid;
-
-  cmd = concat (vcg_viewer, " ", filename, NULL);
-  pid = fork ();
-  if (pid == 0)
-    {
-      system (cmd);
-      exit (0);
-    }
+  /* Initialize the vcg plugin */
+  return vcg.init (argc, argv);
 }
 
