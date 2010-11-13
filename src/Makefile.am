@@ -1,6 +1,6 @@
 # Process this file with automake to produce Makefile.in
 #
-# Copyright (C) 2009, 2010 Eric Fisher, joefoxreal@gmail.com.
+# Copyright (C) 2009, 2010 Mingjie Xing, mingjie.xing@gmail.com.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,10 +32,9 @@ EXTRA_DIST = vcg.gdbinit
 
 vcg_la_SOURCES = \
         cfg.c cfg.h \
-        dump-function.c dump-tree.c dump-tree.h \
+        gcc-function.c \
         fine-tune.c \
-        output.c \
-        tree2vcg.c tree2vcg.h tree2vcg-lex.l tree2vcg-yacc.y \
+	vcg.c \
         vcg-plugin.c vcg-plugin.h
                    
 
