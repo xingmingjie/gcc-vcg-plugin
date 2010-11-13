@@ -1,6 +1,6 @@
-/* Output vcg description file according to the tree dump file.
+/* The vcg plugin.
 
-   Copyright (C) 2009, 2010 Eric Fisher, joefoxreal@gmail.com. 
+   Copyright (C) 2009, 2010 Mingjie Xing, mingjie.xing@gmail.com. 
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,22 +28,32 @@
 #include "gdl.h"
 #include "tree2vcg.h"
 
-/*
-  Define global variables,
-    <none>
 
-  Use global variables,
-    vcg_plugin_top_graph
-
-  Define extern functions,
-    vcg_plugin_output_vcg
-
-  Use extern functions,
-    gdl_get_*
-*/
+/* vcg viewer tool, default is vcgview */
+char *vcg_viewer = "vcgview";
 
 static void
-output_node (FILE *fout, struct gdl_node *node)
+vcg_init ()
+{
+  for (i = 0; i < argc; i++)
+    {
+      printf ("key: %s\n", argv[i].key);
+      printf ("value: %s\n", argv[i].value);
+      /* Get the vcg viewer tool, default is "vcgview". */
+      if (strcmp (argv[i].key, "viewer") == 0)
+        {
+          vcg_viewer = argv[i].value;
+        }
+    }
+}
+
+static void
+vcg_add_graph ()
+{
+}
+
+static void
+vcg_dump_node (FILE *fout, struct gdl_node *node)
 {
   char *str;
   int val;
@@ -89,7 +99,7 @@ output_node (FILE *fout, struct gdl_node *node)
 }
 
 static void
-output_edge (FILE *fout, struct gdl_edge *edge)
+vcg_dump_edge (FILE *fout, struct gdl_edge *edge)
 {
   char *str;
   int val;
@@ -130,7 +140,7 @@ output_edge (FILE *fout, struct gdl_edge *edge)
 }
 
 static void
-output_graph_attributes (FILE *fout, struct gdl_graph *graph)
+vcg_dump_graph_attributes (FILE *fout, struct gdl_graph *graph)
 {
   char *str;
   int val;
@@ -215,9 +225,8 @@ output_graph_attributes (FILE *fout, struct gdl_graph *graph)
   if (val != -1)
     fprintf (fout, "port_sharing: %s\n", val ? "yes" : "no");
 }
-
 static void
-output_graph (FILE *fout, struct gdl_graph *graph)
+vcg_dump_graph (FILE *fout, struct gdl_graph *graph)
 {
   struct gdl_node *nodes, *node;
   struct gdl_edge *edges, *edge;
@@ -245,38 +254,10 @@ output_graph (FILE *fout, struct gdl_graph *graph)
   fputs ("}\n", fout);
 }
 
-void
-vcg_plugin_output_vcg (FILE *fout)
-{
-  output_graph (fout, vcg_plugin_top_graph);
-}
-
-/* vcg viewer tool, default is vcgview */
-char *vcg_viewer = "vcgview";
-
 static void
-vcg_init ()
+vcg_dump (void)
 {
-  for (i = 0; i < argc; i++)
-    {
-      printf ("key: %s\n", argv[i].key);
-      printf ("value: %s\n", argv[i].value);
-      /* Get the vcg viewer tool, default is "vcgview". */
-      if (strcmp (argv[i].key, "viewer") == 0)
-        {
-          vcg_viewer = argv[i].value;
-        }
-    }
-}
-
-static void
-vcg_add_graph ()
-{
-}
-
-static void
-vcg_dump ()
-{
+  vcg_dump_graph (fout, vcg_plugin_top_graph);
 }
 
 static void
