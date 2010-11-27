@@ -17,7 +17,7 @@
 
 # Process this file with automake to produce Makefile.in
 #
-# Copyright (C) 2009, 2010 Eric Fisher, joefoxreal@gmail.com.
+# Copyright (C) 2009, 2010 Mingjie Xing, mingjie.xing@gmail.com.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -51,9 +51,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = src
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	tree2vcg-lex.c tree2vcg-yacc.c tree2vcg-yacc.h
+subdir = vcg-plugin
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
@@ -88,14 +87,13 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
-vcg_la_DEPENDENCIES = libvcg/libvcg.a
-am_vcg_la_OBJECTS = cfg.lo dump-function.lo dump-tree.lo fine-tune.lo \
-	output.lo tree2vcg.lo tree2vcg-lex.lo tree2vcg-yacc.lo \
+vcg_plugin_la_DEPENDENCIES = libgdl/libgdl.a
+am_vcg_plugin_la_OBJECTS = cfg.lo gcc-function.lo fine-tune.lo vcg.lo \
 	vcg-plugin.lo
-vcg_la_OBJECTS = $(am_vcg_la_OBJECTS)
-vcg_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(vcg_la_LDFLAGS) \
-	$(LDFLAGS) -o $@
+vcg_plugin_la_OBJECTS = $(am_vcg_plugin_la_OBJECTS)
+vcg_plugin_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(vcg_plugin_la_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -109,15 +107,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-LEXCOMPILE = $(LEX) $(LFLAGS) $(AM_LFLAGS)
-LTLEXCOMPILE = $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(LEX) $(LFLAGS) $(AM_LFLAGS)
-YLWRAP = $(top_srcdir)/ylwrap
-YACCCOMPILE = $(YACC) $(YFLAGS) $(AM_YFLAGS)
-LTYACCCOMPILE = $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(YACC) $(YFLAGS) $(AM_YFLAGS)
-SOURCES = $(vcg_la_SOURCES)
-DIST_SOURCES = $(vcg_la_SOURCES)
+SOURCES = $(vcg_plugin_la_SOURCES)
+DIST_SOURCES = $(vcg_plugin_la_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -244,22 +235,21 @@ INCLUDES = \
         -DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\"
 
-pkglib_LTLIBRARIES = vcg.la
-EXTRA_DIST = vcg.gdbinit
-vcg_la_SOURCES = \
+pkglib_LTLIBRARIES = vcg-plugin.la
+EXTRA_DIST = vcg-plugin.gdbinit
+vcg_plugin_la_SOURCES = \
         cfg.c cfg.h \
-        dump-function.c dump-tree.c dump-tree.h \
+        gcc-function.c \
         fine-tune.c \
-        output.c \
-        tree2vcg.c tree2vcg.h tree2vcg-lex.l tree2vcg-yacc.y \
+	vcg.c \
         vcg-plugin.c vcg-plugin.h
 
-vcg_la_LDFLAGS = -module
-vcg_la_LIBADD = libvcg/libvcg.a
+vcg_plugin_la_LDFLAGS = -module
+vcg_plugin_la_LIBADD = libgdl/libgdl.a
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .l .lo .o .obj .y
+.SUFFIXES: .c .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -269,9 +259,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu vcg-plugin/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu src/Makefile
+	  $(AUTOMAKE) --gnu vcg-plugin/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -321,13 +311,8 @@ clean-pkglibLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-tree2vcg-yacc.h: tree2vcg-yacc.c
-	@if test ! -f $@; then \
-	  rm -f tree2vcg-yacc.c; \
-	  $(MAKE) $(AM_MAKEFLAGS) tree2vcg-yacc.c; \
-	else :; fi
-vcg.la: $(vcg_la_OBJECTS) $(vcg_la_DEPENDENCIES) 
-	$(vcg_la_LINK) -rpath $(pkglibdir) $(vcg_la_OBJECTS) $(vcg_la_LIBADD) $(LIBS)
+vcg-plugin.la: $(vcg_plugin_la_OBJECTS) $(vcg_plugin_la_DEPENDENCIES) 
+	$(vcg_plugin_la_LINK) -rpath $(pkglibdir) $(vcg_plugin_la_OBJECTS) $(vcg_plugin_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -336,14 +321,10 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cfg.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dump-function.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dump-tree.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fine-tune.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/output.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tree2vcg-lex.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tree2vcg-yacc.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tree2vcg.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcc-function.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vcg-plugin.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vcg.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -365,12 +346,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
-
-.l.c:
-	$(am__skiplex) $(SHELL) $(YLWRAP) $< $(LEX_OUTPUT_ROOT).c $@ -- $(LEXCOMPILE)
-
-.y.c:
-	$(am__skipyacc) $(SHELL) $(YLWRAP) $< y.tab.c $@ y.tab.h $*.h y.output $*.output -- $(YACCCOMPILE)
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -492,9 +467,6 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-rm -f tree2vcg-lex.c
-	-rm -f tree2vcg-yacc.c
-	-rm -f tree2vcg-yacc.h
 clean: clean-am
 
 clean-am: clean-generic clean-libtool clean-pkglibLTLIBRARIES \
