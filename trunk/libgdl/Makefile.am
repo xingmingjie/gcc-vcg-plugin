@@ -17,6 +17,10 @@
 
 noinst_LIBRARIES = libgdl.a
 
+GCCPLUGINS_DIR = `gcc -print-file-name=plugin`
+
+INCLUDES = -I $(GCCPLUGINS_DIR)/include
+
 libgdl_a_SOURCES = \
         gdl.c gdl.h \
         edge-attr.def \

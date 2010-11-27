@@ -17,4 +17,4 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = vcg-plugin
+SUBDIRS = libgdl vcg-plugin
