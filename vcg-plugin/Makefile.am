@@ -17,14 +17,9 @@
 
 LIBTOOL = @LIBTOOL@
 
-AM_YFLAGS = -d -t
-
 GCCPLUGINS_DIR = `gcc -print-file-name=plugin`
 
-INCLUDES = \
-        -I $(GCCPLUGINS_DIR)/include \
-        -DPACKAGE_DATA_DIR=\""$(datadir)"\" \
-	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\"
+INCLUDES = -I $(GCCPLUGINS_DIR)/include
 
 pkglib_LTLIBRARIES = vcg-plugin.la
 

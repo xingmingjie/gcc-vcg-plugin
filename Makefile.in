@@ -239,7 +239,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = vcg-plugin
+SUBDIRS = libgdl vcg-plugin
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
