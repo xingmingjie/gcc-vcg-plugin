@@ -220,7 +220,7 @@ gdl_dump_node (FILE *fout, gdl_node *node)
   fputs ("}\n", fout);
 }
 
-static void
+void
 gdl_dump_edge (FILE *fout, gdl_edge *edge)
 {
   char *str;

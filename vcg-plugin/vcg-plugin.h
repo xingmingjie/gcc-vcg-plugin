@@ -44,8 +44,8 @@ struct vcg_plugin
   char *vcg_viewer;
   char *vcg_filename;
   int (*init) (int argc, char *argv[]);
-  void (*dump) (void);
-  void (*show) (void);
+  void (*dump) (gdl_graph *graph);
+  void (*show) (gdl_graph *graph);
 };
 
 extern struct vcg_plugin vcg; 
