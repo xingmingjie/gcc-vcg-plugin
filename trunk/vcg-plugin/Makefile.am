@@ -26,11 +26,11 @@ INCLUDES = \
         -DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\"
 
-pkglib_LTLIBRARIES = vcg.la
+pkglib_LTLIBRARIES = vcg-plugin.la
 
-EXTRA_DIST = vcg.gdbinit
+EXTRA_DIST = vcg-plugin.gdbinit
 
-vcg_la_SOURCES = \
+vcg_plugin_la_SOURCES = \
         cfg.c cfg.h \
         gcc-function.c \
         fine-tune.c \
@@ -38,6 +38,6 @@ vcg_la_SOURCES = \
         vcg-plugin.c vcg-plugin.h
                    
 
-vcg_la_LDFLAGS = -module
+vcg_plugin_la_LDFLAGS = -module
 
-vcg_la_LIBADD = libvcg/libvcg.a
+vcg_plugin_la_LIBADD = libgdl/libgdl.a

@@ -23,7 +23,6 @@
 #include <libiberty.h>
 
 #include "cfg.h"
-#include "tree2vcg.h"
 
 /*
   Define global variables:

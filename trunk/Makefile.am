@@ -1,6 +1,6 @@
 # Makefile.am
 #
-# Copyright (C) 2009, 2010 Eric Fisher, joefoxreal@gmail.com.
+# Copyright (C) 2009, 2010 Mingjie Xing, mingjie.xing@gmail.com.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,4 +17,4 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src
+SUBDIRS = vcg-plugin
