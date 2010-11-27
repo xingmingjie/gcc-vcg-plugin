@@ -30,7 +30,6 @@ vcg_plugin_la_SOURCES = \
         cfg.c cfg.h \
         gcc-function.c \
         fine-tune.c \
-	vcg.c \
         vcg-plugin.c vcg-plugin.h
                    
 
