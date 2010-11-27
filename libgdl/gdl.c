@@ -64,7 +64,7 @@ char *gdl_layout_algorithm_s[GDL_LAYOUT_ALGORITHM_DEFAULT + 1] =
 
 gdl_graph *vcg_plugin_top_graph;
 
-static gdl_graph *
+gdl_graph *
 gdl_new_graph (char *title)
 {
   gdl_graph *graph;
@@ -96,7 +96,7 @@ gdl_new_graph (char *title)
   return graph;
 }
 
-static gdl_node *
+gdl_node *
 gdl_new_node (char *title)
 {
   gdl_node *node;
@@ -113,7 +113,7 @@ gdl_new_node (char *title)
   return node;
 }
 
-static gdl_edge *
+gdl_edge *
 gdl_new_edge (char *source, char *target)
 {
   gdl_edge *edge;
@@ -129,7 +129,7 @@ gdl_new_edge (char *source, char *target)
   return edge;
 }
 
-static void 
+void 
 gdl_add_subgraph (gdl_graph *graph, gdl_graph *subgraph)
 {
   if (graph->subgraph == NULL)
@@ -144,7 +144,7 @@ gdl_add_subgraph (gdl_graph *graph, gdl_graph *subgraph)
     }
 }
 
-static void 
+void 
 gdl_add_node (gdl_graph *graph, gdl_node *node)
 {
   if (graph->node == NULL)
@@ -159,7 +159,7 @@ gdl_add_node (gdl_graph *graph, gdl_node *node)
     }
 }
 
-static void 
+void 
 gdl_add_edge (gdl_graph *graph, gdl_edge *edge)
 {
   if (graph->edge == NULL)

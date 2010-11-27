@@ -88,7 +88,7 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
 vcg_plugin_la_DEPENDENCIES = libgdl/libgdl.a
-am_vcg_plugin_la_OBJECTS = cfg.lo gcc-function.lo fine-tune.lo vcg.lo \
+am_vcg_plugin_la_OBJECTS = cfg.lo gcc-function.lo fine-tune.lo \
 	vcg-plugin.lo
 vcg_plugin_la_OBJECTS = $(am_vcg_plugin_la_OBJECTS)
 vcg_plugin_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
@@ -231,7 +231,6 @@ vcg_plugin_la_SOURCES = \
         cfg.c cfg.h \
         gcc-function.c \
         fine-tune.c \
-	vcg.c \
         vcg-plugin.c vcg-plugin.h
 
 vcg_plugin_la_LDFLAGS = -module
@@ -314,7 +313,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fine-tune.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcc-function.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vcg-plugin.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vcg.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
