@@ -28,6 +28,7 @@
 #include "plugin-version.h"
 
 #include "vcg-plugin.h"
+#include "gdl.h"
 
 static char *function_name;
 

@@ -62,14 +62,14 @@ char *gdl_layout_algorithm_s[GDL_LAYOUT_ALGORITHM_DEFAULT + 1] =
   NULL
 };
 
-struct gdl_graph *vcg_plugin_top_graph;
+gdl_graph *vcg_plugin_top_graph;
 
-static struct gdl_graph *
-gdl_new_graph (const char *title)
+static gdl_graph *
+gdl_new_graph (char *title)
 {
-  struct gdl_graph *graph;
+  gdl_graph *graph;
 
-  graph = XNEW(struct gdl_graph);
+  graph = XNEW(gdl_graph);
   gdl_set_graph_title (graph, title);
   gdl_set_graph_label (graph, NULL);
   gdl_set_graph_color (graph, GDL_COLOR_DEFAULT);
@@ -96,12 +96,12 @@ gdl_new_graph (const char *title)
   return graph;
 }
 
-static struct gdl_node *
+static gdl_node *
 gdl_new_node (char *title)
 {
-  struct gdl_node *node;
+  gdl_node *node;
 
-  node = (struct gdl_node *) xmalloc (sizeof (struct gdl_node));
+  node = (gdl_node *) xmalloc (sizeof (gdl_node));
   gdl_set_node_title (node, title);
   gdl_set_node_label (node, NULL);
   gdl_set_node_vertical_order (node, -1);
@@ -113,12 +113,12 @@ gdl_new_node (char *title)
   return node;
 }
 
-static struct gdl_edge *
+static gdl_edge *
 gdl_new_edge (char *source, char *target)
 {
-  struct gdl_edge *edge;
+  gdl_edge *edge;
 
-  edge = (struct gdl_edge *) xmalloc (sizeof (struct gdl_edge));
+  edge = (gdl_edge *) xmalloc (sizeof (gdl_edge));
   gdl_set_edge_source (edge, source);
   gdl_set_edge_target (edge, target);
   gdl_set_edge_label (edge, NULL);
@@ -130,7 +130,7 @@ gdl_new_edge (char *source, char *target)
 }
 
 static void 
-gdl_add_subgraph (struct gdl_graph *graph, struct gdl_graph *subgraph)
+gdl_add_subgraph (gdl_graph *graph, gdl_graph *subgraph)
 {
   if (graph->subgraph == NULL)
     {
@@ -145,7 +145,7 @@ gdl_add_subgraph (struct gdl_graph *graph, struct gdl_graph *subgraph)
 }
 
 static void 
-gdl_add_node (struct gdl_graph *graph, struct gdl_node *node)
+gdl_add_node (gdl_graph *graph, gdl_node *node)
 {
   if (graph->node == NULL)
     {
@@ -160,7 +160,7 @@ gdl_add_node (struct gdl_graph *graph, struct gdl_node *node)
 }
 
 static void 
-gdl_add_edge (struct gdl_graph *graph, struct gdl_edge *edge)
+gdl_add_edge (gdl_graph *graph, gdl_edge *edge)
 {
   if (graph->edge == NULL)
     {

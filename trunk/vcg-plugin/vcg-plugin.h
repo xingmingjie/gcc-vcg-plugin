@@ -30,7 +30,6 @@
 #include "intl.h"
 #include "langhooks.h"
 #include "cfghooks.h"
-#include "version.h" /* for printing gcc version number in graph */
 
 /* dump file names */
 
