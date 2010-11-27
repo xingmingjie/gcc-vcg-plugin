@@ -35,7 +35,7 @@ static char *function_name;
 /* Create a graph from the basic block bb. */
 
 static gdl_graph *
-create_bb_graph (basic_block bb)
+create_bb_graph (basic_block bb, int flags)
 {
   gdl_graph *g;
   gdl_node *n;
@@ -48,7 +48,7 @@ create_bb_graph (basic_block bb)
   /* bb_graph's title: fn_name.bb_index */
   index = bb->index;
   sprintf (buf, "%d", index);
-  title = concat (current_function_name, ".", buf);
+  title = concat (function_name, ".", buf, NULL);
 
   g = gdl_new_graph (title);
 
@@ -68,26 +68,29 @@ create_bb_graph (basic_block bb)
   else
     n = gdl_new_node (buf);
 
-  for (gsi = gsi_start_bb (bb); !gsi_end_p (gdi); gsi_next (&gsi))
+/*
+  for (gsi = gsi_start_bb (bb); !gsi_end_p (gsi); gsi_next (&gsi))
     {
       stmt = gsi_stmt (gsi);
       init_print_file ();
       print_gimple_stmt (print_file, stmt, 2, flag);
     }
+*/
+  return g;
 }
 
 /* Create a graph from the function fn. */
 
-static void
-create_function_graph (tree fn)
+static gdl_graph *
+create_function_graph (tree fn, int flags)
 {
   basic_block bb;
-  gdl_graph *g;
+  gdl_graph *graph, *bb_graph;
 
   /* Get the function's name. */
   function_name = lang_hooks.decl_printable_name (fn, 2);
 
-  top_graph = gld_new_graph (function_name);
+  graph = gdl_new_graph (function_name);
 
   /* Switch CFUN to point to FN. */
   push_cfun (DECL_STRUCT_FUNCTION (fn));
@@ -96,10 +99,12 @@ create_function_graph (tree fn)
     {
       FOR_EACH_BB (bb)
         {
-          g = create_bb_graph (bb);
-          gdl_add_subgraph (top_graph, g);
+          bb_graph = create_bb_graph (bb, flags);
+          gdl_add_subgraph (graph, bb_graph);
         }
     }
+
+  return graph;
 }
 
 static void
@@ -108,20 +113,15 @@ exit_if_invalid (tree fn)
 }
 
 void
-vcg_plugin_view_function (tree fn)
+vcg_plugin_view_function (tree fn, int flags)
 {
   struct gdl_graph *g;
 
   exit_if_invalid (fn);
 
-  vcg.init ();
-
   /* */
-  g = create_function_graph (fn);
+  g = create_function_graph (fn, flags);
 
-  vcg.add_graph (g);
-
-  vcg.show ();
-  vcg.cleanup ();
+  vcg.show (g);
 }
 

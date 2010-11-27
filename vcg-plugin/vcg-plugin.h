@@ -34,11 +34,24 @@
 /* dump file names */
 
 
+struct vcg_plugin
+{
+  char *plugin_name;
+  char *plugin_version;
+  char *vcg_viewer;
+  char *vcg_filename;
+  int (*init) (int argc, char *argv[]);
+  void (*dump) (void);
+  void (*show) (void);
+};
+
+extern struct vcg_plugin vcg; 
+
 /* These are available functins, which can be used to
    dump and view gcc internal data structures. */
 
-extern void vcg_plugin_dump_function (tree fn, int flag); 
-extern void vcg_plugin_view_function (tree fn, int flag); 
+extern void vcg_plugin_dump_function (tree fn, int flags); 
+extern void vcg_plugin_view_function (tree fn, int flags); 
 
 extern void vcg_plugin_view (char *filename);
 
