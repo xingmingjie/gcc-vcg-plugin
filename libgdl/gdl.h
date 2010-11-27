@@ -113,6 +113,9 @@ extern gdl_edge * gdl_new_edge (char *source, char *target);
 extern void gdl_add_subgraph (gdl_graph *graph, gdl_graph *subgraph);
 extern void gdl_add_node (gdl_graph *graph, gdl_node *node); 
 extern void gdl_add_edge (gdl_graph *graph, gdl_edge *edge);
+extern void gdl_dump_graph (FILE *fout, gdl_graph *graph);
+extern void gdl_dump_node (FILE *fout, gdl_node *node);
+extern void gdl_dump_edge (FILE *fout, gdl_edge *edge);
 
 
 #define DEF_ATTR(obj, name, type) \

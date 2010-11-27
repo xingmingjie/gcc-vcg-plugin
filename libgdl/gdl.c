@@ -174,3 +174,202 @@ gdl_add_edge (gdl_graph *graph, gdl_edge *edge)
     }
 }
 
+void
+gdl_dump_node (FILE *fout, gdl_node *node)
+{
+  char *str;
+  int val;
+  int i;
+
+  fputs ("node: {\n", fout);
+
+  /* title */
+  str = gdl_get_node_title (node);
+  if (str != NULL)
+    fprintf (fout, "title: \"%s\"\n", str);
+  
+  /* label */
+  str = gdl_get_node_label (node);
+  if (str != NULL)
+    {
+      fprintf (fout, "label: \"", str);
+      for (i = 0; i < strlen (str); i++)
+        {
+          if (str[i] == '"')
+            fprintf (fout,  "\\");
+          fprintf (fout, "%c", str[i]);
+        }
+      fprintf (fout, "\"\n");
+    }
+  
+  /* vertical_order */
+  val = gdl_get_node_vertical_order (node);
+  if (val != -1)
+    fprintf (fout, "vertical_order: %d\n", val);
+
+  /* shape */
+  str = gdl_get_node_shape_s (node);
+  if (str != NULL)
+    fprintf (fout, "shape: %s\n", str); 
+
+  /* color */
+  str = gdl_get_node_color_s (node);
+  if (str != NULL)
+    fprintf (fout, "color: %s\n", str); 
+
+  fputs ("}\n", fout);
+}
+
+static void
+gdl_dump_edge (FILE *fout, gdl_edge *edge)
+{
+  char *str;
+  int val;
+  int i;
+
+  fputs ("edge: {\n", fout);
+
+  /* sourcename */
+  str = gdl_get_edge_source (edge);
+  if (str != NULL)
+    fprintf (fout, "sourcename: \"%s\"\n", str);
+  
+  /* targetname */
+  str = gdl_get_edge_target (edge);
+  if (str != NULL)
+    fprintf (fout, "targetname: \"%s\"\n", str);
+  
+  /* label */
+  str = gdl_get_edge_label (edge);
+  if (str != NULL)
+    {
+      fprintf (fout, "label: \"", str);
+      for (i = 0; i < strlen (str); i++)
+        {
+          if (str[i] == '"')
+            fprintf (fout,  "\\");
+          fprintf (fout, "%c", str[i]);
+        }
+      fprintf (fout, "\"\n");
+    }
+  
+  /* linestyle */
+  str = gdl_get_edge_linestyle_s (edge);
+  if (str != NULL)
+    fprintf (fout, "linestyle: %s\n", str);
+
+  fputs ("}\n", fout);
+}
+
+void
+gdl_dump_graph (FILE *fout, gdl_graph *graph)
+{
+  gdl_node *nodes, *node;
+  gdl_edge *edges, *edge;
+  gdl_graph *subgraphs, *subgraph;
+
+  char *str;
+  int val;
+  int i;
+
+  fputs ("graph: {\n", fout);
+
+  /* Dump the general graph attributes.  */
+
+  /* title */
+  str = gdl_get_graph_title (graph);
+  if (str != NULL)
+    fprintf (fout, "title: \"%s\"\n", str);
+
+  /* label */
+  str = gdl_get_graph_label (graph);
+  if (str != NULL)
+    {
+      fprintf (fout, "label: \"", str);
+      for (i = 0; i < strlen (str); i++)
+        {
+          if (str[i] == '"')
+            fprintf (fout,  "\\");
+          fprintf (fout, "%c", str[i]);
+        }
+      fprintf (fout, "\"\n");
+    }
+
+  /* color */
+  str = gdl_get_graph_color_s (graph);
+  if (str != NULL)
+    fprintf (fout, "color: %s\n", str);
+
+  /* node.color */
+  str = gdl_get_graph_node_color_s (graph);
+  if (str != NULL)
+    fprintf (fout, "node.color: %s\n", str);
+
+  /* node.borderwidth */
+  val = gdl_get_graph_node_borderwidth (graph);
+  if (val != -1)
+    fprintf (fout, "node.borderwidth: %d\n", val);
+
+  /* node.margin */
+  val = gdl_get_graph_node_margin (graph);
+  if (val != -1)
+    fprintf (fout, "//node.margin: %d\n", val);
+
+  /* edge.thickness */
+  val = gdl_get_graph_edge_thickness (graph);
+  if (val != -1)
+    fprintf (fout, "edge.thickness: %d\n", val);
+
+  /* folding */
+  val = gdl_get_graph_folding (graph);
+  if (val != -1)
+    fprintf (fout, "folding: %d\n", val);
+
+  /* vertical order */
+  val = gdl_get_graph_vertical_order (graph);
+  if (val != -1)
+    fprintf (fout, "vertical_order: %d\n", val);
+
+  /* splines */
+  str = gdl_get_graph_splines (graph);
+  if (str != NULL)
+    fprintf (fout, "splines: %s\n", str);
+
+  /* shape */
+  str = gdl_get_graph_shape_s (graph);
+  if (str != NULL)
+    fprintf (fout, "shape: %s\n", str);
+
+  /* layoutalgorithm */
+  str = gdl_get_graph_layout_algorithm_s (graph);
+  if (str != NULL)
+    fprintf (fout, "//layoutalgorithm: %s\n", str);
+
+  /* near_edges */
+  val = gdl_get_graph_near_edges (graph);
+  if (val != -1)
+    fprintf (fout, "near_edges: %s\n", val ? "yes" : "no");
+
+  /* port_sharing */
+  val = gdl_get_graph_port_sharing (graph);
+  if (val != -1)
+    fprintf (fout, "port_sharing: %s\n", val ? "yes" : "no");
+
+  /* Dump the nodes.  */
+  nodes = gdl_get_graph_node (graph);
+  for (node = nodes; node != NULL; node = node->next)
+    gdl_dump_node (fout, node);
+
+  /* Dump the subgraphs.  */
+  subgraphs = gdl_get_graph_subgraph (graph);
+  for (subgraph = subgraphs; subgraph != NULL; subgraph = subgraph->next)
+    gdl_dump_graph (fout, subgraph);
+
+  /* Dump the edges.  */
+  edges = gdl_get_graph_edge (graph);
+  for (edge = edges; edge != NULL; edge = edge->next)
+    gdl_dump_edge (fout, edge);
+
+  fputs ("}\n", fout);
+}
+
