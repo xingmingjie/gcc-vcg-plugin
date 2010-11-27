@@ -119,7 +119,6 @@ vcg_plugin_view_function (tree fn, int flags)
 
   exit_if_invalid (fn);
 
-  /* */
   g = create_function_graph (fn, flags);
 
   vcg.show (g);
