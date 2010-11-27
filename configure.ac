@@ -31,9 +31,7 @@ AM_INIT_AUTOMAKE
 # AC_CONFIG_MACRO_DIR([m4])
 
 # Checks for programs.
-AC_PROG_YACC
 AC_PROG_CC
-AC_PROG_LEX
 
 # libtool
 LT_INIT

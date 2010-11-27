@@ -57,45 +57,49 @@ enum gdl_layout_algorithm
 };
 
 #define DEF_ATTR(obj, name, type) type name;
-struct gdl_node_attr
+typedef struct
 {
   #include "node-attr.def"
-};
+} gdl_node_attr;
 
-struct gdl_edge_attr
+typedef struct
 {
   #include "edge-attr.def"
-};
+} gdl_edge_attr;
 
-struct gdl_graph_attr
+typedef struct
 {
   #include "graph-attr.def"
-};
+} gdl_graph_attr;
 #undef DEF_ATTR
 
-struct gdl_node
+typedef struct gdl_node_ gdl_node;
+typedef struct gdl_edge_ gdl_edge;
+typedef struct gdl_graph_ gdl_graph;
+
+struct gdl_node_ 
 {
-  struct gdl_node_attr attr;
-  struct gdl_node *next;
+  gdl_node_attr attr;
+  gdl_node *next;
 };
 
-struct gdl_edge
+struct gdl_edge_
 {
-  struct gdl_edge_attr attr;
-  struct gdl_edge *next;
+  gdl_edge_attr attr;
+  gdl_edge *next;
 };
 
-struct gdl_graph
+struct gdl_graph_
 {
-  struct gdl_graph_attr attr;
+  gdl_graph_attr attr;
   /* nodes or subgraphs */
-  struct gdl_node *node;
-  struct gdl_node *last_node;
-  struct gdl_graph *subgraph;
-  struct gdl_graph *last_subgraph;
-  struct gdl_edge *edge;
-  struct gdl_edge *last_edge;
-  struct gdl_graph *next;
+  gdl_node *node;
+  gdl_node *last_node;
+  gdl_graph *subgraph;
+  gdl_graph *last_subgraph;
+  gdl_edge *edge;
+  gdl_edge *last_edge;
+  gdl_graph *next;
 };
 
 extern char *gdl_shape_s[GDL_SHAPE_DEFAULT + 1];
@@ -105,7 +109,7 @@ extern char *gdl_layout_algorithm_s[GDL_LAYOUT_ALGORITHM_DEFAULT + 1];
 
 #define DEF_ATTR(obj, name, type) \
 static inline type \
-gdl_get_##obj##_##name (struct gdl_##obj *obj) \
+gdl_get_##obj##_##name (gdl_##obj *obj) \
 { \
   return obj->attr.name; \
 }
@@ -118,7 +122,7 @@ gdl_get_##obj##_##name (struct gdl_##obj *obj) \
 
 #define DEF_ATTR(obj, name, type) \
 static inline void \
-gdl_set_##obj##_##name (struct gdl_##obj *obj, type value) \
+gdl_set_##obj##_##name (gdl_##obj *obj, type value) \
 { \
   obj->attr.name = value; \
 }
@@ -130,66 +134,66 @@ gdl_set_##obj##_##name (struct gdl_##obj *obj, type value) \
 #undef DEF_ATTR
 
 static inline char *
-gdl_get_node_shape_s (struct gdl_node *node)
+gdl_get_node_shape_s (gdl_node *node)
 {
   assert (node->attr.shape >= 0 && node->attr.shape <= GDL_SHAPE_DEFAULT);
   return gdl_shape_s[node->attr.shape];
 }
 
 static inline char *
-gdl_get_node_color_s (struct gdl_node *node)
+gdl_get_node_color_s (gdl_node *node)
 {
   assert (node->attr.color >= 0 && node->attr.color <= GDL_COLOR_DEFAULT);
   return gdl_color_s[node->attr.color];
 }
 
 static inline char *
-gdl_get_edge_linestyle_s (struct gdl_edge *edge)
+gdl_get_edge_linestyle_s (gdl_edge *edge)
 {
   return gdl_linestyle_s[edge->attr.linestyle];
 }
 
 static inline char *
-gdl_get_graph_color_s (struct gdl_graph *graph)
+gdl_get_graph_color_s (gdl_graph *graph)
 {
   return gdl_color_s[graph->attr.color];
 }
 
 static inline char *
-gdl_get_graph_node_color_s (struct gdl_graph *graph)
+gdl_get_graph_node_color_s (gdl_graph *graph)
 {
   return gdl_color_s[graph->attr.node_color];
 }
 
 static inline char *
-gdl_get_graph_shape_s (struct gdl_graph *graph)
+gdl_get_graph_shape_s (gdl_graph *graph)
 {
   assert (graph->attr.shape >= 0 && graph->attr.shape <= GDL_SHAPE_DEFAULT);
   return gdl_shape_s[graph->attr.shape];
 }
 
 static inline char *
-gdl_get_graph_layout_algorithm_s (struct gdl_graph *graph)
+gdl_get_graph_layout_algorithm_s (gdl_graph *graph)
 {
   assert (graph->attr.layout_algorithm >= 0 
           && graph->attr.layout_algorithm <= GDL_LAYOUT_ALGORITHM_DEFAULT);
   return gdl_layout_algorithm_s[graph->attr.layout_algorithm];
 }
 
-static inline struct gdl_node *
-gdl_get_graph_node (struct gdl_graph *graph)
+static inline gdl_node *
+gdl_get_graph_node (gdl_graph *graph)
 {
   return graph->node;
 }
 
-static inline struct gdl_edge *
-gdl_get_graph_edge (struct gdl_graph *graph)
+static inline gdl_edge *
+gdl_get_graph_edge (gdl_graph *graph)
 {
   return graph->edge;
 }
 
-static inline struct gdl_graph *
-gdl_get_graph_subgraph (struct gdl_graph *graph)
+static inline gdl_graph *
+gdl_get_graph_subgraph (gdl_graph *graph)
 {
   return graph->subgraph;
 }
