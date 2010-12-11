@@ -15,39 +15,114 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-/* vcg viewer tool, default is vcgview */
-static char *vcg_viewer = "vcgview";
+#include <config.h>
+
+#include <stddef.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+#include "gcc-plugin.h"
+#include "plugin.h"
+#include "plugin-version.h"
+
+#include "system.h"
+#include "coretypes.h"
+#include "tm.h"
+#include "toplev.h"
+#include "gimple.h"
+#include "tree-pass.h"
+#include "intl.h"
+#include "langhooks.h"
+#include "cfghooks.h"
+
+#include "vcg-plugin.h"
+#include "gdl.h"
+
+static void vcg_error (const char *format, ...);
+static char *vcg_get_file_name (void);
+static void vcg_dump (gdl_graph *graph);
+static void vcg_show (gdl_graph *graph);
 
 static void
-vcg_init (int argc, char *argv[])
+vcg_error (const char *format, ...)
 {
-  int i;
+  va_list ap;
 
-  for (i = 0; i < argc; i++)
-    {
-      printf ("key: %s\n", argv[i].key);
-      printf ("value: %s\n", argv[i].value);
-      /* Get the vcg viewer tool, default is "vcgview". */
-      if (strcmp (argv[i].key, "viewer") == 0)
-        {
-          vcg_viewer = argv[i].value;
-        }
-    }
+  va_start (ap, format);
+  fprintf (stderr, "%s: error: ", vcg_plugin_common.plugin_name);
+  vfprintf (stderr,  format, ap);
+  va_end (ap);
+  fputc ('\n', stderr);
 }
 
+/* Return the dump file name which is going to be used.  Return NULL if there
+   is error.  */
+static char *
+vcg_get_file_name (void)
+{
+  char *str;
+  static unsigned int file_number = 0;
+
+  if (asprintf (&str, "dump-%3d.vcg", file_number) < 0)
+    return NULL;
+
+  file_number++;
+  return str;
+}
+
+/* Dump GRAPH into file.  If FP is NULL, then create a new file.  */
 static void
 vcg_dump (gdl_graph *graph)
 {
-  gdl_dump_graph (fout, graph);
+  char *fname;
+  FILE *fp;
+
+  assert (graph != NULL);
+
+  if ((fname = vcg_get_file_name ()) == NULL)
+    {
+      vcg_plugin_common.error ("failed to create dump file name.");
+      return;
+    }
+
+  if ((fp = fopen (fname, "w")) == NULL)
+    {
+      vcg_plugin_common.error ("failed to open file %s.", fname);
+      return;
+    }
+
+  gdl_dump_graph (fp, graph);
+  fclose (fp);
 }
 
 static void
 vcg_show (gdl_graph *graph)
 {
+  char *fname;
+  FILE *fp;
   char *cmd;
   pid_t pid;
 
-  cmd = concat (vcg_viewer, " ", filename, NULL);
+  assert (graph != NULL);
+
+  if ((fname = make_temp_file ("vcg")) == NULL)
+    {
+      vcg_plugin_common.error ("failed to create temp file name.");
+      return;
+    }
+
+  if ((fp = fopen (fname, "w")) == NULL)
+    {
+      vcg_plugin_common.error ("failed to open file %s.", fname);
+      return;
+    }
+
+  gdl_dump_graph (fp, graph);
+  fclose (fp);
+
+  cmd = concat (vcg_plugin_common.vcg_viewer, " ", fname, NULL);
   pid = fork ();
   if (pid == 0)
     {
@@ -59,9 +134,8 @@ vcg_show (gdl_graph *graph)
 vcg_plugin_common_t vcg_plugin_common =
 {
   "vcg_plugin",
-  "0.1",
   "vcgview",
-  vcg_init,
+  vcg_error,
   vcg_dump,
   vcg_show
 };

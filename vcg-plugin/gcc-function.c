@@ -113,6 +113,18 @@ exit_if_invalid (tree fn)
 }
 
 void
+vcg_plugin_dump_function (tree fn, int flags)
+{
+  gdl_graph *g;
+
+  exit_if_invalid (fn);
+
+  g = create_function_graph (fn, flags);
+
+  vcg_plugin_common.dump (g);
+}
+
+void
 vcg_plugin_view_function (tree fn, int flags)
 {
   gdl_graph *g;

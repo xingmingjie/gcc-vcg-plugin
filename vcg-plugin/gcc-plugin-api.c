@@ -56,6 +56,15 @@ plugin_init (struct plugin_name_args *plugin_info,
     return 1;
 
   /* Initialize the vcg plugin */
-  return vcg_plugin_common.init (argc, argv);
+  for (i = 0; i < argc; i++)
+    {
+      printf ("key: %s\n", argv[i].key);
+      printf ("value: %s\n", argv[i].value);
+      /* Get the vcg viewer tool, default is "vcgview". */
+      if (strcmp (argv[i].key, "viewer") == 0)
+        {
+          vcg_plugin_common.vcg_viewer = argv[i].value;
+        }
+    }
 }
 
