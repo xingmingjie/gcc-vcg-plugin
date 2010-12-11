@@ -37,10 +37,8 @@
 typedef struct
 {
   char *plugin_name;
-  char *plugin_version;
   char *vcg_viewer;
-  char *vcg_filename;
-  int (*init) (int argc, char *argv[]);
+  void (*error) (const char *format, ...);
   void (*dump) (gdl_graph *graph);
   void (*show) (gdl_graph *graph);
 } vcg_plugin_common_t;
@@ -53,6 +51,5 @@ extern vcg_plugin_common_t vcg_plugin_common;
 extern void vcg_plugin_dump_function (tree fn, int flags); 
 extern void vcg_plugin_view_function (tree fn, int flags); 
 
-extern void vcg_plugin_view (char *filename);
 
 #endif
