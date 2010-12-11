@@ -27,9 +27,7 @@ pkglib_LTLIBRARIES = vcg-plugin.la
 EXTRA_DIST = vcg-plugin.gdbinit
 
 vcg_plugin_la_SOURCES = \
-        cfg.c cfg.h \
         gcc-function.c \
-        fine-tune.c \
         vcg-plugin.c vcg-plugin.h
                    
 

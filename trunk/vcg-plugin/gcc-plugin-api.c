@@ -1,10 +1,10 @@
-/* vcg plugin
+/* GCC plugin APIs.
 
    Copyright (C) 2009, 2010 Mingjie Xing, mingjie.xing@gmail.com. 
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
+   the Free Software Foundation, either version 2 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -15,10 +15,17 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-#ifndef VCG_PLUGIN_H
-#define VCG_PLUGIN_H
+#include <config.h>
 
-/* gcc's header files */
+#include <stddef.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+#include "gcc-plugin.h"
+#include "plugin.h"
+#include "plugin-version.h"
 
 #include "system.h"
 #include "coretypes.h"
@@ -26,33 +33,29 @@
 #include "toplev.h"
 #include "gimple.h"
 #include "tree-pass.h"
-#include "rtl.h"
 #include "intl.h"
 #include "langhooks.h"
 #include "cfghooks.h"
 
-/* libgdl */
+#include "vcg-plugin.h"
 #include "gdl.h"
 
-typedef struct
+/* plugin license check */
+int plugin_is_GPL_compatible;
+
+/* plugin initialization */
+int
+plugin_init (struct plugin_name_args *plugin_info,
+             struct plugin_gcc_version *version)
 {
-  char *plugin_name;
-  char *plugin_version;
-  char *vcg_viewer;
-  char *vcg_filename;
-  int (*init) (int argc, char *argv[]);
-  void (*dump) (gdl_graph *graph);
-  void (*show) (gdl_graph *graph);
-} vcg_plugin_common_t;
+  int i;
+  int argc = plugin_info->argc;
+  struct plugin_argument *argv = plugin_info->argv;
 
-extern vcg_plugin_common_t vcg_plugin_common; 
+  if (!plugin_default_version_check (version, &gcc_version))
+    return 1;
 
-/* These are available functins, which can be used to
-   dump and view gcc internal data structures. */
+  /* Initialize the vcg plugin */
+  return vcg_plugin_common.init (argc, argv);
+}
 
-extern void vcg_plugin_dump_function (tree fn, int flags); 
-extern void vcg_plugin_view_function (tree fn, int flags); 
-
-extern void vcg_plugin_view (char *filename);
-
-#endif
