@@ -15,9 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-srcdir = @srcdir@
-LIBTOOL = @LIBTOOL@
-
 GCCPLUGINS_DIR = `gcc -print-file-name=plugin`
 
 INCLUDES = -I $(GCCPLUGINS_DIR)/include -I $(srcdir)/../libgdl
@@ -34,4 +31,4 @@ vcg_plugin_la_SOURCES = \
 
 vcg_plugin_la_LDFLAGS = -module
 
-vcg_plugin_la_LIBADD = libgdl/libgdl.a
+vcg_plugin_la_LIBADD = ../libgdl/libgdl.la

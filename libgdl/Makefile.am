@@ -15,13 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-noinst_LIBRARIES = libgdl.a
+noinst_LTLIBRARIES = libgdl.la
 
 GCCPLUGINS_DIR = `gcc -print-file-name=plugin`
 
 INCLUDES = -I $(GCCPLUGINS_DIR)/include
 
-libgdl_a_SOURCES = \
+libgdl_la_SOURCES = \
         gdl.c gdl.h \
         edge-attr.def \
         graph-attr.def \

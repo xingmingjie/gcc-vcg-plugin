@@ -87,7 +87,7 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
-vcg_plugin_la_DEPENDENCIES = libgdl/libgdl.a
+vcg_plugin_la_DEPENDENCIES = ../libgdl/libgdl.la
 am_vcg_plugin_la_OBJECTS = gcc-plugin-api.lo gcc-function.lo \
 	vcg-plugin.lo
 vcg_plugin_la_OBJECTS = $(am_vcg_plugin_la_OBJECTS)
@@ -233,7 +233,7 @@ vcg_plugin_la_SOURCES = \
         vcg-plugin.c vcg-plugin.h
 
 vcg_plugin_la_LDFLAGS = -module
-vcg_plugin_la_LIBADD = libgdl/libgdl.a
+vcg_plugin_la_LIBADD = ../libgdl/libgdl.la
 all: all-am
 
 .SUFFIXES:
