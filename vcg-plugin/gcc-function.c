@@ -115,12 +115,12 @@ exit_if_invalid (tree fn)
 void
 vcg_plugin_view_function (tree fn, int flags)
 {
-  struct gdl_graph *g;
+  gdl_graph *g;
 
   exit_if_invalid (fn);
 
   g = create_function_graph (fn, flags);
 
-  vcg.show (g);
+  vcg_plugin_common.show (g);
 }
 

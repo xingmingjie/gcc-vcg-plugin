@@ -1,4 +1,4 @@
-/* vcg plugin
+/* Vcg plugin internal common routines.
 
    Copyright (C) 2009, 2010 Mingjie Xing, mingjie.xing@gmail.com. 
 
@@ -15,56 +15,14 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-#include <config.h>
-
-#include <stddef.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-
-#include "gcc-plugin.h"
-#include "plugin.h"
-#include "plugin-version.h"
-
-#include "system.h"
-#include "coretypes.h"
-#include "tm.h"
-#include "toplev.h"
-#include "gimple.h"
-#include "tree-pass.h"
-#include "intl.h"
-#include "langhooks.h"
-#include "cfghooks.h"
-
-#include "vcg-plugin.h"
-#include "gdl.h"
-
-/* plugin license check */
-int plugin_is_GPL_compatible;
-
-/* plugin initialization */
-int
-plugin_init (struct plugin_name_args *plugin_info,
-             struct plugin_gcc_version *version)
-{
-  int i;
-  int argc = plugin_info->argc;
-  struct plugin_argument *argv = plugin_info->argv;
-
-  if (!plugin_default_version_check (version, &gcc_version))
-    return 1;
-
-  /* Initialize the vcg plugin */
-  return vcg.init (argc, argv);
-}
-
 /* vcg viewer tool, default is vcgview */
-char *vcg_viewer = "vcgview";
+static char *vcg_viewer = "vcgview";
 
 static void
 vcg_init (int argc, char *argv[])
 {
+  int i;
+
   for (i = 0; i < argc; i++)
     {
       printf ("key: %s\n", argv[i].key);
@@ -98,7 +56,7 @@ vcg_show (gdl_graph *graph)
     }
 }
 
-struct vcg_plugin vcg =
+vcg_plugin_common_t vcg_plugin_common =
 {
   "vcg_plugin",
   "0.1",
