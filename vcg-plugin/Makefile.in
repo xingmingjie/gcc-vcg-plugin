@@ -88,7 +88,8 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
 vcg_plugin_la_DEPENDENCIES = libgdl/libgdl.a
-am_vcg_plugin_la_OBJECTS = gcc-function.lo vcg-plugin.lo
+am_vcg_plugin_la_OBJECTS = gcc-plugin-api.lo gcc-function.lo \
+	vcg-plugin.lo
 vcg_plugin_la_OBJECTS = $(am_vcg_plugin_la_OBJECTS)
 vcg_plugin_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
@@ -227,6 +228,7 @@ INCLUDES = -I $(GCCPLUGINS_DIR)/include -I $(srcdir)/../libgdl
 pkglib_LTLIBRARIES = vcg-plugin.la
 EXTRA_DIST = vcg-plugin.gdbinit
 vcg_plugin_la_SOURCES = \
+	gcc-plugin-api.c \
         gcc-function.c \
         vcg-plugin.c vcg-plugin.h
 
@@ -307,6 +309,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcc-function.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcc-plugin-api.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vcg-plugin.Plo@am__quote@
 
 .c.o:

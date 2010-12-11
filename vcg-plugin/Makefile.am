@@ -27,6 +27,7 @@ pkglib_LTLIBRARIES = vcg-plugin.la
 EXTRA_DIST = vcg-plugin.gdbinit
 
 vcg_plugin_la_SOURCES = \
+	gcc-plugin-api.c \
         gcc-function.c \
         vcg-plugin.c vcg-plugin.h
                    
