@@ -33,6 +33,33 @@ AM_INIT_AUTOMAKE
 # Checks for programs.
 AC_PROG_CC
 
+AC_ARG_WITH(gmp, [AS_HELP_STRING([--with-gmp=PATH],
+  [specify prefix directory for installed gmp package.  Equivalent to
+   --with-gmp-include=PATH/include plus --with-gmp-lib=PATH/lib])])
+
+AC_ARG_WITH(gmp_include, [AS_HELP_STRING([--with-gmp-include=PATH],
+  [specify directory for installed gmp include files])])
+
+AC_ARG_WITH(gmp_lib, [AS_HELP_STRING([--with-gmp-lib=PATH],
+  [specify directory for installed gmp library])])
+
+if test "x$with_gmp" != x; then
+  gmp_inc="-I$with_gmp/include"
+  gmp_lib="-L$with_gmp/lib"
+fi
+
+if test "x$with_gmp_include" != x; then
+  gmp_inc="-I$with_gmp_include"
+fi
+
+if test "x$with_gmp_lib" != x; then
+  gmp_lib="-L$with_gmp_lib"
+fi
+
+AC_SUBST(gmp_inc)
+AC_SUBST(gmp_lib)
+
+
 # libtool
 LT_INIT
 AC_PROG_LIBTOOL

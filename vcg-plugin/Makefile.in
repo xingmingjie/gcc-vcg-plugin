@@ -194,6 +194,8 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+gmp_inc = @gmp_inc@
+gmp_lib = @gmp_lib@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
@@ -224,7 +226,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 GCCPLUGINS_DIR = `gcc -print-file-name=plugin`
-INCLUDES = -I $(GCCPLUGINS_DIR)/include -I $(srcdir)/../libgdl
+INCLUDES = -I $(GCCPLUGINS_DIR)/include -I $(srcdir)/../libgdl $(GMP_INC)
 pkglib_LTLIBRARIES = vcg-plugin.la
 EXTRA_DIST = vcg-plugin.gdbinit
 vcg_plugin_la_SOURCES = \
