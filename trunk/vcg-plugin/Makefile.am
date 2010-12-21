@@ -17,7 +17,7 @@
 
 GCCPLUGINS_DIR = `gcc -print-file-name=plugin`
 
-INCLUDES = -I $(GCCPLUGINS_DIR)/include -I $(srcdir)/../libgdl
+INCLUDES = -I $(GCCPLUGINS_DIR)/include -I $(srcdir)/../libgdl $(GMP_INC)
 
 pkglib_LTLIBRARIES = vcg-plugin.la
 

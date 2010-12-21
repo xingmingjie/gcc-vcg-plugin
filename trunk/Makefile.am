@@ -17,4 +17,7 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
+export GMP_INC=@gmp_inc@
+export GMP_LIB=@gmp_lib@
+
 SUBDIRS = libgdl vcg-plugin

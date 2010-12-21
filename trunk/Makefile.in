@@ -204,6 +204,8 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+gmp_inc = @gmp_inc@
+gmp_lib = @gmp_lib@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
@@ -728,6 +730,9 @@ uninstall-am:
 	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
 	ps ps-am tags tags-recursive uninstall uninstall-am
 
+
+export GMP_INC=@gmp_inc@
+export GMP_LIB=@gmp_lib@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
