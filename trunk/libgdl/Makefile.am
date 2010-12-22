@@ -29,4 +29,5 @@ libgdl_la_SOURCES = \
         graph-attr.def \
         node-attr.def
                    
+libgdl_la_LDFLAGS = -lc -liberty
 
