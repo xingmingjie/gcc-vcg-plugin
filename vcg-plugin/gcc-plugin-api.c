@@ -66,5 +66,6 @@ plugin_init (struct plugin_name_args *plugin_info,
           vcg_plugin_common.vcg_viewer = argv[i].value;
         }
     }
+  return 0;
 }
 

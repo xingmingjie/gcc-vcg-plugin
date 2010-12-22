@@ -17,6 +17,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 
 #include <error.h>
@@ -192,7 +193,7 @@ gdl_dump_node (FILE *fout, gdl_node *node)
   str = gdl_get_node_label (node);
   if (str != NULL)
     {
-      fprintf (fout, "label: \"", str);
+      fprintf (fout, "label: \"");
       for (i = 0; i < strlen (str); i++)
         {
           if (str[i] == '"')
@@ -224,7 +225,6 @@ void
 gdl_dump_edge (FILE *fout, gdl_edge *edge)
 {
   char *str;
-  int val;
   int i;
 
   fputs ("edge: {\n", fout);
@@ -243,7 +243,7 @@ gdl_dump_edge (FILE *fout, gdl_edge *edge)
   str = gdl_get_edge_label (edge);
   if (str != NULL)
     {
-      fprintf (fout, "label: \"", str);
+      fprintf (fout, "label: \"");
       for (i = 0; i < strlen (str); i++)
         {
           if (str[i] == '"')
@@ -285,7 +285,7 @@ gdl_dump_graph (FILE *fout, gdl_graph *graph)
   str = gdl_get_graph_label (graph);
   if (str != NULL)
     {
-      fprintf (fout, "label: \"", str);
+      fprintf (fout, "label: \"");
       for (i = 0; i < strlen (str); i++)
         {
           if (str[i] == '"')

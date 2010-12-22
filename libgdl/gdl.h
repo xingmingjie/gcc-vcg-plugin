@@ -18,6 +18,8 @@
 #ifndef GDL_H
 #define GDL_H
 
+#include <assert.h>
+
 enum gdl_shape
 {
   GDL_BOX,
