@@ -66,7 +66,7 @@ vcg_get_file_name (void)
   char *str;
   static unsigned int file_number = 0;
 
-  if (asprintf (&str, "dump-%3d.vcg", file_number) < 0)
+  if (asprintf (&str, "dump-%03d.vcg", file_number) < 0)
     return NULL;
 
   file_number++;
