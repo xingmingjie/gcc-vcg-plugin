@@ -39,14 +39,13 @@ create_bb_graph (basic_block bb, int flags)
 {
   gdl_graph *g;
   gdl_node *n;
-  int index;
+  int index = bb->index;
   char buf[32]; /* Should be enough. */
   char *title, *label;
   gimple_stmt_iterator gsi;
   gimple stmt;
 
   /* bb_graph's title: fn_name.bb_index */
-  index = bb->index;
   sprintf (buf, "%d", index);
   title = concat (function_name, ".", buf, NULL);
 
@@ -58,15 +57,23 @@ create_bb_graph (basic_block bb, int flags)
   else if (index == 1)
     gdl_set_graph_label (g, "EXIT");
   else
-    gdl_set_graph_label (g, buf);
+    {
+      sprintf (buf, "%d", index);
+      label = concat ("bb ", buf, NULL);
+      gdl_set_graph_label (g, label);
+    }
 
-  /* bb_node's title: ENTRY | EXIT | bb bb_index */
+  /* bb_node's title: ENTRY | EXIT | bb.bb_index */
   if (index == 0)
     n = gdl_new_node ("ENTRY");
   else if (index == 1)
     n = gdl_new_node ("EXIT");
   else
-    n = gdl_new_node (buf);
+    {
+      sprintf (buf, "%d", index);
+      title = concat ("bb.", buf, NULL);
+      n = gdl_new_node (title);
+    }
 
 /*
   for (gsi = gsi_start_bb (bb); !gsi_end_p (gsi); gsi_next (&gsi))
