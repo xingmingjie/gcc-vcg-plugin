@@ -42,7 +42,7 @@
 #include "gdl.h"
 
 static void vcg_error (const char *format, ...);
-static char *vcg_get_file_name (void);
+static char *vcg_get_file_name (bool is_temp);
 static void vcg_dump (gdl_graph *graph);
 static void vcg_show (gdl_graph *graph);
 
@@ -59,17 +59,24 @@ vcg_error (const char *format, ...)
 }
 
 /* Return the dump file name which is going to be used.  Return NULL if there
-   is error.  */
+   is error.  IS_TEMP is true if we want a temp file.  */
 static char *
-vcg_get_file_name (void)
+vcg_get_file_name (bool is_temp)
 {
   char *str;
   static unsigned int file_number = 0;
 
-  if (asprintf (&str, "dump-%03d.vcg", file_number) < 0)
-    return NULL;
+  if (is_temp)
+    {
+      str = "dump-temp.vcg";
+    }
+  else
+    {
+      if (asprintf (&str, "dump-%03d.vcg", file_number) < 0)
+        return NULL;
 
-  file_number++;
+      file_number++;
+    }
   return str;
 }
 
@@ -82,7 +89,7 @@ vcg_dump (gdl_graph *graph)
 
   assert (graph != NULL);
 
-  if ((fname = vcg_get_file_name ()) == NULL)
+  if ((fname = vcg_get_file_name (false)) == NULL)
     {
       vcg_plugin_common.error ("failed to create dump file name.");
       return;
@@ -108,7 +115,7 @@ vcg_show (gdl_graph *graph)
 
   assert (graph != NULL);
 
-  if ((fname = make_temp_file ("vcg")) == NULL)
+  if ((fname = vcg_get_file_name (true)) == NULL)
     {
       vcg_plugin_common.error ("failed to create temp file name.");
       return;
