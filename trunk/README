@@ -1,7 +1,7 @@
 # This package includes a gcc plugin, which can be loaded when debugging gcc,
 # to show cfg graphicailly.
 #
-# Copyright (C) 2009, 2010 Eric Fisher, joefoxreal@gmail.com. 
+# Copyright (C) 2009, 2010 Mingjie Xing, mingjie.xing@gmail.com. 
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -63,4 +63,4 @@ viewer, default is vcgview.
 ##############
 
 Welcom any suggestion or bug report. You can send a mail to
-joefoxreal@gmail.com.
+mingjie.xing@gmail.com.

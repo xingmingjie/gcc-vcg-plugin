@@ -19,6 +19,8 @@ GCCPLUGINS_DIR = `gcc -print-file-name=plugin`
 
 INCLUDES = -I $(GCCPLUGINS_DIR)/include -I $(srcdir)/../libgdl $(GMP_INC)
 
+AM_CFLAGS = -Wall
+
 pkglib_LTLIBRARIES = vcg-plugin.la
 
 EXTRA_DIST = vcg-plugin.gdbinit
@@ -29,6 +31,6 @@ vcg_plugin_la_SOURCES = \
         vcg-plugin.c vcg-plugin.h
                    
 
-vcg_plugin_la_LDFLAGS = -module
+vcg_plugin_la_LDFLAGS = -module -lc
 
 vcg_plugin_la_LIBADD = ../libgdl/libgdl.la

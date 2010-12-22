@@ -37,6 +37,7 @@
 #include "langhooks.h"
 #include "cfghooks.h"
 
+#include "libiberty.h"
 #include "vcg-plugin.h"
 #include "gdl.h"
 

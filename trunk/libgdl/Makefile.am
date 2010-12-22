@@ -21,6 +21,8 @@ GCCPLUGINS_DIR = `gcc -print-file-name=plugin`
 
 INCLUDES = -I $(GCCPLUGINS_DIR)/include
 
+AM_CFLAGS = -Wall
+
 libgdl_la_SOURCES = \
         gdl.c gdl.h \
         edge-attr.def \
