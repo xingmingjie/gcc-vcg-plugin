@@ -103,12 +103,12 @@
   /* source: "String", no default value
      Specifies the title of the source (node or subgraph) of an edge. This
      attribute is mandatory for the edge specification. */
-  DEF_ATTR (edge, source, char *)
+  DEF_ATTR (edge, source, const char *)
      
   /* target: "String", no default value
      Specifies the title of the target (node or subgraph) of an edge. This
      attribute is mandatory for the edge specification. */
-  DEF_ATTR (edge, target, char *)
+  DEF_ATTR (edge, target, const char *)
      
   /* textcolor: Color Entry, default is black
      Specifies the color of the text labels of an edge. For the available Color

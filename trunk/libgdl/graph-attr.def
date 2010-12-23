@@ -451,7 +451,7 @@
      character), that influence the size of the node. See character set for
      more details. If no label is specified for a subgraph, the value of the
      title of the subgraph is used. */
-  DEF_ATTR (graph, label, char *)
+  DEF_ATTR (graph, label, const char *)
      
   /*   late_edge_labels: yes or no, default is no
      Attribute of top-level graph, subgraphs
@@ -975,7 +975,7 @@
      the name of the file containing the graph specification is used. Since
      titles have to be unique throughout a graph specification, there can be
      only one subgraph at most without a title specification. */
-  DEF_ATTR (graph, title, char *)
+  DEF_ATTR (graph, title, const char *)
      
   /* The name of a subgraph is used to identify it, so that the subgraph can be
      the source and target of an edge specification. These edges start or end

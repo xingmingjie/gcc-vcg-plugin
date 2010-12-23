@@ -30,7 +30,46 @@
 #include "vcg-plugin.h"
 #include "gdl.h"
 
-static char *function_name;
+static const char *function_name;
+static char buf[32]; /* Should be enough.  */
+static char **bb_graph_title;
+static char **bb_graph_label;
+static char **bb_node_title;
+
+/* Initialize all of the names.  */
+static void
+init_names (const char *func_name, int bb_num)
+{
+  int i;
+  
+  bb_graph_title = (char **) xmalloc (bb_num * sizeof (char *));
+  bb_graph_label = (char **) xmalloc (bb_num * sizeof (char *));
+  bb_node_title = (char **) xmalloc (bb_num * sizeof (char *));
+
+  for (i = 0; i < bb_num; i++)
+    {
+      sprintf (buf, "%d", i);
+
+      /* format: func_name.bb_index */
+      bb_graph_title[i] = concat (func_name, ".", buf, NULL);
+
+      /* format: ENTRY | EXIT | bb bb_index */
+      if (i == 0)
+        bb_graph_label[i] = "ENTRY";
+      else if (i == 1)
+        bb_graph_label[i] = "EXIT";
+      else
+        bb_graph_label[i] = concat ("bb ", buf, NULL);
+
+      /* format: ENTRY | EXIT | bb.bb_index */
+      if (i == 0)
+        bb_node_title[i] = "ENTRY";
+      else if (i == 1)
+        bb_node_title[i] = "EXIT";
+      else
+        bb_node_title[i] = concat ("bb.", buf, NULL);
+    }
+}
 
 /* Create a graph from the basic block bb. */
 
@@ -39,41 +78,12 @@ create_bb_graph (basic_block bb, int flags)
 {
   gdl_graph *g;
   gdl_node *n;
-  int index = bb->index;
-  char buf[32]; /* Should be enough. */
-  char *title, *label;
   gimple_stmt_iterator gsi;
   gimple stmt;
 
-  /* bb_graph's title: fn_name.bb_index */
-  sprintf (buf, "%d", index);
-  title = concat (function_name, ".", buf, NULL);
-
-  g = gdl_new_graph (title);
-
-  /* bb_graph's label: ENTRY | EXIT | bb bb_index */
-  if (index == 0)
-    gdl_set_graph_label (g, "ENTRY");
-  else if (index == 1)
-    gdl_set_graph_label (g, "EXIT");
-  else
-    {
-      sprintf (buf, "%d", index);
-      label = concat ("bb ", buf, NULL);
-      gdl_set_graph_label (g, label);
-    }
-
-  /* bb_node's title: ENTRY | EXIT | bb.bb_index */
-  if (index == 0)
-    n = gdl_new_node ("ENTRY");
-  else if (index == 1)
-    n = gdl_new_node ("EXIT");
-  else
-    {
-      sprintf (buf, "%d", index);
-      title = concat ("bb.", buf, NULL);
-      n = gdl_new_node (title);
-    }
+  g = gdl_new_graph (bb_graph_title[bb->index]);
+  gdl_set_graph_label (g, bb_graph_label[bb->index]);
+  n = gdl_new_node (bb_node_title[bb->index]);
 
 /*
   for (gsi = gsi_start_bb (bb); !gsi_end_p (gsi); gsi_next (&gsi))
@@ -92,7 +102,11 @@ static gdl_graph *
 create_function_graph (tree fn, int flags)
 {
   basic_block bb;
+  edge e;
+  edge_iterator ei;
+
   gdl_graph *graph, *bb_graph;
+  gdl_edge *v_edge;
 
   /* Get the function's name. */
   function_name = lang_hooks.decl_printable_name (fn, 2);
@@ -102,12 +116,18 @@ create_function_graph (tree fn, int flags)
   /* Switch CFUN to point to FN. */
   push_cfun (DECL_STRUCT_FUNCTION (fn));
 
-  if (cfun && cfun->decl == fn && cfun->cfg && basic_block_info)
+  init_names (function_name, n_basic_blocks);
+
+  FOR_ALL_BB (bb)
     {
-      FOR_EACH_BB (bb)
+      bb_graph = create_bb_graph (bb, flags);
+      gdl_add_subgraph (graph, bb_graph);
+
+      FOR_EACH_EDGE (e, ei, bb->succs)
         {
-          bb_graph = create_bb_graph (bb, flags);
-          gdl_add_subgraph (graph, bb_graph);
+          v_edge = gdl_new_edge (bb_graph_title[e->src->index],
+                                 bb_graph_title[e->dest->index]);
+          gdl_add_edge (graph, v_edge);
         }
     }
 
