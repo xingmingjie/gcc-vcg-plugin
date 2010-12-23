@@ -182,7 +182,7 @@ Specifies the text to be displayed inside the node. This text may contain
 control characters, e.g. \n (newline character), that influence the size of
 the node. See character set for more details. If no label is specified, the
 value of the node attribute title is used. */
-DEF_ATTR (node, label, char *)
+DEF_ATTR (node, label, const char *)
 
 /* level: Int, default is -1 (i.e. no default)
 This is a synonym for vertical_order. */
@@ -250,7 +250,7 @@ Specifies the alignment of text within a node. */
 /* title: "String", no default value
 Specifies the unique string identifying the node. This attribute is
 mandatory for the node specification. */
-DEF_ATTR (node, title, char *)
+DEF_ATTR (node, title, const char *)
 
 /* useractioncmd3: "String", default is "" (empty string)
 As of aiSee 3.beta, enables a command to be specified that can be executed
