@@ -96,6 +96,61 @@ create_bb_graph (basic_block bb, int flags)
   return g;
 }
 
+int
+set_vertical_order_1 (gdl_graph *graph, int *distance, basic_block bb)
+{
+  int val, max = 0;
+  edge e;
+  edge_iterator ei;
+  gdl_graph *subgraph;
+
+  if (distance[bb->index] != 0)
+    return distance[bb->index];
+
+  FOR_EACH_EDGE (e, ei, bb->preds)
+    {
+      if (e->flags & EDGE_DFS_BACK)
+        continue;
+
+      val = set_vertical_order_1 (graph, distance, e->src);
+      max = max > val ? max : val;
+    }
+  distance[bb->index] = max + 1;
+  subgraph = gdl_find_subgraph (graph, bb_graph_title[bb->index]); 
+  gdl_set_graph_vertical_order (subgraph, distance[bb->index]);
+  return distance[bb->index];
+}
+
+static void
+set_vertical_order (gdl_graph *graph)
+{
+  int val, max = 0;
+  int *distance;
+  basic_block bb;
+  gdl_graph *subgraph;
+
+  calculate_dominance_info (CDI_DOMINATORS);
+  mark_dfs_back_edges ();
+
+  distance = (int *) xcalloc (n_basic_blocks, sizeof (int));
+
+  max = set_vertical_order_1 (graph, distance, EXIT_BLOCK_PTR);
+  FOR_EACH_BB (bb)
+    {
+      if (distance[bb->index] == 0)
+        {
+          val = set_vertical_order_1 (graph, distance, bb);
+          max = max > val ? max : val + 1;
+        }
+    }
+  subgraph = gdl_find_subgraph (graph,
+                                bb_graph_title[EXIT_BLOCK_PTR->index]); 
+  gdl_set_graph_vertical_order (subgraph, max);
+
+
+  free (distance);
+}
+
 /* Create a graph from the function fn. */
 
 static gdl_graph *
@@ -130,6 +185,8 @@ create_function_graph (tree fn, int flags)
           gdl_add_edge (graph, v_edge);
         }
     }
+
+  set_vertical_order (graph);
 
   return graph;
 }
