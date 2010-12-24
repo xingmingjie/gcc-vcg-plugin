@@ -175,6 +175,19 @@ gdl_add_edge (gdl_graph *graph, gdl_edge *edge)
     }
 }
 
+gdl_graph *
+gdl_find_subgraph (gdl_graph *graph, char *title)
+{
+  gdl_graph *subgraphs, *subgraph;
+  
+  subgraphs = gdl_get_graph_subgraph (graph);
+  for (subgraph = subgraphs; subgraph != NULL; subgraph = subgraph->next)
+    if (!strcmp (gdl_get_graph_title (subgraph), title))
+      return subgraph;
+
+  return NULL;
+}
+
 void
 gdl_dump_node (FILE *fout, gdl_node *node)
 {
