@@ -36,6 +36,12 @@ static char **bb_graph_title;
 static char **bb_graph_label;
 static char **bb_node_title;
 
+FILE *tmp_stream;
+char *tmp_buf;
+size_t tmp_buf_size;
+
+int verbose;
+
 /* Initialize all of the names.  */
 static void
 init_names (const char *func_name, int bb_num)
@@ -74,25 +80,32 @@ init_names (const char *func_name, int bb_num)
 /* Create a graph from the basic block bb. */
 
 static gdl_graph *
-create_bb_graph (basic_block bb, int flags)
+create_bb_graph (basic_block bb)
 {
   gdl_graph *g;
   gdl_node *n;
   gimple_stmt_iterator gsi;
   gimple stmt;
+  char *str;
+  int i;
 
   g = gdl_new_graph (bb_graph_title[bb->index]);
   gdl_set_graph_label (g, bb_graph_label[bb->index]);
-  n = gdl_new_node (bb_node_title[bb->index]);
+  gdl_set_graph_folding (g, 1);
+  gdl_set_graph_shape (g, GDL_ELLIPSE);
 
-/*
-  for (gsi = gsi_start_bb (bb); !gsi_end_p (gsi); gsi_next (&gsi))
+  if (verbose > 1)
     {
-      stmt = gsi_stmt (gsi);
-      init_print_file ();
-      print_gimple_stmt (print_file, stmt, 2, flag);
+      rewind (tmp_stream);
+      gimple_dump_bb (bb, tmp_stream, 0, TDF_VOPS|TDF_MEMSYMS);
+      i = tmp_buf_size;
+      while (i > 1 && ISSPACE (tmp_buf[i - 1])) i--;
+      str = xstrndup (tmp_buf, i);
+      n = gdl_new_node (bb_node_title[bb->index]);
+      gdl_set_node_label (n, str);
+      gdl_add_node (g, n);
     }
-*/
+
   return g;
 }
 
@@ -103,6 +116,7 @@ set_vertical_order_1 (gdl_graph *graph, int *distance, basic_block bb)
   edge e;
   edge_iterator ei;
   gdl_graph *subgraph;
+  gdl_node *node;
 
   if (distance[bb->index] != 0)
     return distance[bb->index];
@@ -118,6 +132,11 @@ set_vertical_order_1 (gdl_graph *graph, int *distance, basic_block bb)
   distance[bb->index] = max + 1;
   subgraph = gdl_find_subgraph (graph, bb_graph_title[bb->index]); 
   gdl_set_graph_vertical_order (subgraph, distance[bb->index]);
+  if (verbose > 1)
+    {
+      node = gdl_get_graph_node (subgraph);
+      gdl_set_node_vertical_order (node, distance[bb->index]);
+    }
   return distance[bb->index];
 }
 
@@ -128,6 +147,7 @@ set_vertical_order (gdl_graph *graph)
   int *distance;
   basic_block bb;
   gdl_graph *subgraph;
+  gdl_node *node;
 
   calculate_dominance_info (CDI_DOMINATORS);
   mark_dfs_back_edges ();
@@ -146,6 +166,11 @@ set_vertical_order (gdl_graph *graph)
   subgraph = gdl_find_subgraph (graph,
                                 bb_graph_title[EXIT_BLOCK_PTR->index]); 
   gdl_set_graph_vertical_order (subgraph, max);
+  if (verbose > 1)
+    {
+      node = gdl_get_graph_node (subgraph);
+      gdl_set_node_vertical_order (node, max);
+    }
 
 
   free (distance);
@@ -154,7 +179,7 @@ set_vertical_order (gdl_graph *graph)
 /* Create a graph from the function fn. */
 
 static gdl_graph *
-create_function_graph (tree fn, int flags)
+create_function_graph (tree fn)
 {
   basic_block bb;
   edge e;
@@ -163,10 +188,18 @@ create_function_graph (tree fn, int flags)
   gdl_graph *graph, *bb_graph;
   gdl_edge *v_edge;
 
+  if (verbose > 1)
+    tmp_stream = open_memstream (&tmp_buf, &tmp_buf_size);
+
   /* Get the function's name. */
   function_name = lang_hooks.decl_printable_name (fn, 2);
 
   graph = gdl_new_graph (function_name);
+  gdl_set_graph_node_borderwidth (graph, 1);
+  gdl_set_graph_node_margin (graph, 1);
+  gdl_set_graph_edge_thickness (graph, 1);
+  gdl_set_graph_splines (graph, "yes");
+  gdl_set_graph_port_sharing (graph, 0);
 
   /* Switch CFUN to point to FN. */
   push_cfun (DECL_STRUCT_FUNCTION (fn));
@@ -175,7 +208,7 @@ create_function_graph (tree fn, int flags)
 
   FOR_ALL_BB (bb)
     {
-      bb_graph = create_bb_graph (bb, flags);
+      bb_graph = create_bb_graph (bb);
       gdl_add_subgraph (graph, bb_graph);
 
       FOR_EACH_EDGE (e, ei, bb->succs)
@@ -187,6 +220,12 @@ create_function_graph (tree fn, int flags)
     }
 
   set_vertical_order (graph);
+
+  if (verbose > 1)
+    {
+      fclose (tmp_stream);
+      free (tmp_buf);
+    }
 
   return graph;
 }
@@ -203,7 +242,8 @@ vcg_plugin_dump_function (tree fn, int flags)
 
   exit_if_invalid (fn);
 
-  g = create_function_graph (fn, flags);
+  verbose = flags;
+  g = create_function_graph (fn);
 
   vcg_plugin_common.dump (g);
 }
@@ -215,7 +255,8 @@ vcg_plugin_view_function (tree fn, int flags)
 
   exit_if_invalid (fn);
 
-  g = create_function_graph (fn, flags);
+  verbose = flags;
+  g = create_function_graph (fn);
 
   vcg_plugin_common.show (g);
 }
