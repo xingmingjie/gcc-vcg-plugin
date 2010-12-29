@@ -244,6 +244,7 @@ dump_function_to_file (char *fname, tree fn)
 
   graph = create_function_graph (fn);
   gdl_dump_graph (fp, graph);
+  gdl_free_graph (graph);
 
   /* Free names for graphs and nodes.  */
   free_names (n_basic_blocks);
