@@ -19,6 +19,7 @@
 
 #include <stddef.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -26,6 +27,7 @@
 #include "gcc-plugin.h"
 #include "plugin.h"
 #include "plugin-version.h"
+#include "libiberty.h"
 
 #include "vcg-plugin.h"
 #include "gdl.h"
@@ -101,8 +103,6 @@ create_bb_graph (basic_block bb)
 {
   gdl_graph *g;
   gdl_node *n;
-  gimple_stmt_iterator gsi;
-  gimple stmt;
   char *str;
   int i;
 

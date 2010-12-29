@@ -130,6 +130,53 @@ gdl_new_edge (const char *source, const char *target)
   return edge;
 }
 
+void
+gdl_free_graph (gdl_graph *graph)
+{
+  gdl_graph *subgraphs, *subgraph, *next_subgraph;
+  gdl_node *nodes, *node, *next_node;
+  gdl_edge *edges, *edge, *next_edge;
+
+  /* Free the nodes.  */
+  nodes = gdl_get_graph_node (graph);
+  for (node = nodes; node != NULL;)
+    {
+      next_node = node->next;
+      gdl_free_node (node);
+      node = next_node;
+    }
+
+  /* Free the subgraphs.  */
+  subgraphs = gdl_get_graph_subgraph (graph);
+  for (subgraph = subgraphs; subgraph != NULL;)
+    {
+      next_subgraph = subgraph->next;
+      gdl_free_graph (subgraph);
+      subgraph = next_subgraph;
+    }
+
+  /* Free the edges.  */
+  edges = gdl_get_graph_edge (graph);
+  for (edge = edges; edge != NULL;)
+    {
+      next_edge = edge->next;
+      gdl_free_edge (edge);
+      edge = next_edge;
+    }
+}
+
+void
+gdl_free_node (gdl_node *node)
+{
+  free (node);
+}
+
+void
+gdl_free_edge (gdl_edge *edge)
+{
+  free (edge);
+}
+
 void 
 gdl_add_subgraph (gdl_graph *graph, gdl_graph *subgraph)
 {
