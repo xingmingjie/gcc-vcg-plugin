@@ -109,15 +109,19 @@ extern char *gdl_color_s[GDL_COLOR_DEFAULT + 1];
 extern char *gdl_linestyle_s[GDL_LINESTYLE_DEFAULT + 1];
 extern char *gdl_layout_algorithm_s[GDL_LAYOUT_ALGORITHM_DEFAULT + 1];
 
-extern gdl_graph * gdl_new_graph (const char *title); 
-extern gdl_node * gdl_new_node (const char *title);
-extern gdl_edge * gdl_new_edge (const char *source, const char *target);
+extern gdl_graph *gdl_new_graph (const char *title); 
+extern gdl_node *gdl_new_node (const char *title);
+extern gdl_edge *gdl_new_edge (const char *source, const char *target);
+extern void gdl_free_graph (gdl_graph *graph);
+extern void gdl_free_node (gdl_node *node);
+extern void gdl_free_edge (gdl_edge *edge);
 extern void gdl_add_subgraph (gdl_graph *graph, gdl_graph *subgraph);
 extern void gdl_add_node (gdl_graph *graph, gdl_node *node); 
 extern void gdl_add_edge (gdl_graph *graph, gdl_edge *edge);
 extern void gdl_dump_graph (FILE *fout, gdl_graph *graph);
 extern void gdl_dump_node (FILE *fout, gdl_node *node);
 extern void gdl_dump_edge (FILE *fout, gdl_edge *edge);
+extern gdl_graph *gdl_find_subgraph (gdl_graph *graph, char *title);
 
 
 #define DEF_ATTR(obj, name, type) \
