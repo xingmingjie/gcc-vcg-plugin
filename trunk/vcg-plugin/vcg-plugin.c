@@ -44,7 +44,7 @@
 static void vcg_error (const char *format, ...);
 static char *vcg_get_file_name (bool is_temp);
 static void vcg_dump (gdl_graph *graph);
-static void vcg_show (gdl_graph *graph);
+static void vcg_show (char *fname);
 
 static void
 vcg_error (const char *format, ...)
@@ -106,29 +106,12 @@ vcg_dump (gdl_graph *graph)
 }
 
 static void
-vcg_show (gdl_graph *graph)
+vcg_show (char *fname)
 {
-  char *fname;
-  FILE *fp;
   char *cmd;
   pid_t pid;
 
-  assert (graph != NULL);
-
-  if ((fname = vcg_get_file_name (true)) == NULL)
-    {
-      vcg_plugin_common.error ("failed to create temp file name.");
-      return;
-    }
-
-  if ((fp = fopen (fname, "w")) == NULL)
-    {
-      vcg_plugin_common.error ("failed to open file %s.", fname);
-      return;
-    }
-
-  gdl_dump_graph (fp, graph);
-  fclose (fp);
+  assert (fname != NULL);
 
   cmd = concat (vcg_plugin_common.vcg_viewer, " ", fname, NULL);
   pid = fork ();
@@ -143,7 +126,7 @@ vcg_plugin_common_t vcg_plugin_common =
 {
   "vcg_plugin",
   "vcgview",
+  "dump-temp.vcg",
   vcg_error,
-  vcg_dump,
   vcg_show
 };

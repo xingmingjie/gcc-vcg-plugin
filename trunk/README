@@ -20,7 +20,7 @@
 # Source #
 ##########
 
-The source code can be downloaded from http://code.google.com/p/toolbox-of-eric.
+The source code can be downloaded from http://code.google.com/p/gcc-vcg-plugin.
 
 ###########
 # Install #
@@ -42,18 +42,17 @@ make install
 First, a vcg viewer tool is required. See http://code.google.com/p/vcgviewer
 or http://www.absint.com/aisee. 
 
-The pre-defined vcg plugin commands can be used. Rename file "vcg.gdbinit" to
-".gdbinit" or add "source vcg.gdbinit" in your original ".gdbinit".
-
-Use one term as output screen, suppose /dev/pts/2.
+The pre-defined vcg plugin commands can be used. Rename file
+"vcg-plugin.gdbinit" to ".gdbinit" or add "source vcg-plugin.gdbinit"
+in your original ".gdbinit".
 
 Here's an example about how to use vcg-plugin in gdb: 
 
-  gdb -tty /dev/pts/2 -q -args /path/to/cc1 test.c -fplugin=/path/to/vcg.so -O2 
+  gdb -q -args /path/to/cc1 test.c -fplugin=/path/to/vcg-plugin.so -O2 
 
   gdb) b a_point_of_gimple_pass 
   gdb) r 
-  gdb) view_cfg 
+  gdb) view_function current_function_decl
 
 Also, you can use -fplugin-arg-vcg-viewer=vcgview (xvcg, or aisee3) to select vcg
 viewer, default is vcgview. 
@@ -62,5 +61,4 @@ viewer, default is vcgview.
 # Bug report #
 ##############
 
-Welcom any suggestion or bug report. You can send a mail to
-mingjie.xing@gmail.com.
+Any suggestion or bug report are welcome.
