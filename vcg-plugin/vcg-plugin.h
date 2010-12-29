@@ -38,9 +38,9 @@ typedef struct
 {
   char *plugin_name;
   char *vcg_viewer;
+  char *temp_file_name;
   void (*error) (const char *format, ...);
-  void (*dump) (gdl_graph *graph);
-  void (*show) (gdl_graph *graph);
+  void (*show) (char *fname);
 } vcg_plugin_common_t;
 
 extern vcg_plugin_common_t vcg_plugin_common; 
@@ -48,8 +48,8 @@ extern vcg_plugin_common_t vcg_plugin_common;
 /* These are available functins, which can be used to
    dump and view gcc internal data structures. */
 
-extern void vcg_plugin_dump_function (tree fn, int flags); 
-extern void vcg_plugin_view_function (tree fn, int flags); 
+extern void vcg_plugin_dump_function (tree fn); 
+extern void vcg_plugin_view_function (tree fn); 
 
 
 #endif

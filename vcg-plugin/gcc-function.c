@@ -1,4 +1,4 @@
-/* <one line to give the program's name and a bief idea of what it does.>
+/* Dump or view gcc function.
  *
  * Copyright (C) 2010 Mingjie Xing, mingjie.xing@gmail.com.
  *
@@ -36,15 +36,14 @@ static char **bb_graph_title;
 static char **bb_graph_label;
 static char **bb_node_title;
 
+/* Temp file stream, used to get the bb dump from gcc dump function. */
 FILE *tmp_stream;
 char *tmp_buf;
 size_t tmp_buf_size;
 
-int verbose;
-
 /* Initialize all of the names.  */
 static void
-init_names (const char *func_name, int bb_num)
+create_names (const char *func_name, int bb_num)
 {
   int i;
   
@@ -77,6 +76,24 @@ init_names (const char *func_name, int bb_num)
     }
 }
 
+static void
+free_names (int bb_num)
+{
+  int i;
+
+  for (i = 0; i < bb_num; i++)
+    {
+      free (bb_graph_title[i]);
+      if (i > 1)
+        free (bb_graph_label[i]);
+      if (i > 1)
+        free (bb_node_title[i]);
+    }
+  free (bb_graph_title);
+  free (bb_graph_label);
+  free (bb_node_title);
+}
+
 /* Create a graph from the basic block bb. */
 
 static gdl_graph *
@@ -94,17 +111,14 @@ create_bb_graph (basic_block bb)
   gdl_set_graph_folding (g, 1);
   gdl_set_graph_shape (g, GDL_ELLIPSE);
 
-  if (verbose > 1)
-    {
-      rewind (tmp_stream);
-      gimple_dump_bb (bb, tmp_stream, 0, TDF_VOPS|TDF_MEMSYMS);
-      i = tmp_buf_size;
-      while (i > 1 && ISSPACE (tmp_buf[i - 1])) i--;
-      str = xstrndup (tmp_buf, i);
-      n = gdl_new_node (bb_node_title[bb->index]);
-      gdl_set_node_label (n, str);
-      gdl_add_node (g, n);
-    }
+  rewind (tmp_stream);
+  gimple_dump_bb (bb, tmp_stream, 0, TDF_VOPS|TDF_MEMSYMS|TDF_BLOCKS);
+  i = tmp_buf_size;
+  while (i > 1 && ISSPACE (tmp_buf[i - 1])) i--;
+  str = xstrndup (tmp_buf, i);
+  n = gdl_new_node (bb_node_title[bb->index]);
+  gdl_set_node_label (n, str);
+  gdl_add_node (g, n);
 
   return g;
 }
@@ -132,11 +146,9 @@ set_vertical_order_1 (gdl_graph *graph, int *distance, basic_block bb)
   distance[bb->index] = max + 1;
   subgraph = gdl_find_subgraph (graph, bb_graph_title[bb->index]); 
   gdl_set_graph_vertical_order (subgraph, distance[bb->index]);
-  if (verbose > 1)
-    {
-      node = gdl_get_graph_node (subgraph);
-      gdl_set_node_vertical_order (node, distance[bb->index]);
-    }
+  node = gdl_get_graph_node (subgraph);
+  gdl_set_node_vertical_order (node, distance[bb->index]);
+ 
   return distance[bb->index];
 }
 
@@ -166,12 +178,8 @@ set_vertical_order (gdl_graph *graph)
   subgraph = gdl_find_subgraph (graph,
                                 bb_graph_title[EXIT_BLOCK_PTR->index]); 
   gdl_set_graph_vertical_order (subgraph, max);
-  if (verbose > 1)
-    {
-      node = gdl_get_graph_node (subgraph);
-      gdl_set_node_vertical_order (node, max);
-    }
-
+  node = gdl_get_graph_node (subgraph);
+  gdl_set_node_vertical_order (node, max);
 
   free (distance);
 }
@@ -188,23 +196,12 @@ create_function_graph (tree fn)
   gdl_graph *graph, *bb_graph;
   gdl_edge *v_edge;
 
-  if (verbose > 1)
-    tmp_stream = open_memstream (&tmp_buf, &tmp_buf_size);
-
-  /* Get the function's name. */
-  function_name = lang_hooks.decl_printable_name (fn, 2);
-
   graph = gdl_new_graph (function_name);
   gdl_set_graph_node_borderwidth (graph, 1);
   gdl_set_graph_node_margin (graph, 1);
   gdl_set_graph_edge_thickness (graph, 1);
   gdl_set_graph_splines (graph, "yes");
   gdl_set_graph_port_sharing (graph, 0);
-
-  /* Switch CFUN to point to FN. */
-  push_cfun (DECL_STRUCT_FUNCTION (fn));
-
-  init_names (function_name, n_basic_blocks);
 
   FOR_ALL_BB (bb)
     {
@@ -219,45 +216,68 @@ create_function_graph (tree fn)
         }
     }
 
+  /* Optimize the graph layout.  */
   set_vertical_order (graph);
-
-  if (verbose > 1)
-    {
-      fclose (tmp_stream);
-      free (tmp_buf);
-    }
 
   return graph;
 }
 
 static void
-exit_if_invalid (tree fn)
+dump_function_to_file (char *fname, tree fn)
 {
+  gdl_graph *graph;
+  FILE *fp;
+
+  if ((fp = fopen (fname, "w")) == NULL)
+    {
+      vcg_plugin_common.error ("failed to open file %s.", fname);
+      return;
+    }
+
+  /* Switch CFUN to point to FN.  */
+  push_cfun (DECL_STRUCT_FUNCTION (fn));
+
+  /* Create names for graphs and nodes.  */
+  create_names (function_name, n_basic_blocks);
+
+  tmp_stream = open_memstream (&tmp_buf, &tmp_buf_size);
+
+  graph = create_function_graph (fn);
+  gdl_dump_graph (fp, graph);
+
+  /* Free names for graphs and nodes.  */
+  free_names (n_basic_blocks);
+  fclose (fp);
+  fclose (tmp_stream);
+  free (tmp_buf);
 }
 
 void
-vcg_plugin_dump_function (tree fn, int flags)
+vcg_plugin_dump_function (tree fn)
 {
-  gdl_graph *g;
+  char *fname;
 
-  exit_if_invalid (fn);
+  /* Get the function name.  */
+  function_name = lang_hooks.decl_printable_name (fn, 2);
+  /* Create the dump file name.  */
+  asprintf (&fname, "dump-function-%s.vcg", function_name);
 
-  verbose = flags;
-  g = create_function_graph (fn);
+  dump_function_to_file (fname, fn);
 
-  vcg_plugin_common.dump (g);
+  free (fname);
 }
 
 void
-vcg_plugin_view_function (tree fn, int flags)
+vcg_plugin_view_function (tree fn)
 {
-  gdl_graph *g;
+  char *fname;
 
-  exit_if_invalid (fn);
+  /* Get the function name.  */
+  function_name = lang_hooks.decl_printable_name (fn, 2);
+  /* Get the temp file name.  */
+  fname = vcg_plugin_common.temp_file_name;
 
-  verbose = flags;
-  g = create_function_graph (fn);
-
-  vcg_plugin_common.show (g);
+  dump_function_to_file (fname, fn);
+  vcg_plugin_common.show (fname);
 }
 
