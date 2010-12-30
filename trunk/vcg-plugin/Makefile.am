@@ -27,7 +27,9 @@ EXTRA_DIST = vcg-plugin.gdbinit
 
 vcg_plugin_la_SOURCES = \
 	gcc-plugin-api.c \
-        gcc-function.c \
+	gcc-function.c \
+	gcc-tree.c \
+	gcc-tree-hierarchy.c \
         vcg-plugin.c vcg-plugin.h
                    
 

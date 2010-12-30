@@ -225,8 +225,8 @@ create_function_graph (tree fn)
 static void
 dump_function_to_file (char *fname, tree fn)
 {
-  gdl_graph *graph;
   FILE *fp;
+  gdl_graph *graph;
 
   if ((fp = fopen (fname, "w")) == NULL)
     {
@@ -253,6 +253,8 @@ dump_function_to_file (char *fname, tree fn)
   free (tmp_buf);
 }
 
+/* Public function to dump a gcc function FN.  */
+
 void
 vcg_plugin_dump_function (tree fn)
 {
@@ -262,11 +264,12 @@ vcg_plugin_dump_function (tree fn)
   function_name = lang_hooks.decl_printable_name (fn, 2);
   /* Create the dump file name.  */
   asprintf (&fname, "dump-function-%s.vcg", function_name);
-
   dump_function_to_file (fname, fn);
 
   free (fname);
 }
+
+/* Public function to view a gcc function FN.  */
 
 void
 vcg_plugin_view_function (tree fn)
