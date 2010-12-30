@@ -40,11 +40,8 @@
 #include "cfghooks.h"
 #include "version.h" /* for printing gcc version number in graph */
 
-#ifdef TMP_VCG
-  #undef TMP_VCG
-#endif
-
-#define TMP_VCG "tmp-vcg-plugin-cfg.vcg"
+#include "vcg-plugin.h"
+#include "gcc-tree.h"
 
 #include "tree.h"
 
@@ -79,8 +76,6 @@ node: {\n\
 }\n", (id), (name), (value));\
 } while (0); 
 
-
-#include "view-tree.h"
 
 static void
 dump_tree_base (struct tree_base *s, int id, char *name)
@@ -822,30 +817,67 @@ dump_tree (tree t, int id, char *name)
     }
 }
 
-void
-vcg_plugin_view_tree (tree t)
+/* Create a graph from the function fn. */
+
+static gdl_graph *
+create_tree_graph (tree node)
 {
-  int id = title_id++;
+  gdl_graph *graph;
 
-  fout = fopen (TMP_VCG, "w");
-
-  //PRINT_NODE(name, tsname[tns], id)
-  do {
-  fprintf (fout, "\n\
-graph: {\n\
-  title: \"g%d\"\n\
-  label: \"%s: %s\"\n\
-\n", (id), ("tree"), ("tree"));\
-} while (0); 
+  graph = gdl_new_graph ("tree");
+  gdl_set_graph_node_borderwidth (graph, 1);
+  gdl_set_graph_node_margin (graph, 1);
+  gdl_set_graph_edge_thickness (graph, 1);
+  gdl_set_graph_splines (graph, "yes");
+  gdl_set_graph_port_sharing (graph, 0);
 
 
+  return graph;
+}
 
-  dump_tree (t, id, "tree");
+static void
+dump_tree_to_file (char *fname, tree node)
+{
+  FILE *fp;
+  gdl_graph *graph;
 
-  fprintf (fout, "}\n");
+  if ((fp = fopen (fname, "w")) == NULL)
+    {
+      vcg_plugin_common.error ("failed to open file %s.", fname);
+      return;
+    }
 
-  fclose (fout);
+  graph = create_tree_graph (node);
+  gdl_dump_graph (fp, graph);
+  gdl_free_graph (graph);
 
-  vcg_plugin_view (TMP_VCG);
+  fclose (fp);
+}
+
+/* Public function to dump a gcc tree NODE.  */
+
+void
+vcg_plugin_dump_tree (tree node)
+{
+  char *fname;
+
+  /* Create the dump file name.  */
+  asprintf (&fname, "dump-tree-%#x.vcg", node);
+  dump_tree_to_file (fname, node);
+
+  free (fname);
+}
+
+/* Public function to view a gcc tree NODE.  */
+
+void
+vcg_plugin_view_tree (tree node)
+{
+  char *fname;
+
+  /* Get the temp file name.  */
+  fname = vcg_plugin_common.temp_file_name;
+  dump_tree_to_file (fname, node);
+  vcg_plugin_common.show (fname);
 }
 
