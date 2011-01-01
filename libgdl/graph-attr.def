@@ -621,7 +621,7 @@ DEF_ATTR (layout_algorithm, "layout_algorithm", const char *, GDL_CODE_STR, "nor
      Specifies the horizontal and vertical offset between the border of a
      summary node and its label in pixels. Useful for rectangular nodes only. */
 
-DEF_ATTR (node_margin, "node.margin", int, GDL_CODE_INT, 3)   
+DEF_ATTR (node_margin, "//node.margin", int, GDL_CODE_INT, 3)
      
   /* near_edges: yes or no, default is yes
      Attribute of top-level graph, subgraphs
@@ -882,7 +882,7 @@ DEF_ATTR (splines, "splines", const char *, GDL_CODE_STR, "yes")
      this value should appear only once in a graph specification. See also
      displaying node groups exclusively. */
 
-DEF_ATTR (folding, "folding", const char *, GDL_CODE_STR, "unfolded")
+DEF_ATTR (folding, "folding", int, GDL_CODE_INT, 0)
      
      /* straight_phase: yes or no, default is no
      Attribute of top-level graph, subgraphs
@@ -982,7 +982,7 @@ DEF_ATTR (folding, "folding", const char *, GDL_CODE_STR, "unfolded")
      titles have to be unique throughout a graph specification, there can be
      only one subgraph at most without a title specification. */
 
-DEF_ATTR (title, "title", const char *, GDL_CODE_STR, "")
+DEF_ATTR (title, "title", const char *, GDL_CODE_STR_QUOTE, "")
      
   /* The name of a subgraph is used to identify it, so that the subgraph can be
      the source and target of an edge specification. These edges start or end

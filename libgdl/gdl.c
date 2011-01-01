@@ -27,21 +27,20 @@
 
 /* default attributes */
 
-#define DEF_ATTR(id, name, type, code, value) {code, name, value},
+#define DEF_ATTR(id, name, type, code, value) \
+  { code, name, (union gdl_attr_value) value },
+
 static gdl_attr node_default_attr[] =
 {
   #include "node-attr.def"
-  {0, "", NULL}
 };
 static gdl_attr edge_default_attr[] =
 {
   #include "edge-attr.def"
-  {0, "", NULL}
 };
 static gdl_attr graph_default_attr[] =
 {
   #include "graph-attr.def"
-  {0, "", NULL}
 };
 #undef DEF_ATTR
 
@@ -229,20 +228,20 @@ gdl_dump_node (FILE *fout, gdl_node *node)
       switch (attr->code)
         {
         case GDL_CODE_STR:
-          if (attr->u.str != node_default_attr[i].u.str)
-            fprintf (fout, "%s: %s\n", attr->name, attr->u.str);
+          if (attr->value.str != node_default_attr[i].value.str)
+            fprintf (fout, "%s: %s\n", attr->name, attr->value.str);
           break;
         case GDL_CODE_STR_QUOTE:
-          if (attr->u.str != node_default_attr[i].u.str)
+          if (attr->value.str != node_default_attr[i].value.str)
             {
               fprintf (fout, "%s: \"", attr->name);
-              print_string (fout, attr->u.str);
+              print_string (fout, attr->value.str);
               fprintf (fout, "\"\n");
             }
           break;
         case GDL_CODE_INT:
-          if (attr->u.val != node_default_attr[i].u.val)
-            fprintf (fout, "%s: %d\n", attr->name, attr->u.val);
+          if (attr->value.val != node_default_attr[i].value.val)
+            fprintf (fout, "%s: %d\n", attr->name, attr->value.val);
           break;
         default:
           assert (0);
@@ -267,20 +266,20 @@ gdl_dump_edge (FILE *fout, gdl_edge *edge)
       switch (attr->code)
         {
         case GDL_CODE_STR:
-          if (attr->u.str != edge_default_attr[i].u.str)
-            fprintf (fout, "%s: %s\n", attr->name, attr->u.str);
+          if (attr->value.str != edge_default_attr[i].value.str)
+            fprintf (fout, "%s: %s\n", attr->name, attr->value.str);
           break;
         case GDL_CODE_STR_QUOTE:
-          if (attr->u.str != edge_default_attr[i].u.str)
+          if (attr->value.str != edge_default_attr[i].value.str)
             {
               fprintf (fout, "%s: \"", attr->name);
-              print_string (fout, attr->u.str);
+              print_string (fout, attr->value.str);
               fprintf (fout, "\"\n");
             }
           break;
         case GDL_CODE_INT:
-          if (attr->u.val != edge_default_attr[i].u.val)
-            fprintf (fout, "%s: %d\n", attr->name, attr->u.val);
+          if (attr->value.val != edge_default_attr[i].value.val)
+            fprintf (fout, "%s: %d\n", attr->name, attr->value.val);
           break;
         default:
           assert (0);
@@ -308,20 +307,20 @@ gdl_dump_graph (FILE *fout, gdl_graph *graph)
       switch (attr->code)
         {
         case GDL_CODE_STR:
-          if (attr->u.str != graph_default_attr[i].u.str)
-            fprintf (fout, "%s: %s\n", attr->name, attr->u.str);
+          if (attr->value.str != graph_default_attr[i].value.str)
+            fprintf (fout, "%s: %s\n", attr->name, attr->value.str);
           break;
         case GDL_CODE_STR_QUOTE:
-          if (attr->u.str != graph_default_attr[i].u.str)
+          if (attr->value.str != graph_default_attr[i].value.str)
             {
               fprintf (fout, "%s: \"", attr->name);
-              print_string (fout, attr->u.str);
+              print_string (fout, attr->value.str);
               fprintf (fout, "\"\n");
             }
           break;
         case GDL_CODE_INT:
-          if (attr->u.val != graph_default_attr[i].u.val)
-            fprintf (fout, "%s: %d\n", attr->name, attr->u.val);
+          if (attr->value.val != graph_default_attr[i].value.val)
+            fprintf (fout, "%s: %d\n", attr->name, attr->value.val);
           break;
         default:
           assert (0);

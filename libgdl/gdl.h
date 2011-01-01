@@ -50,13 +50,6 @@
 #define GDL_MAX_DEPTH		"max_depth"
 #define GDL_TREE		"tree"
 
-enum
-{
-  GDL_CODE_STR,
-  GDL_CODE_STR_QUOTE,
-  GDL_CODE_INT
-};
-
 #define DEF_ATTR(id, name, type, code, value) GDL_NODE_ATTR_##id,
 enum gdl_node_attr
 {
@@ -83,15 +76,24 @@ enum
 
 /* node, edge, graph, attribute */
 
-typedef union
+enum
+{
+  GDL_CODE_STR,
+  GDL_CODE_STR_QUOTE,
+  GDL_CODE_INT
+};
+
+union gdl_attr_value
+{
+  int val;
+  char *str;
+};
+
+typedef struct
 {
   int code;
   char *name;
-  union
-  {
-    const char *str;
-    int val;
-  } u;
+  union gdl_attr_value value;
 } gdl_attr;
 
 typedef struct gdl_node_ gdl_node;
@@ -124,58 +126,58 @@ struct gdl_graph_
 };
 
 /* Functions to get the attributes.  */
-#define DEF_ATTR(id, name, type, code, value) \
+#define DEF_ATTR(id, name, type, code, value_) \
 static inline type \
 gdl_get_node_##id (gdl_node *node) \
 { \
-  return *((type *) &node->attr[GDL_NODE_ATTR_##id].u); \
+  return *((type *) &node->attr[GDL_NODE_ATTR_##id].value); \
 }
 #include "node-attr.def"
 #undef DEF_ATTR
 
-#define DEF_ATTR(id, name, type, code, value) \
+#define DEF_ATTR(id, name, type, code, value_) \
 static inline type \
 gdl_get_edge_##id (gdl_edge *edge) \
 { \
-  return *((type *) &edge->attr[GDL_EDGE_ATTR_##id].u); \
+  return *((type *) &edge->attr[GDL_EDGE_ATTR_##id].value); \
 }
 #include "edge-attr.def"
 #undef DEF_ATTR
 
-#define DEF_ATTR(id, name, type, code, value) \
+#define DEF_ATTR(id, name, type, code, value_) \
 static inline type \
 gdl_get_graph_##id (gdl_graph *graph) \
 { \
-  return *((type *) &graph->attr[GDL_GRAPH_ATTR_##id].u); \
+  return *((type *) &graph->attr[GDL_GRAPH_ATTR_##id].value); \
 }
 #include "graph-attr.def"
 #undef DEF_ATTR
 
 /* Functions to set the attributes.  */
 
-#define DEF_ATTR(id, name, type, code, value) \
+#define DEF_ATTR(id, name, type, code, value_) \
 static inline void \
 gdl_set_node_##id (gdl_node *node, type val) \
 { \
-  *((type *) &node->attr[GDL_NODE_ATTR_##id].u) = val; \
+  *((type *) &node->attr[GDL_NODE_ATTR_##id].value) = val; \
 }
 #include "node-attr.def"
 #undef DEF_ATTR
 
-#define DEF_ATTR(id, name, type, code, value) \
+#define DEF_ATTR(id, name, type, code, value_) \
 static inline void \
 gdl_set_edge_##id (gdl_edge *edge, type val) \
 { \
-  *((type *) &edge->attr[GDL_EDGE_ATTR_##id].u) = val; \
+  *((type *) &edge->attr[GDL_EDGE_ATTR_##id].value) = val; \
 }
 #include "edge-attr.def"
 #undef DEF_ATTR
 
-#define DEF_ATTR(id, name, type, code, value) \
+#define DEF_ATTR(id, name, type, code, value_) \
 static inline void \
 gdl_set_graph_##id (gdl_graph *graph, type val) \
 { \
-  *((type *) &graph->attr[GDL_GRAPH_ATTR_##id].u) = val; \
+  *((type *) &graph->attr[GDL_GRAPH_ATTR_##id].value) = val; \
 }
 #include "graph-attr.def"
 #undef DEF_ATTR

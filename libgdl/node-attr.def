@@ -250,7 +250,7 @@ DEF_ATTR (shape, "shape", const char *, GDL_CODE_STR, "box")
   Specifies the unique string identifying the node. This attribute is
   mandatory for the node specification. */
 
-DEF_ATTR (title, "title", const char *, GDL_CODE_STR, "")
+DEF_ATTR (title, "title", const char *, GDL_CODE_STR_QUOTE, "")
 
   /* useractioncmd3: "String", default is "" (empty string)
   As of aiSee 3.beta, enables a command to be specified that can be executed
