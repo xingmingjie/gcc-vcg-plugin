@@ -826,10 +826,8 @@ create_tree_graph (tree node)
 
   graph = gdl_new_graph ("tree");
   gdl_set_graph_node_borderwidth (graph, 1);
-  gdl_set_graph_node_margin (graph, 1);
   gdl_set_graph_edge_thickness (graph, 1);
   gdl_set_graph_splines (graph, "yes");
-  gdl_set_graph_port_sharing (graph, 0);
 
 
   return graph;

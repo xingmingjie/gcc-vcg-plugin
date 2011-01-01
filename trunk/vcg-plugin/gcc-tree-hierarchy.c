@@ -55,11 +55,7 @@ create_tree_hierarchy_graph (void)
   graph = gdl_new_graph ("tree hierarchy");
   gdl_set_graph_orientation (graph, "left_to_right");
   gdl_set_graph_node_borderwidth (graph, 1);
-  gdl_set_graph_node_margin (graph, 1);
-  gdl_set_graph_node_shape (graph, "ellipse");
   gdl_set_graph_edge_thickness (graph, 1);
-  gdl_set_graph_splines (graph, "yes");
-  gdl_set_graph_port_sharing (graph, 0);
 
   #define NEW_NODE(name) \
   node = gdl_new_node (name); \
