@@ -25,43 +25,25 @@
 
 #include "gdl.h"
 
-char *gdl_shape_s[GDL_SHAPE_DEFAULT + 1] =
-{
-  "box",
-  "rhomb",
-  "ellipse",
-  "triangle",
-  NULL
-};
+/* default attributes */
 
-char *gdl_color_s[GDL_COLOR_DEFAULT + 1] =
+#define DEF_ATTR(id, name, type, code, value) {code, name, value},
+static gdl_attr node_default_attr[] =
 {
-  "black",
-  "blue",
-  "lightblue",
-  "red",
-  "green",
-  "yellow",
-  "white",
-  "lightgrey",
-  NULL
+  #include "node-attr.def"
+  {0, "", NULL}
 };
-
-char *gdl_linestyle_s[GDL_LINESTYLE_DEFAULT + 1] =
+static gdl_attr edge_default_attr[] =
 {
-  "continuous",
-  "dashed",
-  "dotted",
-  "invisible",
-  NULL
+  #include "edge-attr.def"
+  {0, "", NULL}
 };
-
-char *gdl_layout_algorithm_s[GDL_LAYOUT_ALGORITHM_DEFAULT + 1] =
+static gdl_attr graph_default_attr[] =
 {
-  "max_depth",
-  "tree",
-  NULL
+  #include "graph-attr.def"
+  {0, "", NULL}
 };
+#undef DEF_ATTR
 
 gdl_graph *vcg_plugin_top_graph;
 
@@ -71,20 +53,8 @@ gdl_new_graph (const char *title)
   gdl_graph *graph;
 
   graph = XNEW(gdl_graph);
+  memcpy (graph->attr, graph_default_attr, sizeof (graph_default_attr));
   gdl_set_graph_title (graph, title);
-  gdl_set_graph_label (graph, NULL);
-  gdl_set_graph_color (graph, GDL_COLOR_DEFAULT);
-  gdl_set_graph_node_color (graph, GDL_COLOR_DEFAULT);
-  gdl_set_graph_folding (graph, -1);
-  gdl_set_graph_shape (graph, GDL_SHAPE_DEFAULT);
-  gdl_set_graph_splines (graph, NULL);
-  gdl_set_graph_layout_algorithm (graph, GDL_LAYOUT_ALGORITHM_DEFAULT);
-  gdl_set_graph_vertical_order (graph, -1);
-  gdl_set_graph_near_edges (graph, -1);
-  gdl_set_graph_port_sharing (graph, -1);
-  gdl_set_graph_node_borderwidth (graph, -1);
-  gdl_set_graph_node_margin (graph, -1);
-  gdl_set_graph_edge_thickness (graph, -1);
 
   graph->node = NULL;
   graph->last_node = NULL;
@@ -103,11 +73,8 @@ gdl_new_node (const char *title)
   gdl_node *node;
 
   node = (gdl_node *) xmalloc (sizeof (gdl_node));
+  memcpy (node->attr, node_default_attr, sizeof (node_default_attr));
   gdl_set_node_title (node, title);
-  gdl_set_node_label (node, NULL);
-  gdl_set_node_vertical_order (node, -1);
-  gdl_set_node_color (node, GDL_COLOR_DEFAULT);
-  gdl_set_node_shape (node, GDL_SHAPE_DEFAULT);
 
   node->next = NULL;
   
@@ -120,10 +87,9 @@ gdl_new_edge (const char *source, const char *target)
   gdl_edge *edge;
 
   edge = (gdl_edge *) xmalloc (sizeof (gdl_edge));
+  memcpy (edge->attr, edge_default_attr, sizeof (edge_default_attr));
   gdl_set_edge_source (edge, source);
   gdl_set_edge_target (edge, target);
-  gdl_set_edge_label (edge, NULL);
-  gdl_set_edge_linestyle (edge, GDL_LINESTYLE_DEFAULT);
 
   edge->next = NULL;
   
@@ -235,48 +201,53 @@ gdl_find_subgraph (gdl_graph *graph, char *title)
   return NULL;
 }
 
+static void
+print_string (FILE *fout, const char *str)
+{
+  int i;
+
+  for (i = 0; i < strlen (str); i++)
+    {
+      if (str[i] == '"')
+        fprintf (fout,  "\\");
+      fprintf (fout, "%c", str[i]);
+    }
+}
+
 void
 gdl_dump_node (FILE *fout, gdl_node *node)
 {
-  const char *str;
-  int val;
   int i;
+  gdl_attr *attr;
 
   fputs ("node: {\n", fout);
 
-  /* title */
-  str = gdl_get_node_title (node);
-  if (str != NULL)
-    fprintf (fout, "title: \"%s\"\n", str);
-  
-  /* label */
-  str = gdl_get_node_label (node);
-  if (str != NULL)
+  /* Dump the attributes.  */
+  for (i = 0; i < GDL_NODE_ATTR_MAX; i++)
     {
-      fprintf (fout, "label: \"");
-      for (i = 0; i < strlen (str); i++)
+      attr = &node->attr[i];
+      switch (attr->code)
         {
-          if (str[i] == '"')
-            fprintf (fout,  "\\");
-          fprintf (fout, "%c", str[i]);
+        case GDL_CODE_STR:
+          if (attr->u.str != node_default_attr[i].u.str)
+            fprintf (fout, "%s: %s\n", attr->name, attr->u.str);
+          break;
+        case GDL_CODE_STR_QUOTE:
+          if (attr->u.str != node_default_attr[i].u.str)
+            {
+              fprintf (fout, "%s: \"", attr->name);
+              print_string (fout, attr->u.str);
+              fprintf (fout, "\"\n");
+            }
+          break;
+        case GDL_CODE_INT:
+          if (attr->u.val != node_default_attr[i].u.val)
+            fprintf (fout, "%s: %d\n", attr->name, attr->u.val);
+          break;
+        default:
+          assert (0);
         }
-      fprintf (fout, "\"\n");
     }
-  
-  /* vertical_order */
-  val = gdl_get_node_vertical_order (node);
-  if (val != -1)
-    fprintf (fout, "vertical_order: %d\n", val);
-
-  /* shape */
-  str = gdl_get_node_shape_s (node);
-  if (str != NULL)
-    fprintf (fout, "shape: %s\n", str); 
-
-  /* color */
-  str = gdl_get_node_color_s (node);
-  if (str != NULL)
-    fprintf (fout, "color: %s\n", str); 
 
   fputs ("}\n", fout);
 }
@@ -284,39 +255,37 @@ gdl_dump_node (FILE *fout, gdl_node *node)
 void
 gdl_dump_edge (FILE *fout, gdl_edge *edge)
 {
-  const char *str;
   int i;
+  gdl_attr *attr;
 
   fputs ("edge: {\n", fout);
 
-  /* sourcename */
-  str = gdl_get_edge_source (edge);
-  if (str != NULL)
-    fprintf (fout, "sourcename: \"%s\"\n", str);
-  
-  /* targetname */
-  str = gdl_get_edge_target (edge);
-  if (str != NULL)
-    fprintf (fout, "targetname: \"%s\"\n", str);
-  
-  /* label */
-  str = gdl_get_edge_label (edge);
-  if (str != NULL)
+  /* Dump the attributes.  */
+  for (i = 0; i < GDL_EDGE_ATTR_MAX; i++)
     {
-      fprintf (fout, "label: \"");
-      for (i = 0; i < strlen (str); i++)
+      attr = &edge->attr[i];
+      switch (attr->code)
         {
-          if (str[i] == '"')
-            fprintf (fout,  "\\");
-          fprintf (fout, "%c", str[i]);
+        case GDL_CODE_STR:
+          if (attr->u.str != edge_default_attr[i].u.str)
+            fprintf (fout, "%s: %s\n", attr->name, attr->u.str);
+          break;
+        case GDL_CODE_STR_QUOTE:
+          if (attr->u.str != edge_default_attr[i].u.str)
+            {
+              fprintf (fout, "%s: \"", attr->name);
+              print_string (fout, attr->u.str);
+              fprintf (fout, "\"\n");
+            }
+          break;
+        case GDL_CODE_INT:
+          if (attr->u.val != edge_default_attr[i].u.val)
+            fprintf (fout, "%s: %d\n", attr->name, attr->u.val);
+          break;
+        default:
+          assert (0);
         }
-      fprintf (fout, "\"\n");
     }
-  
-  /* linestyle */
-  str = gdl_get_edge_linestyle_s (edge);
-  if (str != NULL)
-    fprintf (fout, "linestyle: %s\n", str);
 
   fputs ("}\n", fout);
 }
@@ -324,96 +293,40 @@ gdl_dump_edge (FILE *fout, gdl_edge *edge)
 void
 gdl_dump_graph (FILE *fout, gdl_graph *graph)
 {
+  int i;
   gdl_node *nodes, *node;
   gdl_edge *edges, *edge;
   gdl_graph *subgraphs, *subgraph;
-
-  const char *str;
-  int val;
-  int i;
+  gdl_attr *attr;
 
   fputs ("graph: {\n", fout);
 
-  /* Dump the general graph attributes.  */
-
-  /* title */
-  str = gdl_get_graph_title (graph);
-  if (str != NULL)
-    fprintf (fout, "title: \"%s\"\n", str);
-
-  /* label */
-  str = gdl_get_graph_label (graph);
-  if (str != NULL)
+  /* Dump the attributes.  */
+  for (i = 0; i < GDL_GRAPH_ATTR_MAX; i++)
     {
-      fprintf (fout, "label: \"");
-      for (i = 0; i < strlen (str); i++)
+      attr = &graph->attr[i];
+      switch (attr->code)
         {
-          if (str[i] == '"')
-            fprintf (fout,  "\\");
-          fprintf (fout, "%c", str[i]);
+        case GDL_CODE_STR:
+          if (attr->u.str != graph_default_attr[i].u.str)
+            fprintf (fout, "%s: %s\n", attr->name, attr->u.str);
+          break;
+        case GDL_CODE_STR_QUOTE:
+          if (attr->u.str != graph_default_attr[i].u.str)
+            {
+              fprintf (fout, "%s: \"", attr->name);
+              print_string (fout, attr->u.str);
+              fprintf (fout, "\"\n");
+            }
+          break;
+        case GDL_CODE_INT:
+          if (attr->u.val != graph_default_attr[i].u.val)
+            fprintf (fout, "%s: %d\n", attr->name, attr->u.val);
+          break;
+        default:
+          assert (0);
         }
-      fprintf (fout, "\"\n");
     }
-
-  /* color */
-  str = gdl_get_graph_color_s (graph);
-  if (str != NULL)
-    fprintf (fout, "color: %s\n", str);
-
-  /* node.color */
-  str = gdl_get_graph_node_color_s (graph);
-  if (str != NULL)
-    fprintf (fout, "node.color: %s\n", str);
-
-  /* node.borderwidth */
-  val = gdl_get_graph_node_borderwidth (graph);
-  if (val != -1)
-    fprintf (fout, "node.borderwidth: %d\n", val);
-
-  /* node.margin */
-  val = gdl_get_graph_node_margin (graph);
-  if (val != -1)
-    fprintf (fout, "//node.margin: %d\n", val);
-
-  /* edge.thickness */
-  val = gdl_get_graph_edge_thickness (graph);
-  if (val != -1)
-    fprintf (fout, "edge.thickness: %d\n", val);
-
-  /* folding */
-  val = gdl_get_graph_folding (graph);
-  if (val != -1)
-    fprintf (fout, "folding: %d\n", val);
-
-  /* vertical order */
-  val = gdl_get_graph_vertical_order (graph);
-  if (val != -1)
-    fprintf (fout, "vertical_order: %d\n", val);
-
-  /* splines */
-  str = gdl_get_graph_splines (graph);
-  if (str != NULL)
-    fprintf (fout, "splines: %s\n", str);
-
-  /* shape */
-  str = gdl_get_graph_shape_s (graph);
-  if (str != NULL)
-    fprintf (fout, "shape: %s\n", str);
-
-  /* layoutalgorithm */
-  str = gdl_get_graph_layout_algorithm_s (graph);
-  if (str != NULL)
-    fprintf (fout, "//layoutalgorithm: %s\n", str);
-
-  /* near_edges */
-  val = gdl_get_graph_near_edges (graph);
-  if (val != -1)
-    fprintf (fout, "near_edges: %s\n", val ? "yes" : "no");
-
-  /* port_sharing */
-  val = gdl_get_graph_port_sharing (graph);
-  if (val != -1)
-    fprintf (fout, "port_sharing: %s\n", val ? "yes" : "no");
 
   /* Dump the nodes.  */
   nodes = gdl_get_graph_node (graph);

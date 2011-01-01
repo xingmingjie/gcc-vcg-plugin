@@ -109,7 +109,7 @@ create_bb_graph (basic_block bb)
   g = gdl_new_graph (bb_graph_title[bb->index]);
   gdl_set_graph_label (g, bb_graph_label[bb->index]);
   gdl_set_graph_folding (g, 1);
-  gdl_set_graph_shape (g, GDL_ELLIPSE);
+  gdl_set_graph_shape (g, "ellipse");
 
   rewind (tmp_stream);
   gimple_dump_bb (bb, tmp_stream, 0, TDF_VOPS|TDF_MEMSYMS|TDF_BLOCKS);
