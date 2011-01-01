@@ -70,7 +70,8 @@
      display_edge_labels is set to yes. The label string may contain control
      characters, e.g. \n (newline character), that influence the size of the
      label, font color or style. See character set for more details. */
-  DEF_ATTR (edge, label, char *)
+
+DEF_ATTR (label, "label", const char *, GDL_CODE_STR_QUOTE, "")
      
   /* linestyle: Style, default is solid
      Specifies the style in which an edge is drawn. The following Styles are
@@ -91,7 +92,8 @@
            The edge consists of a solid double line
          * triple
            The edge consists of a solid triple line */
-  DEF_ATTR (edge, linestyle, enum gdl_linestyle)
+
+DEF_ATTR (linestyle, "linestyle", const char *, GDL_CODE_STR, "solid")
      
   /* priority: Int, default is 1
      Depending on the layout algorithm selected, the positions of the nodes may
@@ -103,12 +105,14 @@
   /* source: "String", no default value
      Specifies the title of the source (node or subgraph) of an edge. This
      attribute is mandatory for the edge specification. */
-  DEF_ATTR (edge, source, const char *)
+
+DEF_ATTR (source, "sourcename", const char *, GDL_CODE_STR, "")
      
   /* target: "String", no default value
      Specifies the title of the target (node or subgraph) of an edge. This
      attribute is mandatory for the edge specification. */
-  DEF_ATTR (edge, target, const char *)
+
+DEF_ATTR (target, "targetname", const char *, GDL_CODE_STR, "")
      
   /* textcolor: Color Entry, default is black
      Specifies the color of the text labels of an edge. For the available Color
@@ -116,5 +120,6 @@
      
   /* thickness: Int, default is 2
      Specifies the thickness of an edge. */
-  DEF_ATTR (edge, thickness, int)
+
+DEF_ATTR (thickness, "thickness", int, GDL_CODE_INT, 2)
 

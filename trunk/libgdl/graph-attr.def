@@ -87,8 +87,9 @@
   /* borderwidth: Int, default is 2
      Attribute of subgraphs
      Specifies the thickness of the border of a summary node in pixels. */
-  DEF_ATTR (graph, node_borderwidth, int)   
-  DEF_ATTR (graph, edge_thickness, int)   
+
+DEF_ATTR (node_borderwidth, "node.borderwidth", int, GDL_CODE_INT, 2)   
+DEF_ATTR (edge_thickness, "edge.thickness", int, GDL_CODE_INT, 2)   
      
   /* classname Int:"String", default is 1:"1", 2:"2", 3:"3", etc.
      Attributes of top-level graph
@@ -117,8 +118,9 @@
      of subgraphs respectively. This color is valid as the background color in
      summary nodes, boxes, clusters and as a wrapping color. For available
      Color Entries, see section Colors. See also textcolor and bordercolor. */
-  DEF_ATTR (graph, color, enum gdl_color)
-  DEF_ATTR (graph, node_color, enum gdl_color)
+
+DEF_ATTR (color, "color", const char *, GDL_CODE_STR, "white")
+DEF_ATTR (node_color, "node.color", const char *, GDL_CODE_STR, "white")
      
   /* colorentry Int: Int Int Int, no default value defined
      Attribute of top-level graph, subgraphs
@@ -451,7 +453,8 @@
      character), that influence the size of the node. See character set for
      more details. If no label is specified for a subgraph, the value of the
      title of the subgraph is used. */
-  DEF_ATTR (graph, label, const char *)
+
+DEF_ATTR (label, "label", const char *, GDL_CODE_STR_QUOTE, "")
      
   /*   late_edge_labels: yes or no, default is no
      Attribute of top-level graph, subgraphs
@@ -521,7 +524,7 @@
      gravity / crossing / overlapping / border
                o Boundary rectangle border x / y */
      
-     DEF_ATTR (graph, layout_algorithm, enum gdl_layout_algorithm)
+DEF_ATTR (layout_algorithm, "layout_algorithm", const char *, GDL_CODE_STR, "normal")
      
      /* layout_downfactor: Int, default is 1
      layout_nearfactor: Int, default is 1
@@ -617,12 +620,14 @@
      Attribute of subgraphs
      Specifies the horizontal and vertical offset between the border of a
      summary node and its label in pixels. Useful for rectangular nodes only. */
-  DEF_ATTR (graph, node_margin, int)   
+
+DEF_ATTR (node_margin, "node.margin", int, GDL_CODE_INT, 3)   
      
   /* near_edges: yes or no, default is yes
      Attribute of top-level graph, subgraphs
      no: All near edges are treated as normal edges in the graph layout. */
-  DEF_ATTR (graph, near_edges, int)
+
+DEF_ATTR (near_edges, "near_edges", const char *, GDL_CODE_STR, "yes")
      
   /* nodes: yes or no, default is yes
      Attribute of top-level graph
@@ -637,20 +642,18 @@
      of nodes at the horizontal reference line of levels. top means the tops of
      all nodes of a level have the same y coordinate. center means all nodes of
      a level are centered. bottom means the bottoms of all nodes of a level
-     have the same y coordinate.
+     have the same y coordinate.  */   
      
-     Top
-     
-     orientation: Orientation, default is top_to_bottom
+  /* orientation: Orientation, default is top_to_bottom
      Attribute of top-level graph, subgraphs
      Specifies the Orientation of the graph, the available Orientations being
      top_to_bottom, bottom_to_top, left_to_right, and right_to_left. All
      explanations in this section are given in relation to the default
-     orientation.
+     orientation.  */
      
-     Top
+DEF_ATTR (orientation, "orientation", const char *, GDL_CODE_STR, "top_to_bottom")   
      
-     outport_sharing: yes or no, default is no
+  /* outport_sharing: yes or no, default is no
      Attribute of top-level graph, subgraphs as of aiSee 2.1.89
      See port_sharing.
      
@@ -683,7 +686,8 @@
      this arrow head. This enables many edges to be located adjacent to one
      node without getting confused by too many arrow heads. If no port sharing
      is used, each edge gets its own port. See example. */
-  DEF_ATTR (graph, port_sharing, int)
+
+DEF_ATTR (port_sharing, "port_sharing", const char *, GDL_CODE_STR, "no")
      
   /* priority_phase: yes or no, default is no
      Attribute of top-level graph, subgraphs
@@ -779,8 +783,9 @@
          * uptrapeze
          * lparallelogram
          * rparallelogram */
-  DEF_ATTR (graph, shape, enum gdl_shape)
-  DEF_ATTR (graph, node_shape, enum gdl_shape)
+
+DEF_ATTR (shape, "shape", const char *, GDL_CODE_STR, "box")
+DEF_ATTR (node_shape, "node.shape", const char *, GDL_CODE_STR, "box")
      
   /* shrink: Int, default is 1
      stretch: Int, default is 1
@@ -834,7 +839,8 @@
      spline drawing routine is very slow. Splines are mainly used to prepare
      high-quality PostScript or SVG output for small graphs. See also
      splinefactor. */
-     DEF_ATTR (graph, splines, char *)
+
+DEF_ATTR (splines, "splines", const char *, GDL_CODE_STR, "yes")
      
      /* spreadlevel: Int, default is 1
      Attribute of top-level graph, subgraphs
@@ -876,7 +882,7 @@
      this value should appear only once in a graph specification. See also
      displaying node groups exclusively. */
 
-     DEF_ATTR (graph, folding, int)
+DEF_ATTR (folding, "folding", const char *, GDL_CODE_STR, "unfolded")
      
      /* straight_phase: yes or no, default is no
      Attribute of top-level graph, subgraphs
@@ -975,7 +981,8 @@
      the name of the file containing the graph specification is used. Since
      titles have to be unique throughout a graph specification, there can be
      only one subgraph at most without a title specification. */
-  DEF_ATTR (graph, title, const char *)
+
+DEF_ATTR (title, "title", const char *, GDL_CODE_STR, "")
      
   /* The name of a subgraph is used to identify it, so that the subgraph can be
      the source and target of an edge specification. These edges start or end
@@ -1040,7 +1047,8 @@
      because the source and target node of a near edge have to have the same
      level. In this case, the level specification of the source or the target
      node of the near edge is ignored. */
-DEF_ATTR (graph, vertical_order, int)
+
+DEF_ATTR (vertical_order, "vertical_order", int, GDL_CODE_INT, -1)
    
      /* view: Mode, default is normal, i.e. no fish-eye view
      Attribute of top-level graph
