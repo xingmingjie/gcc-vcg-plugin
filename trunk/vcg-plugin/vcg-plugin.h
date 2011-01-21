@@ -39,6 +39,9 @@ typedef struct
   char *plugin_name;
   char *vcg_viewer;
   char *temp_file_name;
+  void (*init) (void);
+  void (*tag) (char *str);
+  void (*finish) (void);
   void (*error) (const char *format, ...);
   void (*show) (char *fname);
 } vcg_plugin_common_t;
