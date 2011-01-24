@@ -54,7 +54,10 @@ static const char *ts_enum_names[] = {
 static int title_id;
 struct obstack str_obstack;
 
-static gdl_node *create_tree_node (gdl_graph *graph, tree tn, int nested_level);
+static htab_t tree_table;
+
+static gdl_node *create_tree_node (gdl_graph *graph, tree tn, char *name,
+                                   int nested_level);
 
 /* Create gdl edge and add it into GRAPH.  SN is source node,
    TN is target node.  */
@@ -81,7 +84,7 @@ create_common_node (gdl_graph *graph, void *common,
   char buf[256];
   char *title, *label;
 
-  if (common == NULL || nested_level > 10)
+  if (common == NULL)
     return NULL;
 
   sprintf (buf, "node.%d", title_id++);
@@ -89,8 +92,23 @@ create_common_node (gdl_graph *graph, void *common,
   vcg_plugin_common.tag (title);
   node = gdl_new_node (title);
   gdl_add_node (graph, node);
-  gdl_set_node_label (node, ts_enum_names[tns]);
-  gdl_set_node_shape (node, "ellipse");
+
+  /* Avoid nested level is too deep.  */
+  if (nested_level > 10)
+    {
+      gdl_set_node_label (node, "...");
+      return node;
+    }
+
+  sprintf (buf, "common\n");
+  obstack_grow (&str_obstack, buf, strlen (buf));
+  sprintf (buf, "----------\n");
+  obstack_grow (&str_obstack, buf, strlen (buf));
+  sprintf (buf, "%s", ts_enum_names[tns]);
+  obstack_grow (&str_obstack, buf, strlen (buf));
+  obstack_1grow (&str_obstack, '\0');
+  label = obstack_finish (&str_obstack);
+  gdl_set_node_label (node, label);
 
   switch (tns)
     {
@@ -99,11 +117,11 @@ create_common_node (gdl_graph *graph, void *common,
       
     case TS_COMMON:
       #define tx (*(struct tree_common *) common)
-      anode = create_common_node (graph, &tx.base, TS_BASE, nested_level + 1);
+      //anode = create_common_node (graph, &tx.base, TS_BASE, nested_level + 1);
+      //create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.chain, "chain", nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.chain, nested_level + 1);
-      create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.type, nested_level + 1);
+      anode = create_tree_node (graph, tx.type, "type", nested_level + 1);
       create_edge (graph, node, anode);
       #undef tx
       break;
@@ -123,9 +141,9 @@ create_common_node (gdl_graph *graph, void *common,
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.name, nested_level + 1);
+      anode = create_tree_node (graph, tx.name, "name", nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.context, nested_level + 1);
+      anode = create_tree_node (graph, tx.context, "context", nested_level + 1);
       create_edge (graph, node, anode);
       #undef tx
       break;
@@ -135,15 +153,15 @@ create_common_node (gdl_graph *graph, void *common,
       anode = create_common_node (graph, &tx.common, TS_DECL_MINIMAL,
                                   nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.size, nested_level + 1);
+      anode = create_tree_node (graph, tx.size, "size", nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.size_unit, nested_level + 1);
+      anode = create_tree_node (graph, tx.size_unit, "size_unit", nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.initial, nested_level + 1);
+      anode = create_tree_node (graph, tx.initial, "initial", nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.attributes, nested_level + 1);
+      anode = create_tree_node (graph, tx.attributes, "attributes", nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.abstract_origin, nested_level + 1);
+      anode = create_tree_node (graph, tx.abstract_origin, "abstract_origin", nested_level + 1);
       create_edge (graph, node, anode);
       #undef tx
       break;
@@ -161,13 +179,13 @@ create_common_node (gdl_graph *graph, void *common,
       anode = create_common_node (graph, &tx.common, TS_DECL_WITH_VIS,
                                   nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.saved_tree, nested_level + 1);
+      anode = create_tree_node (graph, tx.saved_tree, "saved_tree", nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.arguments, nested_level + 1);
+      anode = create_tree_node (graph, tx.arguments, "arguments", nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.result, nested_level + 1);
+      anode = create_tree_node (graph, tx.result, "result", nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.vindex, nested_level + 1);
+      anode = create_tree_node (graph, tx.vindex, "vindex", nested_level + 1);
       create_edge (graph, node, anode);
       #undef tx
       break;
@@ -177,11 +195,11 @@ create_common_node (gdl_graph *graph, void *common,
       anode = create_common_node (graph, &tx.common, TS_DECL_WRTL,
                                   nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.assembler_name, nested_level + 1);
+      anode = create_tree_node (graph, tx.assembler_name, "assembler_name", nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.section_name, nested_level + 1);
+      anode = create_tree_node (graph, tx.section_name, "section_name", nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.comdat_group, nested_level + 1);
+      anode = create_tree_node (graph, tx.comdat_group, "comdat_group", nested_level + 1);
       create_edge (graph, node, anode);
       #undef tx
       break;
@@ -218,14 +236,15 @@ create_common_node (gdl_graph *graph, void *common,
    for the current nested level for gcc tree structure data.  */
 
 static gdl_node *
-create_tree_node (gdl_graph *graph, tree tn, int nested_level)
+create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
 {
   gdl_node *node, *anode;
   enum tree_node_structure_enum tns;
   char buf[256];
   char *title, *label;
+  void **slot;
 
-  if (tn == 0 || nested_level > 10)
+  if (tn == 0)
     return NULL;
 
   sprintf (buf, "node.%d", title_id++);
@@ -234,14 +253,24 @@ create_tree_node (gdl_graph *graph, tree tn, int nested_level)
   node = gdl_new_node (title);
   gdl_add_node (graph, node);
 
+  /* Avoid nested level is too deep.  */
+  if (nested_level > 10)
+    {
+      gdl_set_node_label (node, "...");
+      return node;
+    }
+
   tns = tree_node_structure (tn);
   
-  sprintf (buf, "tree: 0x%x\n", tn);
-  obstack_grow (&str_obstack, buf, strlen (buf));
-  sprintf (buf, "type: %s\n", ts_enum_names[tns]);
+  sprintf (buf, "%s\n", name);
   obstack_grow (&str_obstack, buf, strlen (buf));
   sprintf (buf, "----------\n");
   obstack_grow (&str_obstack, buf, strlen (buf));
+  sprintf (buf, "addr: 0x%x\n", tn);
+  obstack_grow (&str_obstack, buf, strlen (buf));
+  sprintf (buf, "type: %s", ts_enum_names[tns]);
+  obstack_grow (&str_obstack, buf, strlen (buf));
+
   switch (tns)
     {
     case TS_BASE:
@@ -258,16 +287,16 @@ create_tree_node (gdl_graph *graph, tree tn, int nested_level)
       anode = create_common_node (graph, &tx.base, TS_BASE,
                                   nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.chain, nested_level + 1);
+      anode = create_tree_node (graph, tx.chain, "chain", nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.type, nested_level + 1);
+      anode = create_tree_node (graph, tx.type, "type", nested_level + 1);
       create_edge (graph, node, anode);
       #undef tx
       break;
       
     case TS_INT_CST:
       #define tx tn->int_cst
-      sprintf (buf, "int_cst = %ld", tx.int_cst);
+      sprintf (buf, "\nvalue: %ld", tx.int_cst);
       obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
@@ -307,7 +336,7 @@ create_tree_node (gdl_graph *graph, tree tn, int nested_level)
       
     case TS_IDENTIFIER:
       #define tx tn->identifier
-      sprintf (buf, "id = 0x%x", tx.id);
+      sprintf (buf, "\nvalue: %s", tx.id.str);
       obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
@@ -362,7 +391,7 @@ create_tree_node (gdl_graph *graph, tree tn, int nested_level)
       
     case TS_PARM_DECL:
       #define tx tn->parm_decl
-      sprintf (buf, "ann = 0x%x", tx.ann);
+      sprintf (buf, "\nann = 0x%x", tx.ann);
       obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
@@ -381,7 +410,7 @@ create_tree_node (gdl_graph *graph, tree tn, int nested_level)
       
     case TS_RESULT_DECL:
       #define tx tn->result_decl
-      sprintf (buf, "ann = 0x%x", tx.ann);
+      sprintf (buf, "\nann = 0x%x", tx.ann);
       obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
@@ -406,7 +435,19 @@ create_tree_node (gdl_graph *graph, tree tn, int nested_level)
       
     case TS_FUNCTION_DECL:
       #define tx tn->function_decl
-      sprintf (buf, "f = 0x%x", tx.f);
+      if (htab_find (tree_table, tn))
+        {
+          sprintf (buf, "\nduplicated");
+          obstack_grow (&str_obstack, buf, strlen (buf));
+          obstack_1grow (&str_obstack, '\0');
+          label = obstack_finish (&str_obstack);
+          gdl_set_node_label (node, label);
+
+          return node;
+        }
+      slot = htab_find_slot (tree_table, tn, INSERT);
+      *slot = tn;
+      sprintf (buf, "\nf = 0x%x", tx.f);
       obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
@@ -414,15 +455,21 @@ create_tree_node (gdl_graph *graph, tree tn, int nested_level)
       anode = create_common_node (graph, &tx.common, TS_DECL_NON_COMMON,
                                   nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.personality, nested_level + 1);
+      anode = create_tree_node (graph, tx.personality, "personality", nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.function_specific_target,
+      anode = create_tree_node (graph, tx.function_specific_target, "function_specific_target",
                                 nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.function_specific_optimization,
+      anode = create_tree_node (graph, tx.function_specific_optimization, "function_specific_optimization",
                                 nested_level + 1);
       create_edge (graph, node, anode);
       #undef tx
+      break;
+      
+    case TS_TRANSLATION_UNIT_DECL:
+      obstack_1grow (&str_obstack, '\0');
+      label = obstack_finish (&str_obstack);
+      gdl_set_node_label (node, label);
       break;
       
     case TS_TYPE:
@@ -457,7 +504,7 @@ create_tree_node (gdl_graph *graph, tree tn, int nested_level)
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
       create_edge (graph, node, anode);
-      anode = create_tree_node (graph, tx.var, nested_level + 1);
+      anode = create_tree_node (graph, tx.var, "var", nested_level + 1);
       create_edge (graph, node, anode);
       #undef tx
       break;
@@ -519,7 +566,7 @@ create_tree_graph (tree tn)
   gdl_set_graph_edge_thickness (graph, 1);
   gdl_set_graph_splines (graph, "yes");
 
-  create_tree_node (graph, tn, 0);
+  create_tree_node (graph, tn, "tree", 0);
 
   return graph;
 }
@@ -540,13 +587,15 @@ dump_tree_to_file (char *fname, tree node)
 
   obstack_init (&str_obstack);
   title_id = 1;
+  tree_table = htab_create (32, htab_hash_pointer, htab_eq_pointer, NULL);
 
   graph = create_tree_graph (node);
   gdl_dump_graph (fp, graph);
   gdl_free_graph (graph);
 
-  obstack_free (&str_obstack, NULL);
   fclose (fp);
+  obstack_free (&str_obstack, NULL);
+  htab_delete (tree_table);
 }
 
 /* Public function to dump a gcc tree NODE.  */
