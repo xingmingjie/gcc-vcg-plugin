@@ -54,6 +54,7 @@ static const char *ts_names[] = {
   "tree_complex",
   "tree_identifier",
   "tree_decl_minimal",
+  "tree_decl_common",
   "tree_decl_with_rtl",
   "tree_decl_non_common",
   "tree_decl_with_vis",
@@ -135,7 +136,7 @@ create_common_node (gdl_graph *graph, void *common,
   obstack_grow (&str_obstack, buf, strlen (buf));
   sprintf (buf, "name: common\n");
   obstack_grow (&str_obstack, buf, strlen (buf));
-  sprintf (buf, "addr: 0x%x", common);
+  sprintf (buf, "addr: 0x%x", (unsigned) common);
   obstack_grow (&str_obstack, buf, strlen (buf));
   obstack_1grow (&str_obstack, '\0');
   label = obstack_finish (&str_obstack);
@@ -148,8 +149,8 @@ create_common_node (gdl_graph *graph, void *common,
       
     case TS_COMMON:
       #define tx (*(struct tree_common *) common)
-      //anode = create_common_node (graph, &tx.base, TS_BASE, nested_level + 1);
-      //create_edge (graph, node, anode);
+      anode = create_common_node (graph, &tx.base, TS_BASE, nested_level + 1);
+      create_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.chain, "chain", nested_level + 1);
       create_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.type, "type", nested_level + 1);
@@ -300,7 +301,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
   obstack_grow (&str_obstack, buf, strlen (buf));
   sprintf (buf, "name: %s\n", name);
   obstack_grow (&str_obstack, buf, strlen (buf));
-  sprintf (buf, "addr: 0x%x", tn);
+  sprintf (buf, "addr: 0x%x", (unsigned) tn);
   obstack_grow (&str_obstack, buf, strlen (buf));
 
   switch (tns)
@@ -341,7 +342,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       
     case TS_REAL_CST:
       #define tx tn->real_cst
-      sprintf (buf, "\nreal_cst_ptr: 0x%x", tx.real_cst_ptr);
+      sprintf (buf, "\nreal_cst_ptr: 0x%x", (unsigned) tx.real_cst_ptr);
       obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
@@ -354,7 +355,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       
     case TS_FIXED_CST:
       #define tx tn->fixed_cst
-      sprintf (buf, "\nfixed_cst_ptr: 0x%x", tx.fixed_cst_ptr);
+      sprintf (buf, "\nfixed_cst_ptr: 0x%x", (unsigned) tx.fixed_cst_ptr);
       obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
@@ -380,9 +381,17 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       break;
       
     case TS_STRING:
+      #define tx tn->string
+      sprintf (buf, "\nvalue: ");
+      strncat (buf, tx.str, tx.length);
+      obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
       gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_edge (graph, node, anode);
+      #undef tx
       break;
       
     case TS_COMPLEX:
@@ -414,29 +423,9 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       break;
       
     case TS_DECL_MINIMAL:
-      obstack_1grow (&str_obstack, '\0');
-      label = obstack_finish (&str_obstack);
-      gdl_set_node_label (node, label);
-      break;
-      
     case TS_DECL_COMMON:
-      obstack_1grow (&str_obstack, '\0');
-      label = obstack_finish (&str_obstack);
-      gdl_set_node_label (node, label);
-      break;
-      
     case TS_DECL_WRTL:
-      obstack_1grow (&str_obstack, '\0');
-      label = obstack_finish (&str_obstack);
-      gdl_set_node_label (node, label);
-      break;
-      
     case TS_DECL_NON_COMMON:
-      obstack_1grow (&str_obstack, '\0');
-      label = obstack_finish (&str_obstack);
-      gdl_set_node_label (node, label);
-      break;
-      
     case TS_DECL_WITH_VIS:
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
@@ -457,7 +446,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       
     case TS_PARM_DECL:
       #define tx tn->parm_decl
-      sprintf (buf, "\nann = 0x%x", tx.ann);
+      sprintf (buf, "\nann = 0x%x", (unsigned) tx.ann);
       obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
@@ -469,14 +458,21 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       break;
       
     case TS_LABEL_DECL:
+      #define tx tn->result_decl
+      sprintf (buf, "\nann = 0x%x", (unsigned) tx.ann);
+      obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
       gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_DECL_WRTL,
+                                  nested_level + 1);
+      create_edge (graph, node, anode);
+      #undef tx
       break;
       
     case TS_RESULT_DECL:
       #define tx tn->result_decl
-      sprintf (buf, "\nann = 0x%x", tx.ann);
+      sprintf (buf, "\nann = 0x%x", (unsigned) tx.ann);
       obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
@@ -513,7 +509,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
         }
       slot = htab_find_slot (tree_table, tn, INSERT);
       *slot = tn;
-      sprintf (buf, "\nf = 0x%x", tx.f);
+      sprintf (buf, "\nf = 0x%x", (unsigned) tx.f);
       obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
@@ -535,15 +531,20 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       break;
       
     case TS_TRANSLATION_UNIT_DECL:
+      #define tx tn->translation_unit_decl
+      sprintf (buf, "\nlanguage: %s", tx.language);
+      obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
       gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_DECL_COMMON,
+                                  nested_level + 1);
+      create_edge (graph, node, anode);
+      #undef tx
       break;
       
     case TS_TYPE:
       #define tx tn->type
-      sprintf (buf, "\nlang_specific: 0x%x", tx.lang_specific);
-      obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
       gdl_set_node_label (node, label);
@@ -586,9 +587,18 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       break;
       
     case TS_LIST:
+      #define tx tn->list
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
       gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.purpose, "purpose", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.value, "value", nested_level + 1);
+      create_edge (graph, node, anode);
+      #undef tx
       break;
       
     case TS_VEC:
@@ -609,9 +619,16 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       break;
       
     case TS_EXP:
+      #define tx tn->exp
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
       gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.block, "block", nested_level + 1);
+      create_edge (graph, node, anode);
+      #undef tx
       break;
       
     case TS_SSA_NAME:
@@ -637,43 +654,113 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       create_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.vars, "vars", nested_level + 1);
       create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.subblocks, "subblocks", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.supercontext, "supercontext", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.abstract_origin, "abstract_origin", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.fragment_origin, "fragment_origin", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.fragment_chain, "fragment_chain", nested_level + 1);
+      create_edge (graph, node, anode);
       #undef tx
       break;
       
     case TS_BINFO:
+      #define tx tn->binfo
+      sprintf (buf, "\nbase_binfos: 0x%x", (unsigned) &tx.base_binfos);
+      obstack_grow (&str_obstack, buf, strlen (buf));
+      sprintf (buf, "\nbase_accesses: 0x%x", (unsigned) &tx.base_accesses);
+      obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
       gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.offset, "offset", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.vtable, "vtable", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.virtuals, "virtuals", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.vptr_field, "vptr_field", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.inheritance, "inheritance", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.vtt_subvtt, "vtt_subvtt", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.vtt_vptr, "vtt_vptr", nested_level + 1);
+      create_edge (graph, node, anode);
+      #undef tx
       break;
       
     case TS_STATEMENT_LIST:
+      #define tx tn->stmt_list
+      sprintf (buf, "\nhead: 0x%x", (unsigned) tx.head);
+      obstack_grow (&str_obstack, buf, strlen (buf));
+      sprintf (buf, "\ntail: 0x%x", (unsigned) tx.tail);
+      obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
       gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_edge (graph, node, anode);
+      #undef tx
       break;
       
     case TS_CONSTRUCTOR:
+      #define tx tn->constructor
+      sprintf (buf, "\nelts: 0x%x", (unsigned) tx.elts);
+      obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
       gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_edge (graph, node, anode);
+      #undef tx
       break;
       
     case TS_OMP_CLAUSE:
+      #define tx tn->omp_clause
+      sprintf (buf, "\ncode: 0x%x", tx.code);
+      obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
       gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_edge (graph, node, anode);
+      #undef tx
       break;
       
     case TS_OPTIMIZATION:
+      #define tx tn->optimization
+      sprintf (buf, "\nopts: 0x%x", (unsigned) &tx.opts);
+      obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
       gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_edge (graph, node, anode);
+      #undef tx
       break;
       
     case TS_TARGET_OPTION:
+      #define tx tn->target_option
+      sprintf (buf, "\nopts: 0x%x", (unsigned) &tx.opts);
+      obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
       gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_edge (graph, node, anode);
+      #undef tx
       break;
     }
   return node;
