@@ -41,6 +41,8 @@ create_node_and_edges (gdl_graph *graph, struct cgraph_node *node)
   for (edge = node->callees; edge; edge = edge->next_callee)
     {
       title_a = cgraph_node_name (edge->callee);
+      if (gdl_find_edge (graph, title, title_a))
+        continue;
       edge_g = gdl_new_edge (title, title_a);
       gdl_add_edge (graph, edge_g);
     }
@@ -54,6 +56,9 @@ create_cgraph (void)
   gdl_node *node_g;
 
   graph = gdl_new_graph ("call graph");
+  gdl_set_graph_node_borderwidth (graph, 1);
+  gdl_set_graph_edge_thickness (graph, 1);
+  gdl_set_graph_splines (graph, "yes");
 
   for (node = cgraph_nodes; node; node = node->next)
     create_node_and_edges (graph, node);
