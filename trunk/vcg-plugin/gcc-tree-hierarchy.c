@@ -15,33 +15,15 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */ 
 
-#include <config.h>
-
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 
 #include "gcc-plugin.h"
 #include "plugin.h"
 #include "plugin-version.h"
 
-#include "system.h"
-#include "coretypes.h"
-#include "tm.h"
-#include "toplev.h"
-#include "gimple.h"
-#include "tree-pass.h"
-#include "rtl.h"
-#include "intl.h"
-#include "langhooks.h"
-#include "cfghooks.h"
-#include "version.h" /* for printing gcc version number in graph */
-
 #include "vcg-plugin.h"
-#include "tree.h"
 
 /* Create the tree hierarchy graph.  */
 
