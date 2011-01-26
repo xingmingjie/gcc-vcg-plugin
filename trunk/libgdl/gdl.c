@@ -193,9 +193,27 @@ gdl_find_subgraph (gdl_graph *graph, char *title)
   gdl_graph *subgraphs, *subgraph;
   
   subgraphs = gdl_get_graph_subgraph (graph);
-  for (subgraph = subgraphs; subgraph != NULL; subgraph = subgraph->next)
+  for (subgraph = subgraphs; subgraph; subgraph = subgraph->next)
     if (!strcmp (gdl_get_graph_title (subgraph), title))
       return subgraph;
+
+  return NULL;
+}
+
+gdl_edge *
+gdl_find_edge (gdl_graph *graph, char *src, char *dest)
+{
+  gdl_edge *edges, *edge;
+  char *srcname, *destname;
+
+  edges = gdl_get_graph_edge (graph); 
+  for (edge = edges; edge; edge = edge->next)
+    {
+      srcname = gdl_get_edge_source (edge);
+      destname = gdl_get_edge_target (edge);
+      if (!strcmp (srcname, src) && !strcmp (destname, dest))
+        return edge;
+    }
 
   return NULL;
 }
