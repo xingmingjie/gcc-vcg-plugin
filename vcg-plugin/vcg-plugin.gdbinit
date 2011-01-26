@@ -16,6 +16,22 @@ Usage: dump-function <function decl tree>
 Dump the control flow graph of FUNCTION_DECL_TREE.
 end
 
+define view-cgraph
+  call vcg_plugin_view_cgraph ()
+end
+document view-cgraph
+Usage: view-cgraph
+View the call graph.
+end
+
+define dump-cgraph
+  call vcg_plugin_dump_cgraph ()
+end
+document dump-cgraph
+Usage: dump-cgraph
+Dump the call graph.
+end
+
 define view-tree
   call vcg_plugin_view_tree ($arg0)
 end

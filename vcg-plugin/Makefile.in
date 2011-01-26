@@ -88,8 +88,9 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
 vcg_plugin_la_DEPENDENCIES = ../libgdl/libgdl.la
-am_vcg_plugin_la_OBJECTS = gcc-plugin-api.lo gcc-function.lo \
-	gcc-tree.lo gcc-tree-hierarchy.lo vcg-plugin.lo
+am_vcg_plugin_la_OBJECTS = gcc-cgraph.lo gcc-plugin-api.lo \
+	gcc-function.lo gcc-tree.lo gcc-tree-hierarchy.lo \
+	vcg-plugin.lo
 vcg_plugin_la_OBJECTS = $(am_vcg_plugin_la_OBJECTS)
 vcg_plugin_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
@@ -231,6 +232,7 @@ AM_CFLAGS = -Wall
 pkglib_LTLIBRARIES = vcg-plugin.la
 EXTRA_DIST = vcg-plugin.gdbinit
 vcg_plugin_la_SOURCES = \
+	gcc-cgraph.c \
 	gcc-plugin-api.c \
 	gcc-function.c \
 	gcc-tree.c \
@@ -313,6 +315,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcc-cgraph.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcc-function.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcc-plugin-api.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcc-tree-hierarchy.Plo@am__quote@
