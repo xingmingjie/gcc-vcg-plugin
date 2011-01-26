@@ -15,22 +15,15 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-#include <config.h>
-
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 
 #include "gcc-plugin.h"
 #include "plugin.h"
 #include "plugin-version.h"
-#include "libiberty.h"
 
 #include "vcg-plugin.h"
-#include "gdl.h"
 
 static const char *function_name;
 static char buf[32]; /* Should be enough.  */
