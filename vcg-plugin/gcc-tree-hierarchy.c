@@ -148,7 +148,6 @@ vcg_plugin_dump_tree_hierarchy (void)
 {
   char *fname = "dump-tree-hierarchy.vcg";
 
-  /* Get the temp file name.  */
   dump_tree_hierarchy_to_file (fname);
 }
 

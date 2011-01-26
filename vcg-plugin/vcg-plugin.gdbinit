@@ -64,3 +64,19 @@ Usage: dump-tree-hierarchy
 Dump the graph of gcc tree structure hierarchy.
 end
 
+define view-gimple-hierarchy
+  call vcg_plugin_view_gimple_hierarchy ()
+end
+document view-gimple-hierarchy
+Usage: view-gimple-hierarchy
+View the graph of gcc gimple statement structure hierarchy.
+end
+
+define dump-gimple-hierarchy
+  call vcg_plugin_dump_gimple_hierarchy ()
+end
+document dump-gimple-hierarchy
+Usage: dump-gimple-hierarchy
+Dump the graph of gcc gimple statement structure hierarchy.
+end
+
