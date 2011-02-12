@@ -25,11 +25,11 @@ Dump the graph of gcc gimple statement structure hierarchy.
 end
 
 define dump-passes
-  call vcg_plugin_dump_passes ()
+  call vcg_plugin_dump_passes ($arg0)
 end
 document dump-passes
-Usage: dump-passes
-Dump the graph of gcc passes.
+Usage: dump-passes PASSES
+Dump the graph of PASSES.
 end
 
 define dump-tree
@@ -73,11 +73,11 @@ View the graph of gcc gimple statement structure hierarchy.
 end
 
 define view-passes
-  call vcg_plugin_view_passes ()
+  call vcg_plugin_view_passes ($arg0)
 end
 document view-passes
-Usage: view-passes
-View the graph of gcc passes.
+Usage: view-passes PASSES
+View the graph of PASSES.
 end
 
 define view-tree

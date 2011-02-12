@@ -27,17 +27,6 @@
 
 static int id;
 
-static void
-create_passes_graph_2 (gdl_graph *graph, struct opt_pass *passes)
-{
-  gdl_graph *subgraph;
-  gdl_node *node;
-  gdl_edge *edge;
-  char *src, *dest;
-  struct opt_pass *pass;
-
-}
-
 static gdl_graph *
 create_passes_graph_1 (gdl_graph *graph, struct opt_pass *passes, char *name)
 {
@@ -79,7 +68,7 @@ create_passes_graph_1 (gdl_graph *graph, struct opt_pass *passes, char *name)
 /* Create the passes graph.  */
 
 static gdl_graph *
-create_passes_graph (void)
+create_passes_graph (struct opt_pass *passes)
 {
   gdl_graph *graph;
   gdl_graph *subgraph;
@@ -88,17 +77,13 @@ create_passes_graph (void)
   gdl_set_graph_node_borderwidth (graph, 1);
   gdl_set_graph_edge_thickness (graph, 1);
 
-  create_passes_graph_1 (graph, all_passes, "all_passes");
-  create_passes_graph_1 (graph, all_small_ipa_passes, "all_small_ipa_passes");
-  create_passes_graph_1 (graph, all_lowering_passes, "all_lowering_passes");
-  create_passes_graph_1 (graph, all_regular_ipa_passes, "all_regular_ipa_passes");
-  create_passes_graph_1 (graph, all_lto_gen_passes, "all_lto_gen_passes");
+  create_passes_graph_1 (graph, passes, "passes");
 
   return graph;
 }
 
 static void
-dump_passes_to_file (char *fname)
+dump_passes_to_file (char *fname, struct opt_pass *passes)
 {
   FILE *fp;
   gdl_graph *graph;
@@ -111,7 +96,7 @@ dump_passes_to_file (char *fname)
 
   id = 0;
 
-  graph = create_passes_graph ();
+  graph = create_passes_graph (passes);
   gdl_dump_graph (fp, graph);
   gdl_free_graph (graph);
 
@@ -121,23 +106,23 @@ dump_passes_to_file (char *fname)
 /* Public function to dump the gcc passes.  */
 
 void
-vcg_plugin_dump_passes (void)
+vcg_plugin_dump_passes (struct opt_pass *passes)
 {
   char *fname = "dump-passes.vcg";
 
-  dump_passes_to_file (fname);
+  dump_passes_to_file (fname, passes);
 }
 
 /* Public function to view the gcc passes.  */
 
 void
-vcg_plugin_view_passes (void)
+vcg_plugin_view_passes (struct opt_pass *passes)
 {
   char *fname;
 
   /* Get the temp file name.  */
   fname = vcg_plugin_common.temp_file_name;
-  dump_passes_to_file (fname);
+  dump_passes_to_file (fname, passes);
   vcg_plugin_common.show (fname);
 }
 
