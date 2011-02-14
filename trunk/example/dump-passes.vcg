@@ -1,0 +1,21 @@
+graph: {
+node.borderwidth: 1
+edge.thickness: 1
+title: "passes"
+graph: {
+label: "passes"
+title: "0"
+node: {
+label: "*build_cgraph_edges"
+title: "1"
+}
+node: {
+label: "inline_param"
+title: "2"
+}
+edge: {
+sourcename: "1"
+targetname: "2"
+}
+}
+}
