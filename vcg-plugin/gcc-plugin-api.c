@@ -1,6 +1,6 @@
 /* GCC plugin APIs.
 
-   Copyright (C) 2009, 2010 Mingjie Xing, mingjie.xing@gmail.com. 
+   Copyright (C) 2009, 2010, 2011 Mingjie Xing, mingjie.xing@gmail.com. 
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -52,8 +52,8 @@ plugin_init (struct plugin_name_args *plugin_info,
   int argc = plugin_info->argc;
   struct plugin_argument *argv = plugin_info->argv;
 
-  if (!plugin_default_version_check (version, &gcc_version))
-    return 1;
+  //if (!plugin_default_version_check (version, &gcc_version))
+  //  return 1;
 
   /* Initialize the vcg plugin */
   for (i = 0; i < argc; i++)

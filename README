@@ -1,7 +1,7 @@
 # This package includes a gcc plugin, which can be loaded when debugging gcc,
-# to show cfg graphicailly.
+# to show internal structures graphically.
 #
-# Copyright (C) 2009, 2010 Mingjie Xing, mingjie.xing@gmail.com. 
+# Copyright (C) 2009, 2010, 2011 Mingjie Xing, mingjie.xing@gmail.com. 
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,8 +26,7 @@ The source code can be downloaded from http://code.google.com/p/gcc-vcg-plugin.
 # Install #
 ###########
 
-The plugin requires gcc-4.5.0 version or later, which supports the plugin
-features. To install it, run the following commands,
+The plugin requires gcc-4.5.0 version or later, which supports the plugin features. To install it, run the following commands,
 
 mkdir build-vcg-plugin 
 cd build-vcg-plugin
@@ -39,23 +38,13 @@ make install
 # Usage #
 #########
 
-First, a vcg viewer tool is required. See http://code.google.com/p/vcgviewer
-or http://www.absint.com/aisee. 
+First, a vcg viewer tool is required. See http://code.google.com/p/vcgviewer or http://www.absint.com/aisee. 
 
-The pre-defined vcg plugin commands can be used. Rename file
-"vcg-plugin.gdbinit" to ".gdbinit" or add "source vcg-plugin.gdbinit"
-in your original ".gdbinit".
+The pre-defined vcg plugin commands can be used. Rename file "vcg-plugin.gdbinit" to ".gdbinit" or add "source vcg-plugin.gdbinit" in your original ".gdbinit".
 
-Here's an example about how to use vcg-plugin in gdb: 
+You can use -fplugin-arg-vcg-viewer=vcgview (xvcg, or aisee3) to select vcg viewer, default is vcgview. 
 
-  gdb -q -args /path/to/cc1 test.c -fplugin=/path/to/vcg-plugin.so -O2 
-
-  gdb) b a_point_of_gimple_pass 
-  gdb) r 
-  gdb) view_function current_function_decl
-
-Also, you can use -fplugin-arg-vcg-viewer=vcgview (xvcg, or aisee3) to select vcg
-viewer, default is vcgview. 
+There is an example in "example" directory. 
 
 ##############
 # Bug report #

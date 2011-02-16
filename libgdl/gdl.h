@@ -1,6 +1,6 @@
 /* The structures according to graph description language (gdl).
 
-   Copyright (C) 2009, 2010 Mingjie Xing, mingjie.xing@gmail.com. 
+   Copyright (C) 2009, 2010, 2011 Mingjie Xing, mingjie.xing@gmail.com. 
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -104,6 +104,8 @@ struct gdl_node_
 {
   gdl_attr attr[GDL_NODE_ATTR_MAX];
   gdl_node *next;
+  /* The graph who it belongs to.  */
+  gdl_graph *parent;
 };
 
 struct gdl_edge_
@@ -123,6 +125,8 @@ struct gdl_graph_
   gdl_edge *edge;
   gdl_edge *last_edge;
   gdl_graph *next;
+  /* The graph who it belongs to.  */
+  gdl_graph *parent;
 };
 
 /* Functions to get the attributes.  */
@@ -198,6 +202,18 @@ static inline gdl_graph *
 gdl_get_graph_subgraph (gdl_graph *graph)
 {
   return graph->subgraph;
+}
+
+static inline gdl_graph *
+gdl_get_graph_parent (gdl_graph *graph)
+{
+  return graph->parent;
+}
+
+static inline gdl_graph *
+gdl_get_node_parent (gdl_node *node)
+{
+  return node->parent;
 }
 
 extern gdl_graph *gdl_new_graph (const char *title); 
