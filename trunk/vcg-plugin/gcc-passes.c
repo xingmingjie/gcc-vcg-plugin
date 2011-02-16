@@ -25,65 +25,168 @@
 
 #include "vcg-plugin.h"
 
-static int id;
-
-static gdl_graph *
-create_passes_graph_1 (gdl_graph *graph, struct opt_pass *passes, char *name)
+#define DEF_PASS_LIST(LIST) #LIST,
+/* Pass list names.  */
+static const char *pass_list_name[] =
 {
-  gdl_graph *subgraph, *g;
-  gdl_node *node;
-  gdl_edge *edge;
-  char *title, *prev_title = NULL;
-  struct opt_pass *pass;
+  GCC_PASS_LISTS
+  NULL
+};
+#undef DEF_PASS_LIST
 
-  asprintf (&title, "%d", id++);
+/*  */
+static int which_pass_list;
+static int id = 0;
+
+/* Point to the focused pass.  */
+static struct opt_pass *this_pass = NULL;
+static gdl_node *this_node = NULL;
+
+static void
+check_this_pass (struct opt_pass *pass, gdl_node *node)
+{
+  if (pass == this_pass)
+    this_node = node;
+}
+
+static void
+try_create_edge (gdl_graph *graph, gdl_node *src, gdl_node *dest)
+{
+  gdl_edge *edge;
+  char *src_title, *dest_title;
+
+  if (src == NULL)
+    return;
+
+  src_title = gdl_get_node_title (src);
+  dest_title = gdl_get_node_title (dest);
+  edge = gdl_new_edge (src_title, dest_title);
+  gdl_add_edge (graph, edge);
+} 
+
+static gdl_node *
+create_sub_pass_list_graph (gdl_graph *graph, struct opt_pass *pass_list,
+                            char *name, gdl_node *prev_node)
+{
+  gdl_graph *subgraph;
+  gdl_node *node;
+  char *title;
+  struct opt_pass *pass = pass_list;
+
+  asprintf (&title, "%s.%d", name, id++);
   subgraph = gdl_new_graph (title);
   gdl_set_graph_label (subgraph, name);
+  gdl_set_graph_folding (subgraph, 1);
+  gdl_set_graph_shape (subgraph, "ellipse");
+  gdl_set_graph_color (subgraph, "lightgrey");
   gdl_add_subgraph (graph, subgraph);
 
-  for (pass = passes; pass; pass = pass->next)
+  if (pass->execute)
+    {
+      asprintf (&title, "%s.%d", name, id++);
+      node = gdl_new_node (title);
+      check_this_pass (pass, node);
+      gdl_set_node_label (node, name);
+      gdl_add_node (subgraph, node);
+      try_create_edge (subgraph, prev_node, node);
+      prev_node = node;
+    }
+
+  for (pass = pass->sub; pass; pass = pass->next)
     {
       if (pass->sub)
         {
-          g = create_passes_graph_1 (subgraph, pass->sub, pass->name);
-          title = gdl_get_graph_title (g);
+          prev_node = create_sub_pass_list_graph (subgraph, pass, pass->name,
+                                                  prev_node);
         }
       else
         {
-          asprintf (&title, "%d", id++);
+          asprintf (&title, "%s.%d", pass->name, id++);
           node = gdl_new_node (title);
           gdl_set_node_label (node, pass->name);
+          check_this_pass (pass, node);
           gdl_add_node (subgraph, node);
+          try_create_edge (subgraph, prev_node, node);
+          prev_node = node;
         }
-      if (prev_title)
-        {
-          edge = gdl_new_edge (prev_title, title);
-          gdl_add_edge (subgraph, edge);
-        }
-      prev_title = title;
     }
-  return subgraph;
+  return node;
+}
+
+static void
+create_pass_list_graph (gdl_graph *graph, struct opt_pass *pass_list,
+                        char *name, gdl_node *prev_node)
+{
+  gdl_graph *subgraph;
+  gdl_node *node;
+  char *title;
+  struct opt_pass *pass;
+
+  subgraph = gdl_new_graph (name);
+  gdl_set_graph_label (subgraph, name);
+  gdl_set_graph_folding (subgraph, 1);
+  gdl_set_graph_shape (subgraph, "ellipse");
+  gdl_set_graph_color (subgraph, "lightgrey");
+  gdl_add_subgraph (graph, subgraph);
+
+  for (pass = pass_list; pass; pass = pass->next)
+    {
+      if (pass->sub)
+        {
+          prev_node = create_sub_pass_list_graph (subgraph, pass, pass->name,
+                                                  prev_node);
+        }
+      else
+        {
+          asprintf (&title, "%s.%d", pass->name, id++);
+          node = gdl_new_node (title);
+          gdl_set_node_label (node, pass->name);
+          check_this_pass (pass, node);
+          gdl_add_node (subgraph, node);
+          try_create_edge (subgraph, prev_node, node);
+          prev_node = node;
+        }
+    }
 }
 
 /* Create the passes graph.  */
 
 static gdl_graph *
-create_passes_graph (struct opt_pass *passes)
+create_passes_graph (struct opt_pass *pass)
 {
-  gdl_graph *graph;
+  gdl_graph *graph, *g;
   gdl_graph *subgraph;
+  int i;
+
+  /* Do some initialization.  */
+  id = 0;
+  this_pass = pass;
+  this_node = NULL;
 
   graph = gdl_new_graph ("passes");
   gdl_set_graph_node_borderwidth (graph, 1);
   gdl_set_graph_edge_thickness (graph, 1);
 
-  create_passes_graph_1 (graph, passes, "passes");
+  for (i = 0; i < PASS_LIST_NUM; i++)
+    create_pass_list_graph (graph, *gcc_pass_lists[i], pass_list_name[i], NULL);
+
+  if (this_node)
+    {
+      gdl_set_node_color (this_node, "red");
+      g = gdl_get_node_parent (this_node);
+      while (g && g != graph)
+        {
+          gdl_set_graph_color (g, "red");
+          gdl_set_graph_folding (g, 0);
+          g = gdl_get_graph_parent (g);
+        }
+    }
 
   return graph;
 }
 
 static void
-dump_passes_to_file (char *fname, struct opt_pass *passes)
+dump_passes_to_file (char *fname, struct opt_pass *pass)
 {
   FILE *fp;
   gdl_graph *graph;
@@ -94,9 +197,7 @@ dump_passes_to_file (char *fname, struct opt_pass *passes)
       return;
     }
 
-  id = 0;
-
-  graph = create_passes_graph (passes);
+  graph = create_passes_graph (pass);
   gdl_dump_graph (fp, graph);
   gdl_free_graph (graph);
 
@@ -106,23 +207,23 @@ dump_passes_to_file (char *fname, struct opt_pass *passes)
 /* Public function to dump the gcc passes.  */
 
 void
-vcg_plugin_dump_passes (struct opt_pass *passes)
+vcg_plugin_dump_passes (struct opt_pass *pass)
 {
   char *fname = "dump-passes.vcg";
 
-  dump_passes_to_file (fname, passes);
+  dump_passes_to_file (fname, pass);
 }
 
 /* Public function to view the gcc passes.  */
 
 void
-vcg_plugin_view_passes (struct opt_pass *passes)
+vcg_plugin_view_passes (struct opt_pass *pass)
 {
   char *fname;
 
   /* Get the temp file name.  */
   fname = vcg_plugin_common.temp_file_name;
-  dump_passes_to_file (fname, passes);
+  dump_passes_to_file (fname, pass);
   vcg_plugin_common.show (fname);
 }
 

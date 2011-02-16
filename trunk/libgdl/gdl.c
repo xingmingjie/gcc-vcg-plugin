@@ -1,6 +1,6 @@
 /* Graph description languange.
 
-   Copyright (C) 2009, 2010 Mingjie Xing, mingjie.xing@gmail.com. 
+   Copyright (C) 2009, 2010, 2011 Mingjie Xing, mingjie.xing@gmail.com. 
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -62,6 +62,7 @@ gdl_new_graph (const char *title)
   graph->edge = NULL;
   graph->last_edge = NULL;
   graph->next = NULL;
+  graph->parent = NULL;
 
   return graph;
 }
@@ -76,6 +77,7 @@ gdl_new_node (const char *title)
   gdl_set_node_title (node, title);
 
   node->next = NULL;
+  node->parent = NULL;
   
   return node;
 }
@@ -155,6 +157,7 @@ gdl_add_subgraph (gdl_graph *graph, gdl_graph *subgraph)
       graph->last_subgraph->next = subgraph;
       graph->last_subgraph = subgraph;
     }
+  subgraph->parent = graph;
 }
 
 void 
@@ -170,6 +173,7 @@ gdl_add_node (gdl_graph *graph, gdl_node *node)
       graph->last_node->next = node;
       graph->last_node = node;
     }
+  node->parent = graph;
 }
 
 void 

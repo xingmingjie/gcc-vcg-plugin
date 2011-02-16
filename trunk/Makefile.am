@@ -1,6 +1,6 @@
 # Makefile.am
 #
-# Copyright (C) 2009, 2010 Mingjie Xing, mingjie.xing@gmail.com.
+# Copyright (C) 2009, 2010, 2011 Mingjie Xing, mingjie.xing@gmail.com.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,3 +21,5 @@ export GMP_INC=@gmp_inc@
 export GMP_LIB=@gmp_lib@
 
 SUBDIRS = libgdl vcg-plugin
+
+EXTRA_DIST = example
