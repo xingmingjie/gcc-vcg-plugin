@@ -1172,13 +1172,15 @@ DEF_ATTR (vertical_order, "vertical_order", int, GDL_CODE_INT, -1)
      Attribute of top-level graph, subgraphs
      Describes the horizontal distance between lines at the points where they
      cross levels. It is advisable to set xlspace to a larger value, if splines
-     are used in order to prevent sharp bends.
+     are used in order to prevent sharp bends.  */
      
-     Top
+  /* Top
      
      xspace: Int, default is 20
      yspace: Int, default is 70
      Attributes of top-level graph, subgraphs
      Specify the minimum horizontal and vertical distance between nodes in
-     pixels */
+     pixels.  */
 
+DEF_ATTR (xspace, "xspace", int, GDL_CODE_INT, 20)   
+DEF_ATTR (yspace, "yspace", int, GDL_CODE_INT, 70)   

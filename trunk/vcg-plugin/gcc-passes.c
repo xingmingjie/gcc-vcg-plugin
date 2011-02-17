@@ -164,6 +164,7 @@ create_passes_graph (struct opt_pass *pass)
   this_node = NULL;
 
   graph = gdl_new_graph ("passes");
+  gdl_set_graph_yspace (graph, 15);
   gdl_set_graph_node_borderwidth (graph, 1);
   gdl_set_graph_edge_thickness (graph, 1);
 
