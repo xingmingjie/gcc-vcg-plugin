@@ -44,7 +44,45 @@ static gdl_attr graph_default_attr[] =
 };
 #undef DEF_ATTR
 
-gdl_graph *vcg_plugin_top_graph;
+/* Create a node for a given TITLE.  */
+
+gdl_node *
+gdl_new_node (const char *title)
+{
+  gdl_node *node;
+
+  node = (gdl_node *) xmalloc (sizeof (gdl_node));
+  memcpy (node->attr, node_default_attr, sizeof (node_default_attr));
+
+  /* Duplicate the string.  */
+  node->title = strdup (title);
+
+  node->next = NULL;
+  node->parent = NULL;
+  
+  return node;
+}
+
+/* Create an edge for a given SOURCE and TARGET.  */
+
+gdl_edge *
+gdl_new_edge (const char *source, const char *target)
+{
+  gdl_edge *edge;
+
+  edge = (gdl_edge *) xmalloc (sizeof (gdl_edge));
+  memcpy (edge->attr, edge_default_attr, sizeof (edge_default_attr));
+
+  /* Duplicate the string.  */
+  edge->source = strdup (source);
+  edge->target = strdup (target);
+
+  edge->next = NULL;
+  
+  return edge;
+}
+
+/* Create a graph for a given TITLE.  */
 
 gdl_graph *
 gdl_new_graph (const char *title)
@@ -53,7 +91,9 @@ gdl_new_graph (const char *title)
 
   graph = XNEW(gdl_graph);
   memcpy (graph->attr, graph_default_attr, sizeof (graph_default_attr));
-  gdl_set_graph_title (graph, title);
+
+  /* Duplicate the string.  */
+  graph->title = strdup (title);
 
   graph->node = NULL;
   graph->last_node = NULL;
@@ -67,35 +107,26 @@ gdl_new_graph (const char *title)
   return graph;
 }
 
-gdl_node *
-gdl_new_node (const char *title)
+/* Free the NODE.  */
+
+void
+gdl_free_node (gdl_node *node)
 {
-  gdl_node *node;
-
-  node = (gdl_node *) xmalloc (sizeof (gdl_node));
-  memcpy (node->attr, node_default_attr, sizeof (node_default_attr));
-  gdl_set_node_title (node, title);
-
-  node->next = NULL;
-  node->parent = NULL;
-  
-  return node;
+  free (node->title);
+  free (node);
 }
 
-gdl_edge *
-gdl_new_edge (const char *source, const char *target)
+/* Free the EDGE.  */
+
+void
+gdl_free_edge (gdl_edge *edge)
 {
-  gdl_edge *edge;
-
-  edge = (gdl_edge *) xmalloc (sizeof (gdl_edge));
-  memcpy (edge->attr, edge_default_attr, sizeof (edge_default_attr));
-  gdl_set_edge_source (edge, source);
-  gdl_set_edge_target (edge, target);
-
-  edge->next = NULL;
-  
-  return edge;
+  free (edge->source);
+  free (edge->target);
+  free (edge);
 }
+
+/* Free the GRAPH.  */
 
 void
 gdl_free_graph (gdl_graph *graph)
@@ -113,6 +144,15 @@ gdl_free_graph (gdl_graph *graph)
       node = next_node;
     }
 
+  /* Free the edges.  */
+  edges = gdl_get_graph_edge (graph);
+  for (edge = edges; edge != NULL;)
+    {
+      next_edge = edge->next;
+      gdl_free_edge (edge);
+      edge = next_edge;
+    }
+
   /* Free the subgraphs.  */
   subgraphs = gdl_get_graph_subgraph (graph);
   for (subgraph = subgraphs; subgraph != NULL;)
@@ -122,43 +162,12 @@ gdl_free_graph (gdl_graph *graph)
       subgraph = next_subgraph;
     }
 
-  /* Free the edges.  */
-  edges = gdl_get_graph_edge (graph);
-  for (edge = edges; edge != NULL;)
-    {
-      next_edge = edge->next;
-      gdl_free_edge (edge);
-      edge = next_edge;
-    }
+  /* Free the graph.  */
+  free (graph->title);
+  free (graph);
 }
 
-void
-gdl_free_node (gdl_node *node)
-{
-  free (node);
-}
-
-void
-gdl_free_edge (gdl_edge *edge)
-{
-  free (edge);
-}
-
-void 
-gdl_add_subgraph (gdl_graph *graph, gdl_graph *subgraph)
-{
-  if (graph->subgraph == NULL)
-    {
-      graph->subgraph = subgraph;
-      graph->last_subgraph = subgraph;
-    }
-  else
-    {
-      graph->last_subgraph->next = subgraph;
-      graph->last_subgraph = subgraph;
-    }
-  subgraph->parent = graph;
-}
+/* Add NODE into GRAPH.  */
 
 void 
 gdl_add_node (gdl_graph *graph, gdl_node *node)
@@ -176,6 +185,8 @@ gdl_add_node (gdl_graph *graph, gdl_node *node)
   node->parent = graph;
 }
 
+/* Add EDGE into GRAPH.  */
+
 void 
 gdl_add_edge (gdl_graph *graph, gdl_edge *edge)
 {
@@ -191,6 +202,46 @@ gdl_add_edge (gdl_graph *graph, gdl_edge *edge)
     }
 }
 
+/* Add SUBGRAPH into GRAPH.  */
+
+void 
+gdl_add_subgraph (gdl_graph *graph, gdl_graph *subgraph)
+{
+  if (graph->subgraph == NULL)
+    {
+      graph->subgraph = subgraph;
+      graph->last_subgraph = subgraph;
+    }
+  else
+    {
+      graph->last_subgraph->next = subgraph;
+      graph->last_subgraph = subgraph;
+    }
+  subgraph->parent = graph;
+}
+
+/* Find the edge in GRAPH for a given SOURCE and TARGET.  */
+
+gdl_edge *
+gdl_find_edge (gdl_graph *graph, char *source, char *target)
+{
+  gdl_edge *edges, *edge;
+  char *srcname, *destname;
+
+  edges = gdl_get_graph_edge (graph); 
+  for (edge = edges; edge; edge = edge->next)
+    {
+      srcname = gdl_get_edge_source (edge);
+      destname = gdl_get_edge_target (edge);
+      if (!strcmp (srcname, source) && !strcmp (destname, target))
+        return edge;
+    }
+
+  return NULL;
+}
+
+/* Find the subgraph in GRAPH for a given TITLE.  */
+
 gdl_graph *
 gdl_find_subgraph (gdl_graph *graph, char *title)
 {
@@ -204,25 +255,9 @@ gdl_find_subgraph (gdl_graph *graph, char *title)
   return NULL;
 }
 
-gdl_edge *
-gdl_find_edge (gdl_graph *graph, char *src, char *dest)
-{
-  gdl_edge *edges, *edge;
-  char *srcname, *destname;
+/* Print the string into the file and add a '\' before each '"'.  */
 
-  edges = gdl_get_graph_edge (graph); 
-  for (edge = edges; edge; edge = edge->next)
-    {
-      srcname = gdl_get_edge_source (edge);
-      destname = gdl_get_edge_target (edge);
-      if (!strcmp (srcname, src) && !strcmp (destname, dest))
-        return edge;
-    }
-
-  return NULL;
-}
-
-static void
+static inline void
 print_string (FILE *fout, const char *str)
 {
   int i;
@@ -234,6 +269,8 @@ print_string (FILE *fout, const char *str)
       fprintf (fout, "%c", str[i]);
     }
 }
+
+/* Dump NODE into the file.  */
 
 void
 gdl_dump_node (FILE *fout, gdl_node *node)
@@ -273,6 +310,8 @@ gdl_dump_node (FILE *fout, gdl_node *node)
   fputs ("}\n", fout);
 }
 
+/* Dump EDGE into the file.  */
+
 void
 gdl_dump_edge (FILE *fout, gdl_edge *edge)
 {
@@ -310,6 +349,8 @@ gdl_dump_edge (FILE *fout, gdl_edge *edge)
 
   fputs ("}\n", fout);
 }
+
+/* Dump GRAPH into the file.  */
 
 void
 gdl_dump_graph (FILE *fout, gdl_graph *graph)
