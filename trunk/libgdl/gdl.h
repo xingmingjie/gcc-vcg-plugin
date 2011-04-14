@@ -228,6 +228,7 @@ extern void gdl_add_node (gdl_graph *graph, gdl_node *node);
 extern void gdl_add_edge (gdl_graph *graph, gdl_edge *edge);
 extern void gdl_add_subgraph (gdl_graph *graph, gdl_graph *subgraph);
 
+extern gdl_node *gdl_find_node (gdl_graph *graph, char *title);
 extern gdl_edge *gdl_find_edge (gdl_graph *graph, char *source, char *target);
 extern gdl_graph *gdl_find_subgraph (gdl_graph *graph, char *title);
 
