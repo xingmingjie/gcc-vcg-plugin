@@ -163,7 +163,7 @@ vcg_finish (void)
       current_malloc_str = ms;
       ms = current_malloc_str->next;
       free (current_malloc_str->str);
-      free (current_malloc);
+      //free (current_malloc_str);
     }
 }
 
