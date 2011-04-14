@@ -220,6 +220,21 @@ gdl_add_subgraph (gdl_graph *graph, gdl_graph *subgraph)
   subgraph->parent = graph;
 }
 
+/* Find the node in GRAPH for a given TITLE.  */
+
+gdl_node *
+gdl_find_node (gdl_graph *graph, char *title)
+{
+  gdl_edge *nodes, *node;
+
+  nodes = gdl_get_graph_node (graph); 
+  for (node = nodes; node; node = node->next)
+    if (!strcmp (gdl_get_node_title (node), title))
+      return node;
+
+  return NULL;
+}
+
 /* Find the edge in GRAPH for a given SOURCE and TARGET.  */
 
 gdl_edge *
