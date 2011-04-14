@@ -421,9 +421,16 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       break;
       
     case TS_VAR_DECL:
+      #define tx tn->var_decl
+      sprintf (buf, "\nann = 0x%x", (unsigned) tx.ann);
+      obstack_grow (&str_obstack, buf, strlen (buf));
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
       gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_DECL_WITH_VIS,
+                                  nested_level + 1);
+      create_edge (graph, node, anode);
+      #undef tx
       break;
       
     case TS_PARM_DECL:
@@ -472,9 +479,14 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       break;
       
     case TS_TYPE_DECL:
+      #define tx tn->type_decl
       obstack_1grow (&str_obstack, '\0');
       label = obstack_finish (&str_obstack);
       gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_DECL_NON_COMMON,
+                                  nested_level + 1);
+      create_edge (graph, node, anode);
+      #undef tx
       break;
       
     case TS_FUNCTION_DECL:
@@ -610,6 +622,12 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       create_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.block, "block", nested_level + 1);
       create_edge (graph, node, anode);
+      for (i = 0; i < TREE_OPERAND_LENGTH(tn); i++)
+        {
+          sprintf (buf, "operands[%d]", i);
+          anode = create_tree_node (graph, tx.operands[i], buf, nested_level + 1);
+          create_edge (graph, node, anode);
+        }
       #undef tx
       break;
       
