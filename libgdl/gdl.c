@@ -73,10 +73,14 @@ gdl_new_edge (const char *source, const char *target)
   edge = (gdl_edge *) xmalloc (sizeof (gdl_edge));
   memcpy (edge->attr, edge_default_attr, sizeof (edge_default_attr));
 
+<<<<<<< .mine
+  edge->type = GDL_EDGE;
+=======
   /* Duplicate the string.  */
   edge->source = strdup (source);
   edge->target = strdup (target);
 
+>>>>>>> .r65
   edge->next = NULL;
   
   return edge;
@@ -333,7 +337,35 @@ gdl_dump_edge (FILE *fout, gdl_edge *edge)
   int i;
   gdl_attr *attr;
 
-  fputs ("edge: {\n", fout);
+  switch (edge->type)
+    {
+    case GDL_EDGE:
+      fputs ("edge: {\n", fout);
+      break;
+    case GDL_BACKEDGE:
+      fputs ("backedge: {\n", fout);
+      break;
+    case GDL_NEAREDGE:
+      fputs ("nearedge: {\n", fout);
+      break;
+    case GDL_LEFTNEAREDGE:
+      fputs ("leftnearedge: {\n", fout);
+      break;
+    case GDL_RIGHTNEAREDGE:
+      fputs ("rightnearedge: {\n", fout);
+      break;
+    case GDL_BENTNEAREDGE:
+      fputs ("bentnearedge: {\n", fout);
+      break;
+    case GDL_LEFTBENTNEAREDGE:
+      fputs ("leftbentnearedge: {\n", fout);
+      break;
+    case GDL_RIGHTBENTNEAREDGE:
+      fputs ("rightbentnearedge: {\n", fout);
+      break;
+    defaut:
+      abort ();
+    }
 
   /* Dump the attributes.  */
   for (i = 0; i < GDL_EDGE_ATTR_MAX; i++)

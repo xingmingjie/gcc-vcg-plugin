@@ -86,6 +86,21 @@ create_edge (gdl_graph *graph, gdl_node *sn, gdl_node *tn)
   gdl_add_edge (graph, edge);
 }
 
+/* Like create_edge, but also set the line style as "dashed".  */
+
+static void
+create_dashed_edge (gdl_graph *graph, gdl_node *sn, gdl_node *tn)
+{
+  gdl_edge *edge;
+
+  if (tn == NULL || sn == NULL)
+    return;
+
+  edge = gdl_new_edge (gdl_get_node_title (sn), gdl_get_node_title (tn));
+  gdl_set_edge_linestyle (edge, "dashed");
+  gdl_add_edge (graph, edge);
+}
+
 /* Create gdl node for tree common part COMMON and add it into GRAPH.  */
 
 static gdl_node *
@@ -132,7 +147,7 @@ create_common_node (gdl_graph *graph, void *common,
     case TS_COMMON:
       #define tx (*(struct tree_common *) common)
       anode = create_common_node (graph, &tx.base, TS_BASE, nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.chain, "chain", nested_level + 1);
       create_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.type, "type", nested_level + 1);
@@ -140,21 +155,11 @@ create_common_node (gdl_graph *graph, void *common,
       #undef tx
       break;
       
-    case TS_INT_CST:
-    case TS_REAL_CST:
-    case TS_FIXED_CST:
-    case TS_VECTOR:
-    case TS_STRING:
-    case TS_COMPLEX:
-    case TS_IDENTIFIER:
-      abort ();
-      break;
-      
     case TS_DECL_MINIMAL:
       #define tx (*(struct tree_decl_minimal *) common)
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.name, "name", nested_level + 1);
       create_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.context, "context", nested_level + 1);
@@ -166,7 +171,7 @@ create_common_node (gdl_graph *graph, void *common,
       #define tx (*(struct tree_decl_common *) common)
       anode = create_common_node (graph, &tx.common, TS_DECL_MINIMAL,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.size, "size", nested_level + 1);
       create_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.size_unit, "size_unit", nested_level + 1);
@@ -184,7 +189,7 @@ create_common_node (gdl_graph *graph, void *common,
       #define tx (*(struct tree_decl_with_rtl *) common)
       anode = create_common_node (graph, &tx.common, TS_DECL_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
       
@@ -192,7 +197,7 @@ create_common_node (gdl_graph *graph, void *common,
       #define tx (*(struct tree_decl_non_common *) common)
       anode = create_common_node (graph, &tx.common, TS_DECL_WITH_VIS,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.saved_tree, "saved_tree", nested_level + 1);
       create_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.arguments, "arguments", nested_level + 1);
@@ -208,7 +213,7 @@ create_common_node (gdl_graph *graph, void *common,
       #define tx (*(struct tree_decl_with_vis *) common)
       anode = create_common_node (graph, &tx.common, TS_DECL_WRTL,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.assembler_name, "assembler_name", nested_level + 1);
       create_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.section_name, "section_name", nested_level + 1);
@@ -218,6 +223,13 @@ create_common_node (gdl_graph *graph, void *common,
       #undef tx
       break;
       
+    case TS_INT_CST:
+    case TS_REAL_CST:
+    case TS_FIXED_CST:
+    case TS_VECTOR:
+    case TS_STRING:
+    case TS_COMPLEX:
+    case TS_IDENTIFIER:
     case TS_FIELD_DECL:
     case TS_VAR_DECL:
     case TS_PARM_DECL:
@@ -301,7 +313,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.base, TS_BASE,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.chain, "chain", nested_level + 1);
       create_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.type, "type", nested_level + 1);
@@ -318,7 +330,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
       
@@ -331,7 +343,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
       
@@ -344,7 +356,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
       
@@ -355,7 +367,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.elements, "elements",
                                 nested_level + 1);
       create_edge (graph, node, anode);
@@ -372,7 +384,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
       
@@ -383,7 +395,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.real, "real", nested_level + 1);
       create_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.imag, "imag", nested_level + 1);
@@ -400,7 +412,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
       
@@ -429,7 +441,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_DECL_WITH_VIS,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
       
@@ -442,7 +454,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_DECL_WRTL,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
       
@@ -455,7 +467,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_DECL_WRTL,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
       
@@ -468,7 +480,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_DECL_WRTL,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
       
@@ -485,7 +497,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_DECL_NON_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
       
@@ -510,7 +522,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_DECL_NON_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.personality, "personality",
                                 nested_level + 1);
       create_edge (graph, node, anode);
@@ -533,7 +545,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_DECL_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
       
@@ -546,7 +558,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
         {
           anode = create_common_node (graph, &tx.common, TS_COMMON,
                                       nested_level + 1);
-          create_edge (graph, node, anode);
+          create_dashed_edge (graph, node, anode);
           anode = create_tree_node (graph, tx.values, "values", nested_level + 1);
           create_edge (graph, node, anode);
           anode = create_tree_node (graph, tx.size, "size", nested_level + 1);
@@ -587,7 +599,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.purpose, "purpose", nested_level + 1);
       create_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.value, "value", nested_level + 1);
@@ -602,7 +614,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       for (i = 0; i < tx.length; i++)
         {
           sprintf (buf, "a[%d]", i);
@@ -619,7 +631,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.block, "block", nested_level + 1);
       create_edge (graph, node, anode);
       for (i = 0; i < TREE_OPERAND_LENGTH(tn); i++)
@@ -638,7 +650,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.var, "var", nested_level + 1);
       create_edge (graph, node, anode);
       #undef tx
@@ -651,7 +663,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.vars, "vars", nested_level + 1);
       create_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.subblocks, "subblocks", nested_level + 1);
@@ -678,7 +690,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.offset, "offset", nested_level + 1);
       create_edge (graph, node, anode);
       anode = create_tree_node (graph, tx.vtable, "vtable", nested_level + 1);
@@ -707,7 +719,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
       
@@ -720,7 +732,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
       
@@ -733,7 +745,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
       
@@ -746,7 +758,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
       
@@ -759,7 +771,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
       gdl_set_node_label (node, label);
       anode = create_common_node (graph, &tx.common, TS_COMMON,
                                   nested_level + 1);
-      create_edge (graph, node, anode);
+      create_dashed_edge (graph, node, anode);
       #undef tx
       break;
     }
