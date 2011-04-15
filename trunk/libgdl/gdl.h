@@ -96,11 +96,11 @@ typedef struct
   union gdl_attr_value value;
 } gdl_attr;
 
-typedef struct gdl_node_ gdl_node;
-typedef struct gdl_edge_ gdl_edge;
-typedef struct gdl_graph_ gdl_graph;
+typedef struct gdl_node gdl_node;
+typedef struct gdl_edge gdl_edge;
+typedef struct gdl_graph gdl_graph;
 
-struct gdl_node_ 
+struct gdl_node 
 {
   gdl_attr attr[GDL_NODE_ATTR_MAX];
   gdl_node *next;
@@ -108,13 +108,26 @@ struct gdl_node_
   gdl_graph *parent;
 };
 
-struct gdl_edge_
+typedef enum
 {
+  GDL_EDGE,
+  GDL_BACKEDGE,
+  GDL_NEAREDGE,
+  GDL_LEFTNEAREDGE,
+  GDL_RIGHTNEAREDGE,
+  GDL_BENTNEAREDGE,
+  GDL_LEFTBENTNEAREDGE,
+  GDL_RIGHTBENTNEAREDGE 
+} gdl_edge_type;
+
+struct gdl_edge
+{
+  gdl_edge_type type;
   gdl_attr attr[GDL_EDGE_ATTR_MAX];
   gdl_edge *next;
 };
 
-struct gdl_graph_
+struct gdl_graph
 {
   gdl_attr attr[GDL_GRAPH_ATTR_MAX];
   /* nodes or subgraphs */
