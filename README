@@ -38,13 +38,13 @@ make install
 # Usage #
 #########
 
-First, a vcg viewer tool is required. See http://code.google.com/p/vcgviewer or http://www.absint.com/aisee. 
+First, a vcg viewer tool is required. See http://code.google.com/p/vcgviewer. 
 
 The pre-defined vcg plugin commands can be used. Rename file "vcg-plugin.gdbinit" to ".gdbinit" or add "source vcg-plugin.gdbinit" in your original ".gdbinit".
 
-You can use -fplugin-arg-vcg-viewer=vcgview (xvcg, or aisee3) to select vcg viewer, default is vcgview. 
+You can use -fplugin-arg-vcg-viewer=vcgview to select vcg viewer, default is vcgview. 
 
-There is an example in "example" directory. 
+There are examples in "example" directory. 
 
 ##############
 # Bug report #
