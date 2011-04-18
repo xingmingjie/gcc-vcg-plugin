@@ -229,6 +229,19 @@ gdl_get_node_parent (gdl_node *node)
   return node->parent;
 }
 
+static inline gdl_edge_type 
+gdl_get_edge_type (gdl_edge *edge)
+{
+  return edge->type;
+}
+
+static inline void
+gdl_set_edge_type (gdl_edge *edge, gdl_edge_type type)
+{
+  edge->type = type;
+}
+
+extern gdl_graph *gdl_new_graph (const char *title); 
 extern gdl_node *gdl_new_node (const char *title);
 extern gdl_edge *gdl_new_edge (const char *source, const char *target);
 extern gdl_graph *gdl_new_graph (const char *title); 
