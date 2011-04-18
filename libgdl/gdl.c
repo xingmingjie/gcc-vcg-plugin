@@ -55,7 +55,7 @@ gdl_new_node (const char *title)
   memcpy (node->attr, node_default_attr, sizeof (node_default_attr));
 
   /* Duplicate the string.  */
-  node->title = strdup (title);
+  node->attr[GDL_NODE_ATTR_title].value.str = strdup (title);
 
   node->next = NULL;
   node->parent = NULL;
@@ -73,14 +73,11 @@ gdl_new_edge (const char *source, const char *target)
   edge = (gdl_edge *) xmalloc (sizeof (gdl_edge));
   memcpy (edge->attr, edge_default_attr, sizeof (edge_default_attr));
 
-<<<<<<< .mine
-  edge->type = GDL_EDGE;
-=======
   /* Duplicate the string.  */
-  edge->source = strdup (source);
-  edge->target = strdup (target);
+  edge->attr[GDL_EDGE_ATTR_source].value.str = strdup (source);
+  edge->attr[GDL_EDGE_ATTR_target].value.str = strdup (target);
 
->>>>>>> .r65
+  edge->type = GDL_EDGE;
   edge->next = NULL;
   
   return edge;
@@ -97,7 +94,7 @@ gdl_new_graph (const char *title)
   memcpy (graph->attr, graph_default_attr, sizeof (graph_default_attr));
 
   /* Duplicate the string.  */
-  graph->title = strdup (title);
+  graph->attr[GDL_GRAPH_ATTR_title].value.str = strdup (title);
 
   graph->node = NULL;
   graph->last_node = NULL;
@@ -116,7 +113,7 @@ gdl_new_graph (const char *title)
 void
 gdl_free_node (gdl_node *node)
 {
-  free (node->title);
+  free (node->attr[GDL_NODE_ATTR_title].value.str);
   free (node);
 }
 
@@ -125,8 +122,8 @@ gdl_free_node (gdl_node *node)
 void
 gdl_free_edge (gdl_edge *edge)
 {
-  free (edge->source);
-  free (edge->target);
+  free (edge->attr[GDL_EDGE_ATTR_source].value.str);
+  free (edge->attr[GDL_EDGE_ATTR_target].value.str);
   free (edge);
 }
 
@@ -167,7 +164,7 @@ gdl_free_graph (gdl_graph *graph)
     }
 
   /* Free the graph.  */
-  free (graph->title);
+  free (graph->attr[GDL_GRAPH_ATTR_title].value.str);
   free (graph);
 }
 
@@ -229,7 +226,7 @@ gdl_add_subgraph (gdl_graph *graph, gdl_graph *subgraph)
 gdl_node *
 gdl_find_node (gdl_graph *graph, char *title)
 {
-  gdl_edge *nodes, *node;
+  gdl_node *nodes, *node;
 
   nodes = gdl_get_graph_node (graph); 
   for (node = nodes; node; node = node->next)

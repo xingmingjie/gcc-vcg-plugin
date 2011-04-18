@@ -37,6 +37,8 @@
 typedef struct
 {
   char *plugin_name;
+  char *plugin_version;
+  char *gcc_version;
   char *vcg_viewer;
   char *temp_file_name;
   void (*init) (void);

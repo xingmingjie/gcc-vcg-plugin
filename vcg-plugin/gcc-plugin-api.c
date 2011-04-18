@@ -66,6 +66,11 @@ plugin_init (struct plugin_name_args *plugin_info,
           vcg_plugin_common.vcg_viewer = argv[i].value;
         }
     }
+  vcg_plugin_common.plugin_version = "VCG Plugin: compatible with GCC 4.6.0";
+  vcg_plugin_common.gcc_version = concat ("GCC: (GNU) ", version->basever,
+                                          version->datestamp,
+                                          "(", version->devphase, ")");
+  
   return 0;
 }
 
