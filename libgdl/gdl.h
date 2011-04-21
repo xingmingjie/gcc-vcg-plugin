@@ -96,13 +96,25 @@ typedef struct
   union gdl_attr_value value;
 } gdl_attr;
 
+
+/* Make colorentry as a common global variable.  */
+char *gdl_colorentry[256][3];
+
 typedef struct gdl_node gdl_node;
 typedef struct gdl_edge gdl_edge;
 typedef struct gdl_graph gdl_graph;
 
 struct gdl_node 
 {
-  gdl_attr attr[GDL_NODE_ATTR_MAX];
+  char *bordercolor;
+  int borderwidth;
+  char *color;
+  char *label;
+  char *title;
+  int vertical_order;
+  /* The value is 1 if the attribute is set.  */
+  int set_p[GDL_NODE_ATTR_MAX];
+
   gdl_node *next;
   /* The graph who it belongs to.  */
   gdl_graph *parent;
@@ -122,14 +134,46 @@ typedef enum
 
 struct gdl_edge
 {
+  char *label;
+  char *linestyle;
+  char *sourcename;
+  char *targetname;
+  int thickness;
+
   gdl_edge_type type;
-  gdl_attr attr[GDL_EDGE_ATTR_MAX];
+
+  /* The value is 1 if the attribute is set.  */
+  int set_p[GDL_EDGE_ATTR_MAX];
+
   gdl_edge *next;
 };
 
 struct gdl_graph
 {
-  gdl_attr attr[GDL_GRAPH_ATTR_MAX];
+  char *color;
+  int folding;
+  char *label;
+  char *layout_algorithm;
+  char *near_edges;
+  char *orientation;
+  char *port_sharing;
+  char *shape;
+  char *splines;
+  char *title;
+  int vertical_order;
+  int xspace;
+  int yspace;
+
+  int node_borderwidth;
+  char *node_color;
+  char *node_shape;
+
+  char *edge_color;
+  int edge_thickness;
+
+  /* The value is 1 if the attribute is set.  */
+  int set_p[GDL_GRAPH_ATTR_MAX];
+
   /* nodes or subgraphs */
   gdl_node *node;
   gdl_node *last_node;
@@ -141,105 +185,6 @@ struct gdl_graph
   /* The graph who it belongs to.  */
   gdl_graph *parent;
 };
-
-/* Functions to get the attributes.  */
-#define DEF_ATTR(id, name, type, code, value_) \
-static inline type \
-gdl_get_node_##id (gdl_node *node) \
-{ \
-  return *((type *) &node->attr[GDL_NODE_ATTR_##id].value); \
-}
-#include "node-attr.def"
-#undef DEF_ATTR
-
-#define DEF_ATTR(id, name, type, code, value_) \
-static inline type \
-gdl_get_edge_##id (gdl_edge *edge) \
-{ \
-  return *((type *) &edge->attr[GDL_EDGE_ATTR_##id].value); \
-}
-#include "edge-attr.def"
-#undef DEF_ATTR
-
-#define DEF_ATTR(id, name, type, code, value_) \
-static inline type \
-gdl_get_graph_##id (gdl_graph *graph) \
-{ \
-  return *((type *) &graph->attr[GDL_GRAPH_ATTR_##id].value); \
-}
-#include "graph-attr.def"
-#undef DEF_ATTR
-
-/* Functions to set the attributes.  */
-
-#define DEF_ATTR(id, name, type, code, value_) \
-static inline void \
-gdl_set_node_##id (gdl_node *node, type val) \
-{ \
-  *((type *) &node->attr[GDL_NODE_ATTR_##id].value) = val; \
-}
-#include "node-attr.def"
-#undef DEF_ATTR
-
-#define DEF_ATTR(id, name, type, code, value_) \
-static inline void \
-gdl_set_edge_##id (gdl_edge *edge, type val) \
-{ \
-  *((type *) &edge->attr[GDL_EDGE_ATTR_##id].value) = val; \
-}
-#include "edge-attr.def"
-#undef DEF_ATTR
-
-#define DEF_ATTR(id, name, type, code, value_) \
-static inline void \
-gdl_set_graph_##id (gdl_graph *graph, type val) \
-{ \
-  *((type *) &graph->attr[GDL_GRAPH_ATTR_##id].value) = val; \
-}
-#include "graph-attr.def"
-#undef DEF_ATTR
-
-static inline gdl_node *
-gdl_get_graph_node (gdl_graph *graph)
-{
-  return graph->node;
-}
-
-static inline gdl_edge *
-gdl_get_graph_edge (gdl_graph *graph)
-{
-  return graph->edge;
-}
-
-static inline gdl_graph *
-gdl_get_graph_subgraph (gdl_graph *graph)
-{
-  return graph->subgraph;
-}
-
-static inline gdl_graph *
-gdl_get_graph_parent (gdl_graph *graph)
-{
-  return graph->parent;
-}
-
-static inline gdl_graph *
-gdl_get_node_parent (gdl_node *node)
-{
-  return node->parent;
-}
-
-static inline gdl_edge_type 
-gdl_get_edge_type (gdl_edge *edge)
-{
-  return edge->type;
-}
-
-static inline void
-gdl_set_edge_type (gdl_edge *edge, gdl_edge_type type)
-{
-  edge->type = type;
-}
 
 extern gdl_graph *gdl_new_graph (const char *title); 
 extern gdl_node *gdl_new_node (const char *title);

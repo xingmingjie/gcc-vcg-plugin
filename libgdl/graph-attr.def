@@ -18,9 +18,12 @@
 
 DEF_ATTR (node_borderwidth, "node.borderwidth", int, GDL_CODE_INT, 2)   
 DEF_ATTR (edge_thickness, "edge.thickness", int, GDL_CODE_INT, 2)   
-     
+
+DEF_ATTR (colorentry, "colorentry", const char *, GDL_CODE_STR, "white")
+
 DEF_ATTR (color, "color", const char *, GDL_CODE_STR, "white")
 DEF_ATTR (node_color, "node.color", const char *, GDL_CODE_STR, "white")
+DEF_ATTR (edge_color, "edge.color", const char *, GDL_CODE_STR, "white")
      
 DEF_ATTR (label, "label", const char *, GDL_CODE_STR_QUOTE, "")
      
