@@ -20,9 +20,9 @@ DEF_ATTR (label, "label", const char *, GDL_CODE_STR_QUOTE, "")
      
 DEF_ATTR (linestyle, "linestyle", const char *, GDL_CODE_STR, "solid")
      
-DEF_ATTR (source, "sourcename", const char *, GDL_CODE_STR_QUOTE, "")
+DEF_ATTR (sourcename, "sourcename", const char *, GDL_CODE_STR_QUOTE, "")
      
-DEF_ATTR (target, "targetname", const char *, GDL_CODE_STR_QUOTE, "")
+DEF_ATTR (targetname, "targetname", const char *, GDL_CODE_STR_QUOTE, "")
      
 DEF_ATTR (thickness, "thickness", int, GDL_CODE_INT, 2)
 

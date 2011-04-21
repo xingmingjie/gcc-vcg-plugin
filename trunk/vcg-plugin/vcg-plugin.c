@@ -150,7 +150,7 @@ vcg_init (void)
 
   node = gdl_new_node ("info");
   gdl_set_node_label (node, vcg_plugin_common.info);
-  gdl_set_node_borderwidth (node, 0);
+  gdl_set_node_borderwidth (node, 1);
   gdl_add_node (graph, node);
 
   vcg_plugin_common.top_graph = graph;
