@@ -218,7 +218,12 @@ static void
 dump_function_to_file (char *fname, tree fn)
 {
   FILE *fp;
-  gdl_graph *graph;
+  basic_block bb;
+  edge e;
+  edge_iterator ei;
+
+  gdl_graph *graph, *bb_graph;
+  gdl_edge *v_edge;
 
   if ((fp = fopen (fname, "w")) == NULL)
     {
@@ -234,9 +239,25 @@ dump_function_to_file (char *fname, tree fn)
 
   tmp_stream = open_memstream (&tmp_buf, &tmp_buf_size);
 
-  graph = create_function_graph (fn);
+  graph = vcg_plugin_common.top_graph;
+
+  FOR_ALL_BB (bb)
+    {
+      bb_graph = create_bb_graph (bb);
+      gdl_add_subgraph (graph, bb_graph);
+
+      FOR_EACH_EDGE (e, ei, bb->succs)
+        {
+          v_edge = gdl_new_edge (bb_graph_title[e->src->index],
+                                 bb_graph_title[e->dest->index]);
+          gdl_add_edge (graph, v_edge);
+        }
+    }
+
+  /* Optimize the graph layout.  */
+  set_vertical_order (graph);
+
   gdl_dump_graph (fp, graph);
-  gdl_free_graph (graph);
 
   /* Free names for graphs and nodes.  */
   free_names (n_basic_blocks);
@@ -252,13 +273,16 @@ vcg_plugin_dump_function (tree fn)
 {
   char *fname;
 
+  vcg_plugin_common.init ();
+
   /* Get the function name.  */
   function_name = lang_hooks.decl_printable_name (fn, 2);
   /* Create the dump file name.  */
   asprintf (&fname, "dump-function-%s.vcg", function_name);
+  vcg_plugin_common.tag (fname);
   dump_function_to_file (fname, fn);
 
-  free (fname);
+  vcg_plugin_common.finish ();
 }
 
 /* Public function to view a gcc function FN.  */
@@ -268,6 +292,8 @@ vcg_plugin_view_function (tree fn)
 {
   char *fname;
 
+  vcg_plugin_common.init ();
+
   /* Get the function name.  */
   function_name = lang_hooks.decl_printable_name (fn, 2);
   /* Get the temp file name.  */
@@ -275,5 +301,7 @@ vcg_plugin_view_function (tree fn)
 
   dump_function_to_file (fname, fn);
   vcg_plugin_common.show (fname);
+
+  vcg_plugin_common.finish ();
 }
 

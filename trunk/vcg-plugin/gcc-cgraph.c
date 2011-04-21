@@ -48,24 +48,6 @@ create_node_and_edges (gdl_graph *graph, struct cgraph_node *node)
     }
 }
 
-static gdl_graph *
-create_cgraph (void)
-{
-  struct cgraph_node *node;
-  gdl_graph *graph;
-  gdl_node *node_g;
-
-  graph = gdl_new_graph ("call graph");
-  gdl_set_graph_node_borderwidth (graph, 1);
-  gdl_set_graph_edge_thickness (graph, 1);
-  gdl_set_graph_splines (graph, "yes");
-
-  for (node = cgraph_nodes; node; node = node->next)
-    create_node_and_edges (graph, node);
-
-  return graph;
-}
-
 /* Dump call graph into the file FNAME.  */
 
 static void
@@ -73,6 +55,7 @@ dump_cgraph_to_file (char *fname)
 {
   FILE *fp;
   gdl_graph *graph;
+  struct cgraph_node *node;
 
   if ((fp = fopen (fname, "w")) == NULL)
     {
@@ -80,9 +63,11 @@ dump_cgraph_to_file (char *fname)
       return;
     }
 
-  graph = create_cgraph();
+  graph = vcg_plugin_common.top_graph;
+  for (node = cgraph_nodes; node; node = node->next)
+    create_node_and_edges (graph, node);
+
   gdl_dump_graph (fp, graph);
-  gdl_free_graph (graph);
 
   fclose (fp);
 }
