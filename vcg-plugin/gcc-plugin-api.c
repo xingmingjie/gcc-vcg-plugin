@@ -66,10 +66,10 @@ plugin_init (struct plugin_name_args *plugin_info,
           vcg_plugin_common.vcg_viewer = argv[i].value;
         }
     }
-  vcg_plugin_common.info = concat ("VCG Plugin: compatible with GCC 4.6.0\n\n",
-                                   "GCC: (GNU) ", version->basever, " ",
-                                   version->datestamp, " ",
-                                   "(", version->devphase, ")", NULL);
+  vcg_plugin_common.info = concat ("GCC: (GNU) ", version->basever,
+                                   " ", version->datestamp, " ",
+                                   "(", version->devphase, ")\n",
+                                   "Created by GCC VCG Plugin", NULL);
   
   return 0;
 }
