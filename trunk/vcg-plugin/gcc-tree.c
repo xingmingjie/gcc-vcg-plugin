@@ -778,23 +778,6 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
   return node;
 }
 
-/* Create a graph from the tree TN.  */
-
-static gdl_graph *
-create_tree_graph (tree tn)
-{
-  gdl_graph *graph;
-
-  graph = gdl_new_graph ("tree");
-  gdl_set_graph_node_borderwidth (graph, 1);
-  gdl_set_graph_edge_thickness (graph, 1);
-  gdl_set_graph_splines (graph, "yes");
-
-  create_tree_node (graph, tn, "tree", 1);
-
-  return graph;
-}
-
 /* Dump tree NODE into the file FNAME.  */
 
 static void
@@ -813,9 +796,9 @@ dump_tree_to_file (char *fname, tree node)
   title_id = 1;
   tree_table = htab_create (32, htab_hash_pointer, htab_eq_pointer, NULL);
 
-  graph = create_tree_graph (node);
+  graph = vcg_plugin_common.top_graph;
+  create_tree_node (graph, node, "tree", 1);
   gdl_dump_graph (fp, graph);
-  gdl_free_graph (graph);
 
   fclose (fp);
   obstack_free (&str_obstack, NULL);
