@@ -149,24 +149,27 @@ create_pass_list_graph (gdl_graph *graph, struct opt_pass *pass_list,
     }
 }
 
-/* Create the passes graph.  */
-
-static gdl_graph *
-create_passes_graph (struct opt_pass *pass)
+static void
+dump_passes_to_file (char *fname, struct opt_pass *pass)
 {
+  FILE *fp;
   gdl_graph *graph, *g;
   gdl_graph *subgraph;
   int i;
+
+  if ((fp = fopen (fname, "w")) == NULL)
+    {
+      vcg_plugin_common.error ("failed to open file %s.", fname);
+      return;
+    }
+
+  graph = vcg_plugin_common.top_graph;
+  gdl_set_graph_yspace (graph, 15);
 
   /* Do some initialization.  */
   id = 0;
   this_pass = pass;
   this_node = NULL;
-
-  graph = gdl_new_graph ("passes");
-  gdl_set_graph_yspace (graph, 15);
-  gdl_set_graph_node_borderwidth (graph, 1);
-  gdl_set_graph_edge_thickness (graph, 1);
 
   for (i = 0; i < PASS_LIST_NUM; i++)
     create_pass_list_graph (graph, *gcc_pass_lists[i], pass_list_name[i], NULL);
@@ -182,25 +185,7 @@ create_passes_graph (struct opt_pass *pass)
           g = gdl_get_graph_parent (g);
         }
     }
-
-  return graph;
-}
-
-static void
-dump_passes_to_file (char *fname, struct opt_pass *pass)
-{
-  FILE *fp;
-  gdl_graph *graph;
-
-  if ((fp = fopen (fname, "w")) == NULL)
-    {
-      vcg_plugin_common.error ("failed to open file %s.", fname);
-      return;
-    }
-
-  graph = create_passes_graph (pass);
   gdl_dump_graph (fp, graph);
-  gdl_free_graph (graph);
 
   fclose (fp);
 }
@@ -212,7 +197,11 @@ vcg_plugin_dump_passes (struct opt_pass *pass)
 {
   char *fname = "dump-passes.vcg";
 
+  vcg_plugin_common.init ();
+
   dump_passes_to_file (fname, pass);
+
+  vcg_plugin_common.finish ();
 }
 
 /* Public function to view the gcc passes.  */
@@ -222,9 +211,13 @@ vcg_plugin_view_passes (struct opt_pass *pass)
 {
   char *fname;
 
+  vcg_plugin_common.init ();
+
   /* Get the temp file name.  */
   fname = vcg_plugin_common.temp_file_name;
   dump_passes_to_file (fname, pass);
   vcg_plugin_common.show (fname);
+
+  vcg_plugin_common.finish ();
 }
 
