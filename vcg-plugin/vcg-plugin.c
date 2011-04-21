@@ -136,9 +136,24 @@ static vcg_malloc_str *current_malloc_str;
 static void
 vcg_init (void)
 {
+  gdl_graph *graph;
+  gdl_node *node;
+
   malloc_str.str = NULL;
   malloc_str.next = NULL;  
   current_malloc_str = &malloc_str;
+
+  graph = gdl_new_graph ("top graph");
+  gdl_set_graph_node_borderwidth (graph, 1);
+  gdl_set_graph_edge_thickness (graph, 1);
+  gdl_set_graph_splines (graph, "yes");
+
+  node = gdl_new_node ("info");
+  gdl_set_node_label (node, vcg_plugin_common.info);
+  gdl_set_node_borderwidth (node, 0);
+  gdl_add_node (graph, node);
+
+  vcg_plugin_common.top_graph = graph;
 }
 
 static void
@@ -165,13 +180,16 @@ vcg_finish (void)
       free (current_malloc_str->str);
       //free (current_malloc_str);
     }
+  gdl_free_graph (vcg_plugin_common.top_graph);
 }
 
 vcg_plugin_common_t vcg_plugin_common =
 {
   "vcg_plugin",
+  "",
   "vcgview",
   "dump-temp.vcg",
+  NULL,
   vcg_init,
   vcg_tag,
   vcg_finish,

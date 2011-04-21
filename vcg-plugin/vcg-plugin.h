@@ -37,10 +37,10 @@
 typedef struct
 {
   char *plugin_name;
-  char *plugin_version;
-  char *gcc_version;
+  char *info;
   char *vcg_viewer;
   char *temp_file_name;
+  gdl_graph *top_graph;
   void (*init) (void);
   void (*tag) (char *str);
   void (*finish) (void);
