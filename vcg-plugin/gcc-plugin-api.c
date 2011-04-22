@@ -68,8 +68,7 @@ plugin_init (struct plugin_name_args *plugin_info,
     }
   vcg_plugin_common.info = concat ("GCC: (GNU) ", version->basever,
                                    " ", version->datestamp, " ",
-                                   "(", version->devphase, ")\n",
-                                   "Created by GCC VCG Plugin", NULL);
+                                   "(", version->devphase, ")\n", NULL);
   
   return 0;
 }

@@ -28,16 +28,9 @@
 static void
 dump_gimple_hierarchy_to_file (char *fname)
 {
-  FILE *fp;
   gdl_graph *graph;
   gdl_node *node;
   gdl_edge *edge;
-
-  if ((fp = fopen (fname, "w")) == NULL)
-    {
-      vcg_plugin_common.error ("failed to open file %s.", fname);
-      return;
-    }
 
   graph = vcg_plugin_common.top_graph;
   gdl_set_graph_orientation (graph, "left_to_right");
@@ -102,9 +95,7 @@ dump_gimple_hierarchy_to_file (char *fname)
   NEW_EDGE ("gimple_statement_base", "gimple_statement_omp_atomic_load")
   NEW_EDGE ("gimple_statement_base", "gimple_statement_omp_atomic_store")
 
-  gdl_dump_graph (fp, graph);
-
-  fclose (fp);
+  vcg_plugin_common.dump (fname, graph);
 }
 
 /* Public function to dump the gcc gimple statement structure hierarchy.  */

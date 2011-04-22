@@ -53,23 +53,14 @@ create_node_and_edges (gdl_graph *graph, struct cgraph_node *node)
 static void
 dump_cgraph_to_file (char *fname)
 {
-  FILE *fp;
   gdl_graph *graph;
   struct cgraph_node *node;
-
-  if ((fp = fopen (fname, "w")) == NULL)
-    {
-      vcg_plugin_common.error ("failed to open file %s.", fname);
-      return;
-    }
 
   graph = vcg_plugin_common.top_graph;
   for (node = cgraph_nodes; node; node = node->next)
     create_node_and_edges (graph, node);
 
-  gdl_dump_graph (fp, graph);
-
-  fclose (fp);
+  vcg_plugin_common.dump (fname, graph);
 }
 
 /* Public function to dump call graph.  */
