@@ -24,10 +24,7 @@ INCLUDES = -I $(GCCPLUGINS_DIR)/include
 AM_CFLAGS = -Wall
 
 libgdl_la_SOURCES = \
-        gdl.c gdl.h \
-        edge-attr.def \
-        graph-attr.def \
-        node-attr.def
+        gdl.c gdl.h
                    
 libgdl_la_LDFLAGS = -lc -liberty
 
