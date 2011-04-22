@@ -50,59 +50,23 @@
 #define GDL_MAX_DEPTH		"max_depth"
 #define GDL_TREE		"tree"
 
-#define DEF_ATTR(id, name, type, code, value) GDL_NODE_ATTR_##id,
-enum gdl_node_attr
-{
-  #include "node-attr.def"
-  GDL_NODE_ATTR_MAX
-};
-#undef DEF_ATTR
-
-#define DEF_ATTR(id, name, type, code, value) GDL_EDGE_ATTR_##id,
-enum
-{
-  #include "edge-attr.def"
-  GDL_EDGE_ATTR_MAX
-};
-#undef DEF_ATTR
-
-#define DEF_ATTR(id, name, type, code, value) GDL_GRAPH_ATTR_##id,
-enum
-{
-  #include "graph-attr.def"
-  GDL_GRAPH_ATTR_MAX
-};
-#undef DEF_ATTR
-
-/* node, edge, graph, attribute */
-
-enum
-{
-  GDL_CODE_STR,
-  GDL_CODE_STR_QUOTE,
-  GDL_CODE_INT
-};
-
-union gdl_attr_value
-{
-  int val;
-  char *str;
-};
-
-typedef struct
-{
-  int code;
-  char *name;
-  union gdl_attr_value value;
-} gdl_attr;
-
-
 /* Make colorentry as a common global variable.  */
 char *gdl_colorentry[256][3];
 
 typedef struct gdl_node gdl_node;
 typedef struct gdl_edge gdl_edge;
 typedef struct gdl_graph gdl_graph;
+
+enum gdl_node_attr
+{
+  GDL_NODE_ATTR_bordercolor,
+  GDL_NODE_ATTR_borderwidth,
+  GDL_NODE_ATTR_color,
+  GDL_NODE_ATTR_label,
+  GDL_NODE_ATTR_title,
+  GDL_NODE_ATTR_vertical_order,
+  GDL_NODE_ATTR_MAX
+};
 
 struct gdl_node 
 {
@@ -132,6 +96,16 @@ typedef enum
   GDL_RIGHTBENTNEAREDGE 
 } gdl_edge_type;
 
+enum gdl_edge_attr
+{
+  GDL_EDGE_ATTR_label,
+  GDL_EDGE_ATTR_linestyle,
+  GDL_EDGE_ATTR_sourcename,
+  GDL_EDGE_ATTR_targetname,
+  GDL_EDGE_ATTR_thickness,
+  GDL_EDGE_ATTR_MAX
+};
+
 struct gdl_edge
 {
   char *label;
@@ -139,13 +113,36 @@ struct gdl_edge
   char *sourcename;
   char *targetname;
   int thickness;
-
-  gdl_edge_type type;
-
   /* The value is 1 if the attribute is set.  */
   int set_p[GDL_EDGE_ATTR_MAX];
 
+  gdl_edge_type type;
   gdl_edge *next;
+};
+
+enum gdl_graph_attr
+{
+  GDL_GRAPH_ATTR_color,
+  GDL_GRAPH_ATTR_folding,
+  GDL_GRAPH_ATTR_label,
+  GDL_GRAPH_ATTR_layout_algorithm,
+  GDL_GRAPH_ATTR_near_edges,
+  GDL_GRAPH_ATTR_orientation,
+  GDL_GRAPH_ATTR_port_sharing,
+  GDL_GRAPH_ATTR_shape,
+  GDL_GRAPH_ATTR_splines,
+  GDL_GRAPH_ATTR_title,
+  GDL_GRAPH_ATTR_vertical_order,
+  GDL_GRAPH_ATTR_xspace,
+  GDL_GRAPH_ATTR_yspace,
+
+  GDL_GRAPH_ATTR_node_borderwidth,
+  GDL_GRAPH_ATTR_node_color,
+  GDL_GRAPH_ATTR_node_shape,
+
+  GDL_GRAPH_ATTR_edge_color,
+  GDL_GRAPH_ATTR_edge_thickness,
+  GDL_GRAPH_ATTR_MAX
 };
 
 struct gdl_graph
@@ -170,7 +167,6 @@ struct gdl_graph
 
   char *edge_color;
   int edge_thickness;
-
   /* The value is 1 if the attribute is set.  */
   int set_p[GDL_GRAPH_ATTR_MAX];
 
@@ -185,6 +181,73 @@ struct gdl_graph
   /* The graph who it belongs to.  */
   gdl_graph *parent;
 };
+
+extern char *gdl_get_node_bordercolor (gdl_node *node);
+extern int gdl_get_node_borderwidth (gdl_node *node);
+extern char *gdl_get_node_color (gdl_node *node);
+extern char *gdl_get_node_label (gdl_node *node);
+extern char *gdl_get_node_title (gdl_node *node);
+extern int gdl_get_node_vertical_order (gdl_node *node);
+extern char *gdl_get_edge_label (gdl_edge *edge);
+extern char *gdl_get_edge_linestyle (gdl_edge *edge);
+extern char *gdl_get_edge_sourcename (gdl_edge *edge);
+extern char *gdl_get_edge_targetname (gdl_edge *edge);
+extern int gdl_get_edge_thickness (gdl_edge *edge);
+extern char *gdl_get_graph_color (gdl_graph *graph);
+extern int gdl_get_graph_folding (gdl_graph *graph);
+extern char *gdl_get_graph_label (gdl_graph *graph);
+extern char *gdl_get_graph_layout_algorithm (gdl_graph *graph);
+extern char *gdl_get_graph_near_edges (gdl_graph *graph);
+extern char *gdl_get_graph_orientation (gdl_graph *graph);
+extern char *gdl_get_graph_port_sharing (gdl_graph *graph);
+extern char *gdl_get_graph_shape (gdl_graph *graph);
+extern char *gdl_get_graph_splines (gdl_graph *graph);
+extern char *gdl_get_graph_title (gdl_graph *graph);
+extern int gdl_get_graph_vertical_order (gdl_graph *graph);
+extern int gdl_get_graph_xspace (gdl_graph *graph);
+extern int gdl_get_graph_yspace (gdl_graph *graph);
+extern int gdl_get_graph_node_borderwidth (gdl_graph *graph);
+extern char *gdl_get_graph_node_color (gdl_graph *graph);
+extern char *gdl_get_graph_node_shape (gdl_graph *graph);
+extern char *gdl_get_graph_edge_color (gdl_graph *graph);
+extern int gdl_get_graph_edge_thickness (gdl_graph *graph);
+extern gdl_node *gdl_get_graph_node (gdl_graph *graph);
+extern gdl_edge *gdl_get_graph_edge (gdl_graph *graph);
+extern gdl_graph *gdl_get_graph_subgraph (gdl_graph *graph);
+extern gdl_graph *gdl_get_graph_parent (gdl_graph *graph);
+extern gdl_graph *gdl_get_node_parent (gdl_node *node);
+extern gdl_edge_type gdl_get_edge_type (gdl_edge *edge);
+
+extern void gdl_set_node_bordercolor (gdl_node *node, char *value);
+extern void gdl_set_node_borderwidth (gdl_node *node, int value);
+extern void gdl_set_node_color (gdl_node *node, char *value);
+extern void gdl_set_node_label (gdl_node *node, char *value);
+extern void gdl_set_node_title (gdl_node *node, char *value);
+extern void gdl_set_node_vertical_order (gdl_node *node, int value);
+extern void gdl_set_edge_label (gdl_edge *edge, char *value);
+extern void gdl_set_edge_linestyle (gdl_edge *edge, char *value);
+extern void gdl_set_edge_sourcename (gdl_edge *edge, char *value);
+extern void gdl_set_edge_targetname (gdl_edge *edge, char *value);
+extern void gdl_set_edge_thickness (gdl_edge *edge, int value);
+extern void gdl_set_graph_color (gdl_graph *graph, char *value);
+extern void gdl_set_graph_folding (gdl_graph *graph, int value);
+extern void gdl_set_graph_label (gdl_graph *graph, char *value);
+extern void gdl_set_graph_layout_algorithm (gdl_graph *graph, char *value);
+extern void gdl_set_graph_near_edges (gdl_graph *graph, char *value);
+extern void gdl_set_graph_orientation (gdl_graph *graph, char *value);
+extern void gdl_set_graph_port_sharing (gdl_graph *graph, char *value);
+extern void gdl_set_graph_shape (gdl_graph *graph, char *value);
+extern void gdl_set_graph_splines (gdl_graph *graph, char *value);
+extern void gdl_set_graph_title (gdl_graph *graph, char *value);
+extern void gdl_set_graph_vertical_order (gdl_graph *graph, int value);
+extern void gdl_set_graph_xspace (gdl_graph *graph, int value);
+extern void gdl_set_graph_yspace (gdl_graph *graph, int value);
+extern void gdl_set_graph_node_borderwidth (gdl_graph *graph, int value);
+extern void gdl_set_graph_node_color (gdl_graph *graph, char *value);
+extern void gdl_set_graph_node_shape (gdl_graph *graph, char *value);
+extern void gdl_set_graph_edge_color (gdl_graph *graph, char *value);
+extern void gdl_set_graph_edge_thickness (gdl_graph *graph, int value);
+extern void gdl_set_edge_type (gdl_edge *edge, gdl_edge_type type);
 
 extern gdl_graph *gdl_new_graph (const char *title); 
 extern gdl_node *gdl_new_node (const char *title);
