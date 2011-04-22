@@ -288,6 +288,18 @@ gdl_set_graph_color (gdl_graph *graph, char *value)
 }
 
 void
+gdl_set_graph_colorentry (gdl_graph *graph, int id, int r, int g, int b)
+{
+  assert (id >= 0 && id < 256);
+
+  graph->set_p[GDL_GRAPH_ATTR_colorentry] = 1;
+  graph->colorentry_set_p[id] = 1;
+  graph->colorentry[id][0] = r;
+  graph->colorentry[id][1] = g;
+  graph->colorentry[id][2] = b;
+}
+
+void
 gdl_set_graph_folding (gdl_graph *graph, int value)
 {
   graph->set_p[GDL_GRAPH_ATTR_folding] = 1;
@@ -390,6 +402,13 @@ gdl_set_graph_node_shape (gdl_graph *graph, char *value)
 {
   graph->set_p[GDL_GRAPH_ATTR_node_shape] = 1;
   graph->node_shape = value;
+}
+
+void
+gdl_set_graph_node_textcolor (gdl_graph *graph, char *value)
+{
+  graph->set_p[GDL_GRAPH_ATTR_node_textcolor] = 1;
+  graph->node_textcolor = value;
 }
 
 void
@@ -498,6 +517,7 @@ gdl_new_graph (const char *title)
 
   graph = XNEW (gdl_graph);
   memset (graph->set_p, 0, GDL_GRAPH_ATTR_MAX * sizeof (int));
+  memset (graph->colorentry_set_p, 0, 256 * sizeof (int));
 
   /* Duplicate the string.  */
   gdl_set_graph_title (graph, strdup (title));
@@ -814,6 +834,7 @@ gdl_dump_edge (FILE *fout, gdl_edge *edge)
 void
 gdl_dump_graph (FILE *fout, gdl_graph *graph)
 {
+  int i;
   gdl_node *nodes, *node;
   gdl_edge *edges, *edge;
   gdl_graph *subgraphs, *subgraph;
@@ -821,6 +842,16 @@ gdl_dump_graph (FILE *fout, gdl_graph *graph)
   fputs ("graph: {\n", fout);
 
   /* Dump the attributes.  */
+
+  if (graph->set_p[GDL_GRAPH_ATTR_colorentry])
+    {
+      for (i = 0; i < 256; i++)
+        if (graph->colorentry_set_p[i])
+          fprintf (fout, "colorentry %d: %d %d %d\n", i,
+                   graph->colorentry[i][0],
+                   graph->colorentry[i][1],
+                   graph->colorentry[i][2]);
+    }
 
   if (graph->set_p[GDL_GRAPH_ATTR_color])
     {
@@ -899,6 +930,11 @@ gdl_dump_graph (FILE *fout, gdl_graph *graph)
   if (graph->set_p[GDL_GRAPH_ATTR_node_shape])
     {
       fprintf (fout, "node.shape: %s\n", graph->node_shape);
+    }
+
+  if (graph->set_p[GDL_GRAPH_ATTR_node_textcolor])
+    {
+      fprintf (fout, "node.textcolor: %s\n", graph->node_textcolor);
     }
 
   if (graph->set_p[GDL_GRAPH_ATTR_edge_color])

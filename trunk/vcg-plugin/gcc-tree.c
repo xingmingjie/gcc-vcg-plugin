@@ -783,14 +783,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
 static void
 dump_tree_to_file (char *fname, tree node)
 {
-  FILE *fp;
   gdl_graph *graph;
-
-  if ((fp = fopen (fname, "w")) == NULL)
-    {
-      vcg_plugin_common.error ("failed to open file %s.", fname);
-      return;
-    }
 
   obstack_init (&str_obstack);
   title_id = 1;
@@ -798,9 +791,8 @@ dump_tree_to_file (char *fname, tree node)
 
   graph = vcg_plugin_common.top_graph;
   create_tree_node (graph, node, "tree", 1);
-  gdl_dump_graph (fp, graph);
+  vcg_plugin_common.dump (fname, graph);
 
-  fclose (fp);
   obstack_free (&str_obstack, NULL);
   htab_delete (tree_table);
 }

@@ -177,59 +177,15 @@ set_vertical_order (gdl_graph *graph)
   free (distance);
 }
 
-/* Create a graph from the function fn. */
-
-static gdl_graph *
-create_function_graph (tree fn)
-{
-  basic_block bb;
-  edge e;
-  edge_iterator ei;
-
-  gdl_graph *graph, *bb_graph;
-  gdl_edge *v_edge;
-
-  graph = gdl_new_graph (function_name);
-  gdl_set_graph_node_borderwidth (graph, 1);
-  gdl_set_graph_node_margin (graph, 1);
-  gdl_set_graph_edge_thickness (graph, 1);
-  gdl_set_graph_splines (graph, "yes");
-
-  FOR_ALL_BB (bb)
-    {
-      bb_graph = create_bb_graph (bb);
-      gdl_add_subgraph (graph, bb_graph);
-
-      FOR_EACH_EDGE (e, ei, bb->succs)
-        {
-          v_edge = gdl_new_edge (bb_graph_title[e->src->index],
-                                 bb_graph_title[e->dest->index]);
-          gdl_add_edge (graph, v_edge);
-        }
-    }
-
-  /* Optimize the graph layout.  */
-  set_vertical_order (graph);
-
-  return graph;
-}
-
 static void
 dump_function_to_file (char *fname, tree fn)
 {
-  FILE *fp;
   basic_block bb;
   edge e;
   edge_iterator ei;
 
   gdl_graph *graph, *bb_graph;
   gdl_edge *v_edge;
-
-  if ((fp = fopen (fname, "w")) == NULL)
-    {
-      vcg_plugin_common.error ("failed to open file %s.", fname);
-      return;
-    }
 
   /* Switch CFUN to point to FN.  */
   push_cfun (DECL_STRUCT_FUNCTION (fn));
@@ -257,11 +213,10 @@ dump_function_to_file (char *fname, tree fn)
   /* Optimize the graph layout.  */
   set_vertical_order (graph);
 
-  gdl_dump_graph (fp, graph);
+  vcg_plugin_common.dump (fname, graph);
 
   /* Free names for graphs and nodes.  */
   free_names (n_basic_blocks);
-  fclose (fp);
   fclose (tmp_stream);
   free (tmp_buf);
 }

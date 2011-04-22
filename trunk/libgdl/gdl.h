@@ -29,14 +29,14 @@
 
 /* color */
 
-#define GDL_BLACK		"black"
-#define GDL_BLUE		"blue"
-#define GDL_LIGHTBLUE		"lightblue"
-#define GDL_RED			"red"
-#define GDL_GREEN		"green"
-#define GDL_YELLOW		"yellow"
-#define GDL_WHITE		"white"
-#define GDL_LIGHTGREY		"lightgrey"
+#define GDL_COLOR_BLACK		"black"
+#define GDL_COLOR_BLUE		"blue"
+#define GDL_COLOR_LIGHTBLUE	"lightblue"
+#define GDL_COLOR_RED		"red"
+#define GDL_COLOR_GREEN		"green"
+#define GDL_COLOR_YELLOW	"yellow"
+#define GDL_COLOR_WHITE		"white"
+#define GDL_COLOR_LIGHTGREY	"lightgrey"
 
 /* line style */
 
@@ -49,9 +49,6 @@
 
 #define GDL_MAX_DEPTH		"max_depth"
 #define GDL_TREE		"tree"
-
-/* Make colorentry as a common global variable.  */
-char *gdl_colorentry[256][3];
 
 typedef struct gdl_node gdl_node;
 typedef struct gdl_edge gdl_edge;
@@ -123,6 +120,7 @@ struct gdl_edge
 enum gdl_graph_attr
 {
   GDL_GRAPH_ATTR_color,
+  GDL_GRAPH_ATTR_colorentry,
   GDL_GRAPH_ATTR_folding,
   GDL_GRAPH_ATTR_label,
   GDL_GRAPH_ATTR_layout_algorithm,
@@ -139,6 +137,7 @@ enum gdl_graph_attr
   GDL_GRAPH_ATTR_node_borderwidth,
   GDL_GRAPH_ATTR_node_color,
   GDL_GRAPH_ATTR_node_shape,
+  GDL_GRAPH_ATTR_node_textcolor,
 
   GDL_GRAPH_ATTR_edge_color,
   GDL_GRAPH_ATTR_edge_thickness,
@@ -148,6 +147,7 @@ enum gdl_graph_attr
 struct gdl_graph
 {
   char *color;
+  int colorentry[256][3];
   int folding;
   char *label;
   char *layout_algorithm;
@@ -164,11 +164,13 @@ struct gdl_graph
   int node_borderwidth;
   char *node_color;
   char *node_shape;
+  char *node_textcolor;
 
   char *edge_color;
   int edge_thickness;
   /* The value is 1 if the attribute is set.  */
   int set_p[GDL_GRAPH_ATTR_MAX];
+  int colorentry_set_p[256];
 
   /* nodes or subgraphs */
   gdl_node *node;
@@ -230,6 +232,8 @@ extern void gdl_set_edge_sourcename (gdl_edge *edge, char *value);
 extern void gdl_set_edge_targetname (gdl_edge *edge, char *value);
 extern void gdl_set_edge_thickness (gdl_edge *edge, int value);
 extern void gdl_set_graph_color (gdl_graph *graph, char *value);
+extern void gdl_set_graph_colorentry (gdl_graph *graph, int id,
+                                      int r, int g, int b);
 extern void gdl_set_graph_folding (gdl_graph *graph, int value);
 extern void gdl_set_graph_label (gdl_graph *graph, char *value);
 extern void gdl_set_graph_layout_algorithm (gdl_graph *graph, char *value);
@@ -245,6 +249,7 @@ extern void gdl_set_graph_yspace (gdl_graph *graph, int value);
 extern void gdl_set_graph_node_borderwidth (gdl_graph *graph, int value);
 extern void gdl_set_graph_node_color (gdl_graph *graph, char *value);
 extern void gdl_set_graph_node_shape (gdl_graph *graph, char *value);
+extern void gdl_set_graph_node_textcolor (gdl_graph *graph, char *value);
 extern void gdl_set_graph_edge_color (gdl_graph *graph, char *value);
 extern void gdl_set_graph_edge_thickness (gdl_graph *graph, int value);
 extern void gdl_set_edge_type (gdl_edge *edge, gdl_edge_type type);

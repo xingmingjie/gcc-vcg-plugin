@@ -37,6 +37,7 @@
 typedef struct
 {
   char *plugin_name;
+  char *version;
   char *info;
   char *vcg_viewer;
   char *temp_file_name;
@@ -45,6 +46,7 @@ typedef struct
   void (*tag) (char *str);
   void (*finish) (void);
   void (*error) (const char *format, ...);
+  void (*dump) (char *fname, gdl_graph *graph);
   void (*show) (char *fname);
 } vcg_plugin_common_t;
 
