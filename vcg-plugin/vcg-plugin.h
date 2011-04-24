@@ -55,8 +55,22 @@ extern vcg_plugin_common_t vcg_plugin_common;
 /* These are available functins, which can be used to
    dump and view gcc internal data structures. */
 
+extern void vcg_plugin_dump_cgraph (void);
+extern void vcg_plugin_view_cgraph (void);
+
 extern void vcg_plugin_dump_function (tree fn); 
 extern void vcg_plugin_view_function (tree fn); 
 
+extern void vcg_plugin_dump_gimple_hierarchy (void);
+extern void vcg_plugin_view_gimple_hierarchy (void);
+
+extern void vcg_plugin_dump_passes (struct opt_pass *pass);
+extern void vcg_plugin_view_passes (struct opt_pass *pass);
+
+extern void vcg_plugin_dump_tree_hierarchy (void);
+extern void vcg_plugin_view_tree_hierarchy (void);
+
+extern void vcg_plugin_dump_tree (tree node);
+extern void vcg_plugin_view_tree (tree node);
 
 #endif
