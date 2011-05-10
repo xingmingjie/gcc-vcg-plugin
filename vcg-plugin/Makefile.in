@@ -90,7 +90,7 @@ LTLIBRARIES = $(pkglib_LTLIBRARIES)
 vcg_plugin_la_DEPENDENCIES = ../libgdl/libgdl.la
 am_vcg_plugin_la_OBJECTS = gcc-cgraph.lo gcc-function.lo \
 	gcc-gimple-hierarchy.lo gcc-passes.lo gcc-plugin-api.lo \
-	gcc-tree.lo gcc-tree-hierarchy.lo vcg-plugin.lo
+	gcc-rtx.lo gcc-tree.lo gcc-tree-hierarchy.lo vcg-plugin.lo
 vcg_plugin_la_OBJECTS = $(am_vcg_plugin_la_OBJECTS)
 vcg_plugin_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
@@ -237,6 +237,7 @@ vcg_plugin_la_SOURCES = \
 	gcc-gimple-hierarchy.c \
 	gcc-passes.c \
 	gcc-plugin-api.c \
+	gcc-rtx.c \
 	gcc-tree.c \
 	gcc-tree-hierarchy.c \
         vcg-plugin.c vcg-plugin.h
@@ -322,6 +323,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcc-gimple-hierarchy.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcc-passes.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcc-plugin-api.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcc-rtx.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcc-tree-hierarchy.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gcc-tree.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vcg-plugin.Plo@am__quote@

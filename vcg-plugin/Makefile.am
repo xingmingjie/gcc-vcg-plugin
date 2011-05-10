@@ -31,6 +31,7 @@ vcg_plugin_la_SOURCES = \
 	gcc-gimple-hierarchy.c \
 	gcc-passes.c \
 	gcc-plugin-api.c \
+	gcc-rtx.c \
 	gcc-tree.c \
 	gcc-tree-hierarchy.c \
         vcg-plugin.c vcg-plugin.h
