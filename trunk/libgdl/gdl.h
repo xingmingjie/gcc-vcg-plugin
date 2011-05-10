@@ -173,6 +173,9 @@ struct gdl_graph
   int colorentry_set_p[256];
 
   /* nodes or subgraphs */
+  int node_num;
+  int subgraph_num;
+  int edge_num;
   gdl_node *node;
   gdl_node *last_node;
   gdl_graph *subgraph;
@@ -256,8 +259,12 @@ extern void gdl_set_edge_type (gdl_edge *edge, gdl_edge_type type);
 
 extern gdl_graph *gdl_new_graph (const char *title); 
 extern gdl_node *gdl_new_node (const char *title);
+extern gdl_node *gdl_new_graph_node (gdl_graph *graph, const char *title);
 extern gdl_edge *gdl_new_edge (const char *source, const char *target);
+extern gdl_edge *gdl_new_graph_edge (gdl_graph *graph,
+                                     const char *source, const char *target);
 extern gdl_graph *gdl_new_graph (const char *title); 
+extern gdl_graph *gdl_new_graph_subgraph (gdl_graph *graph, const char *title); 
 
 extern void gdl_free_node (gdl_node *node);
 extern void gdl_free_edge (gdl_edge *edge);
