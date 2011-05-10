@@ -64,6 +64,22 @@ Usage: dump-passes [struct opt_pass * PASS]
 Dump the graph of gcc pass lists. If PASS exists, then show the PASS in red color.
 end
 
+define view-rtx
+  call vcg_plugin_view_rtx ($arg0)
+end
+document view-rtx
+Usage: view-rtx [rtx RTX]
+View the graph of RTX.
+end
+
+define dump-rtx
+  call vcg_plugin_dump_rtx ($arg0)
+end
+document dump-rtx
+Usage: dump-rtx [rtx RTX]
+Dump the graph of RTX.
+end
+
 define view-tree
   call vcg_plugin_view_tree ($arg0)
 end
