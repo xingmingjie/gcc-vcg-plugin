@@ -63,8 +63,8 @@ static const char *ts_names[] = {
   "tree_target_option"
 };
 
-static int title_id;
-struct obstack str_obstack;
+static unsigned title_id = 0;
+static struct obstack str_obstack;
 
 static htab_t tree_table;
 
