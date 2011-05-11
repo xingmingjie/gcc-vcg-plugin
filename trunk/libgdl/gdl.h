@@ -59,6 +59,7 @@ enum gdl_node_attr
   GDL_NODE_ATTR_bordercolor,
   GDL_NODE_ATTR_borderwidth,
   GDL_NODE_ATTR_color,
+  GDL_NODE_ATTR_horizontal_order,
   GDL_NODE_ATTR_label,
   GDL_NODE_ATTR_title,
   GDL_NODE_ATTR_vertical_order,
@@ -70,6 +71,7 @@ struct gdl_node
   char *bordercolor;
   int borderwidth;
   char *color;
+  int horizontal_order;
   char *label;
   char *title;
   int vertical_order;
@@ -226,6 +228,7 @@ extern gdl_edge_type gdl_get_edge_type (gdl_edge *edge);
 extern void gdl_set_node_bordercolor (gdl_node *node, char *value);
 extern void gdl_set_node_borderwidth (gdl_node *node, int value);
 extern void gdl_set_node_color (gdl_node *node, char *value);
+extern void gdl_set_node_horizontal_order (gdl_node *node, int value);
 extern void gdl_set_node_label (gdl_node *node, char *value);
 extern void gdl_set_node_title (gdl_node *node, char *value);
 extern void gdl_set_node_vertical_order (gdl_node *node, int value);
