@@ -345,6 +345,11 @@ gdl_dump_node (FILE *fout, gdl_node *node)
       fprintf (fout, "color: %s\n", node->color);
     }
 
+  if (node->set_p[GDL_NODE_ATTR_horizontal_order])
+    {
+      fprintf (fout, "horizontal_order: %d\n", node->horizontal_order);
+    }
+
   if (node->set_p[GDL_NODE_ATTR_label])
     {
       fprintf (fout, "label: \"");

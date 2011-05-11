@@ -225,6 +225,13 @@ gdl_set_node_color (gdl_node *node, char *value)
 }
 
 void
+gdl_set_node_horizontal_order (gdl_node *node, int value)
+{
+  node->set_p[GDL_NODE_ATTR_horizontal_order] = 1;
+  node->horizontal_order = value;
+}
+
+void
 gdl_set_node_label (gdl_node *node, char *value)
 {
   node->set_p[GDL_NODE_ATTR_label] = 1;
