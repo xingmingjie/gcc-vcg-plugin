@@ -31,7 +31,7 @@ static FILE *tmp_stream;
 static char *tmp_buf;
 static size_t tmp_buf_size;
 
-static void
+static gdl_node *
 create_rtx_node (gdl_graph *graph, const_rtx x)
 {
   gdl_node *node, *node_x;
@@ -42,6 +42,7 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
   const char *str;
   int value;
   rtx sub;
+  enum rtx_code subc;
 
   if (x == 0)
     return;
@@ -83,6 +84,21 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
       case '0':
         break;
 
+      case 'B':
+        node_x = gdl_new_graph_node (graph, NULL);
+        vcg_plugin_common.buf_print ("B\n");
+        vcg_plugin_common.buf_print ("----------\n");
+        if (XBBDEF (x, i))
+          vcg_plugin_common.buf_print ("%i", XBBDEF (x, i)->index);
+
+        label = vcg_plugin_common.buf_finish ();
+        gdl_set_node_label (node_x, label);
+        gdl_set_node_horizontal_order (node_x, i + 1);
+        gdl_new_graph_edge (graph, gdl_get_node_title (node),
+                            gdl_get_node_title (node_x));
+
+        break;
+
       case 'i':
         node_x = gdl_new_graph_node (graph, NULL);
         value = XINT (x, i);
@@ -96,13 +112,50 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
                             gdl_get_node_title (node_x));
         break;
 
+      case 'e':
+      do_e:
+        node_x = create_rtx_node (graph, XEXP (x, i));
+        gdl_new_graph_edge (graph, gdl_get_node_title (node),
+                            gdl_get_node_title (node_x));
+        break;
+
+      case 'n':
+        node_x = gdl_new_graph_node (graph, NULL);
+        vcg_plugin_common.buf_print ("n\n");
+        vcg_plugin_common.buf_print ("----------\n");
+        vcg_plugin_common.buf_print ("%s", GET_NOTE_INSN_NAME (XINT (x, i)));
+        label = vcg_plugin_common.buf_finish ();
+        gdl_set_node_label (node_x, label);
+        gdl_set_node_horizontal_order (node_x, i + 1);
+        gdl_new_graph_edge (graph, gdl_get_node_title (node),
+                            gdl_get_node_title (node_x));
+        
+        break;
+
       case 'u':
         node_x = gdl_new_graph_node (graph, NULL);
         sub = XEXP (x, i);
         vcg_plugin_common.buf_print ("u\n");
         vcg_plugin_common.buf_print ("----------\n");
         vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) sub);
-        vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) sub);
+        if (sub)
+          {
+            subc = GET_CODE (sub);
+            if (code == LABEL_REF)
+              {
+                if (subc == NOTE
+                    && NOTE_KIND (sub) == NOTE_INSN_DELETED_LABEL)
+                  {
+                    vcg_plugin_common.buf_print ("[%d deleted]\n", INSN_UID (sub));
+
+        //        if (subc != CODE_LABEL)
+        //          goto do_e;
+                  }
+              }
+
+            vcg_plugin_common.buf_print ("id: %d\n", INSN_UID (sub));
+          }
+
         label = vcg_plugin_common.buf_finish ();
         gdl_set_node_label (node_x, label);
         gdl_set_node_horizontal_order (node_x, i + 1);
@@ -111,6 +164,8 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
         break;
 
       }
+
+  return node;
 }
 
 /* Dump rtx X into the file FNAME.  */
