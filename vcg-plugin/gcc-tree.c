@@ -63,7 +63,6 @@ static const char *ts_names[] = {
   "tree_target_option"
 };
 
-static unsigned title_id = 0;
 static struct obstack str_obstack;
 
 static htab_t tree_table;
@@ -77,13 +76,10 @@ static gdl_node *create_tree_node (gdl_graph *graph, tree tn, char *name,
 static void
 create_edge (gdl_graph *graph, gdl_node *sn, gdl_node *tn)
 {
-  gdl_edge *edge;
-
   if (tn == NULL || sn == NULL)
     return;
 
-  edge = gdl_new_edge (gdl_get_node_title (sn), gdl_get_node_title (tn));
-  gdl_add_edge (graph, edge);
+  gdl_new_graph_edge (graph, gdl_get_node_title (sn), gdl_get_node_title (tn));
 }
 
 /* Like create_edge, but also set the line style as "dashed".  */
@@ -96,9 +92,9 @@ create_dashed_edge (gdl_graph *graph, gdl_node *sn, gdl_node *tn)
   if (tn == NULL || sn == NULL)
     return;
 
-  edge = gdl_new_edge (gdl_get_node_title (sn), gdl_get_node_title (tn));
+  edge = gdl_new_graph_edge (graph, gdl_get_node_title (sn),
+                             gdl_get_node_title (tn));
   gdl_set_edge_linestyle (edge, "dashed");
-  gdl_add_edge (graph, edge);
 }
 
 /* Create gdl node for tree common part COMMON and add it into GRAPH.  */
@@ -114,11 +110,7 @@ create_common_node (gdl_graph *graph, void *common,
   if (common == NULL)
     return NULL;
 
-  sprintf (buf, "node.%d", title_id++);
-  title = xstrdup (buf);
-  vcg_plugin_common.tag (title);
-  node = gdl_new_node (title);
-  gdl_add_node (graph, node);
+  node = gdl_new_graph_node (graph, NULL);
 
   /* Avoid nested level is too deep.  */
   if (nested_level > 10)
@@ -274,11 +266,7 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
   if (tn == 0)
     return NULL;
 
-  sprintf (buf, "node.%d", title_id++);
-  title = xstrdup (buf);
-  vcg_plugin_common.tag (title);
-  node = gdl_new_node (title);
-  gdl_add_node (graph, node);
+  node = gdl_new_graph_node (graph, NULL);
 
   /* Avoid nested level is too deep.  */
   if (nested_level > 10)
@@ -786,7 +774,6 @@ dump_tree_to_file (char *fname, tree node)
   gdl_graph *graph;
 
   obstack_init (&str_obstack);
-  title_id = 1;
   tree_table = htab_create (32, htab_hash_pointer, htab_eq_pointer, NULL);
 
   graph = vcg_plugin_common.top_graph;
