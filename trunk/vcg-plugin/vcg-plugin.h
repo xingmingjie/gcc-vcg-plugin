@@ -43,11 +43,13 @@ typedef struct
   char *temp_file_name;
   gdl_graph *top_graph;
   void (*init) (void);
-  void (*tag) (char *str);
   void (*finish) (void);
   void (*error) (const char *format, ...);
   void (*dump) (char *fname, gdl_graph *graph);
   void (*show) (char *fname);
+  void (*tag) (char *str);
+  void (*buf_print) (char *fmt, ...);
+  char *(*buf_finish) (void);
 } vcg_plugin_common_t;
 
 extern vcg_plugin_common_t vcg_plugin_common; 
