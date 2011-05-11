@@ -27,6 +27,11 @@
 
 static struct obstack str_obstack;
 
+/* Temp file stream, used to get the rtx dump. */
+static FILE *tmp_stream;
+static char *tmp_buf;
+static size_t tmp_buf_size;
+
 static void
 create_rtx_node (gdl_graph *graph, const_rtx x, int nested_level)
 {
@@ -37,6 +42,7 @@ create_rtx_node (gdl_graph *graph, const_rtx x, int nested_level)
   const char *format_ptr;
   int i;
   const char *str;
+  int value;
 
   if (x == 0)
     return;
@@ -52,14 +58,18 @@ create_rtx_node (gdl_graph *graph, const_rtx x, int nested_level)
     }
 
   code = GET_CODE (x);
-  sprintf (buf, "%s\n", GET_RTX_NAME (code));
-  obstack_grow (&str_obstack, buf, strlen (buf));
+  //sprintf (buf, "%s\n", GET_RTX_NAME (code));
+  
+  rewind (tmp_stream);
+  print_rtl_single (tmp_stream, x);
+  fflush(tmp_stream);
+  obstack_grow (&str_obstack, tmp_buf, tmp_buf_size);
   sprintf (buf, "----------\n");
   obstack_grow (&str_obstack, buf, strlen (buf));
   sprintf (buf, "addr: 0x%x\n", (unsigned) x);
   obstack_grow (&str_obstack, buf, strlen (buf));
 
-  format_ptr = GET_RTX_FORMAT (GET_CODE (x));
+  format_ptr = GET_RTX_FORMAT (code);
   sprintf (buf, "format: %s", format_ptr);
   obstack_grow (&str_obstack, buf, strlen (buf));
 
@@ -85,7 +95,24 @@ create_rtx_node (gdl_graph *graph, const_rtx x, int nested_level)
                             gdl_get_node_title (node_x));
         break;
 
+      case '0':
+        
+
       case 'i':
+        value = XINT (x, i);
+        node_x = gdl_new_graph_node (graph, NULL);
+        sprintf (buf, "i\n");
+        obstack_grow (&str_obstack, buf, strlen (buf));
+        sprintf (buf, "----------\n");
+        obstack_grow (&str_obstack, buf, strlen (buf));
+        sprintf (buf, "%d", value);
+        obstack_grow (&str_obstack, buf, strlen (buf));
+        label = obstack_finish (&str_obstack);
+        gdl_set_node_label (node_x, label);
+        gdl_new_graph_edge (graph, gdl_get_node_title (node),
+                            gdl_get_node_title (node_x));
+
+        break;
       }
 }
 
@@ -97,12 +124,15 @@ dump_rtx_to_file (char *fname, const_rtx x)
   gdl_graph *graph;
 
   obstack_init (&str_obstack);
+  tmp_stream = open_memstream (&tmp_buf, &tmp_buf_size);
 
   graph = vcg_plugin_common.top_graph;
   create_rtx_node (graph, x, 1);
   vcg_plugin_common.dump (fname, graph);
 
   obstack_free (&str_obstack, NULL);
+  fclose (tmp_stream);
+  free (tmp_buf);
 }
 
 /* Public function to dump a gcc rtx X.  */

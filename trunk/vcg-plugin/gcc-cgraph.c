@@ -30,21 +30,17 @@ static void
 create_node_and_edges (gdl_graph *graph, struct cgraph_node *node)
 {
   struct cgraph_edge *edge;
-  gdl_node *node_g;
-  gdl_edge *edge_g;
   char *title, *title_a;
 
   title = cgraph_node_name (node);
-  node_g = gdl_new_node (title);
-  gdl_add_node (graph, node_g);
+  gdl_new_graph_node (graph, title);
 
   for (edge = node->callees; edge; edge = edge->next_callee)
     {
       title_a = cgraph_node_name (edge->callee);
       if (gdl_find_edge (graph, title, title_a))
         continue;
-      edge_g = gdl_new_edge (title, title_a);
-      gdl_add_edge (graph, edge_g);
+      gdl_new_graph_edge (graph, title, title_a);
     }
 }
 
