@@ -58,7 +58,19 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
   vcg_plugin_common.buf_print ("%s", tmp_buf);
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) x);
-  vcg_plugin_common.buf_print ("format: %s", format_ptr);
+  vcg_plugin_common.buf_print ("format: %s\n", format_ptr);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("code: %d\n", x->code);
+  vcg_plugin_common.buf_print ("mode: %d\n", x->mode);
+  vcg_plugin_common.buf_print ("jump: %d\n", x->jump);
+  vcg_plugin_common.buf_print ("call: %d\n", x->call);
+  vcg_plugin_common.buf_print ("unchanging: %d\n", x->unchanging);
+  vcg_plugin_common.buf_print ("volatil: %d\n", x->volatil);
+  vcg_plugin_common.buf_print ("in_struct: %d\n", x->in_struct);
+  vcg_plugin_common.buf_print ("used: %d\n", x->used);
+  vcg_plugin_common.buf_print ("frame_related: %d\n", x->frame_related);
+  vcg_plugin_common.buf_print ("return_val: %d\n", x->return_val);
+  vcg_plugin_common.buf_print ("u: (see below)");
   label = vcg_plugin_common.buf_finish ();
   gdl_set_node_label (node, label);
   
@@ -82,6 +94,15 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
         break;
 
       case '0':
+        //node_x = gdl_new_graph_node (graph, NULL);
+        //vcg_plugin_common.buf_print ("0\n");
+        //vcg_plugin_common.buf_print ("----------\n");
+        //if (i == 1 && REG_P (x))
+        //  {
+            //vcg_plugin_common.buf_print ("ORIGINAL_REGNO(RTX)", );
+            //vcg_plugin_common.buf_print ("rt_uint", XBBDEF (x, i)->index);
+            
+        //  }
         break;
 
       case 'B':
