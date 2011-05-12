@@ -43,6 +43,7 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
   int value;
   rtx sub;
   enum rtx_code subc;
+  basic_block bb;
 
   if (x == 0)
     return;
@@ -70,10 +71,13 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
   vcg_plugin_common.buf_print ("used: %d\n", x->used);
   vcg_plugin_common.buf_print ("frame_related: %d\n", x->frame_related);
   vcg_plugin_common.buf_print ("return_val: %d\n", x->return_val);
-  vcg_plugin_common.buf_print ("u: (see below)");
+  vcg_plugin_common.buf_print ("u: ");
+  vcg_plugin_common.buf_print ("fld[%d]", strlen (format_ptr));
   label = vcg_plugin_common.buf_finish ();
   gdl_set_node_label (node, label);
   
+//  node_x = gdl_new_graph_node (graph, NULL);
+
   for (i = 0; i < GET_RTX_LENGTH (code); i++)
     switch (*format_ptr++)
       {
@@ -94,24 +98,92 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
         break;
 
       case '0':
-        //node_x = gdl_new_graph_node (graph, NULL);
-        //vcg_plugin_common.buf_print ("0\n");
-        //vcg_plugin_common.buf_print ("----------\n");
-        //if (i == 1 && REG_P (x))
-        //  {
-            //vcg_plugin_common.buf_print ("ORIGINAL_REGNO(RTX)", );
-            //vcg_plugin_common.buf_print ("rt_uint", XBBDEF (x, i)->index);
+        node_x = gdl_new_graph_node (graph, NULL);
+        vcg_plugin_common.buf_print ("fld[%d]\n", i);
+        vcg_plugin_common.buf_print ("format: 0\n");
+        if (i == 1 && REG_P (x))
+          {
+            vcg_plugin_common.buf_print ("rt_uint: %d\n", ORIGINAL_REGNO (x));
+            vcg_plugin_common.buf_print ("----------\n");
+            vcg_plugin_common.buf_print ("ORIGINAL_REGNO");
             
-        //  }
+          }
+        else if (i == 1 && code == SYMBOL_REF)
+          {
+            vcg_plugin_common.buf_print ("rt_int: %d\n", SYMBOL_REF_FLAGS (x));
+            vcg_plugin_common.buf_print ("----------\n");
+            vcg_plugin_common.buf_print ("SYMBOL_REF_FLAGS");
+          }
+        else if (i == 2 && code == SYMBOL_REF)
+          {
+            vcg_plugin_common.buf_print ("rt_tree: 0x%x\n", SYMBOL_REF_DECL (x));
+            vcg_plugin_common.buf_print ("----------\n");
+            vcg_plugin_common.buf_print ("SYMBOL_REF_DECL");
+          }
+        else if (i == 4 && NOTE_P (x))
+          {
+            switch (NOTE_KIND (x))
+              {
+              case NOTE_INSN_EH_REGION_BEG:
+              case NOTE_INSN_EH_REGION_END:
+                vcg_plugin_common.buf_print ("rt_int: %d\n", NOTE_EH_HANDLER (x));
+                vcg_plugin_common.buf_print ("----------\n");
+                vcg_plugin_common.buf_print ("NOTE_EH_HANDLER");
+                break;
+
+              case NOTE_INSN_BLOCK_BEG:
+              case NOTE_INSN_BLOCK_END:
+                vcg_plugin_common.buf_print ("rt_tree: 0x%x\n", NOTE_BLOCK (x));
+                vcg_plugin_common.buf_print ("----------\n");
+                vcg_plugin_common.buf_print ("NOTE_BLOCK");
+                break;
+
+              case NOTE_INSN_BASIC_BLOCK:
+              case NOTE_INSN_SWITCH_TEXT_SECTIONS:
+                bb = NOTE_BASIC_BLOCK (x);
+                vcg_plugin_common.buf_print ("rt_bb: 0x%x\n", bb);
+                vcg_plugin_common.buf_print ("----------\n");
+                if (bb)
+                  vcg_plugin_common.buf_print ("bb index: %d\n", bb->index);
+                vcg_plugin_common.buf_print ("NOTE_BASIC_BLOCK");
+                break;
+          
+              case NOTE_INSN_DELETED_LABEL:
+                vcg_plugin_common.buf_print ("rt_str: %s\n",
+                                             NOTE_DELETED_LABEL_NAME (x));
+                vcg_plugin_common.buf_print ("----------\n");
+                vcg_plugin_common.buf_print ("NOTE_DELETED_LABEL_NAME");
+                break;
+       
+              case NOTE_INSN_VAR_LOCATION:
+                vcg_plugin_common.buf_print ("rt_rtx: 0x%x\n",
+                                             NOTE_VAR_LOCATION (x));
+                vcg_plugin_common.buf_print ("----------\n");
+                vcg_plugin_common.buf_print ("NOTE_VAR_LOCATION");
+                break;
+       
+              }
+          }
+       
+        label = vcg_plugin_common.buf_finish ();
+        gdl_set_node_label (node_x, label);
+        gdl_set_node_horizontal_order (node_x, i + 1);
+        gdl_new_graph_edge (graph, gdl_get_node_title (node),
+                            gdl_get_node_title (node_x));
+
         break;
 
       case 'B':
         node_x = gdl_new_graph_node (graph, NULL);
-        vcg_plugin_common.buf_print ("B\n");
-        vcg_plugin_common.buf_print ("----------\n");
-        if (XBBDEF (x, i))
-          vcg_plugin_common.buf_print ("%i", XBBDEF (x, i)->index);
-
+        bb = XBBDEF (x, i);
+        vcg_plugin_common.buf_print ("fld[%d]\n", i);
+        vcg_plugin_common.buf_print ("format: B\n");
+        vcg_plugin_common.buf_print ("rt_bb: 0x%x\n", bb);
+        if (bb)
+          {
+            vcg_plugin_common.buf_print ("----------\n");
+            vcg_plugin_common.buf_print ("bb index: %d", bb->index);
+          }
         label = vcg_plugin_common.buf_finish ();
         gdl_set_node_label (node_x, label);
         gdl_set_node_horizontal_order (node_x, i + 1);
@@ -123,9 +195,9 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
       case 'i':
         node_x = gdl_new_graph_node (graph, NULL);
         value = XINT (x, i);
-        vcg_plugin_common.buf_print ("i\n");
-        vcg_plugin_common.buf_print ("----------\n");
-        vcg_plugin_common.buf_print ("%d", value);
+        vcg_plugin_common.buf_print ("fld[%d]\n", i);
+        vcg_plugin_common.buf_print ("format: i\n");
+        vcg_plugin_common.buf_print ("rt_int: %d", value);
         label = vcg_plugin_common.buf_finish ();
         gdl_set_node_label (node_x, label);
         gdl_set_node_horizontal_order (node_x, i + 1);
@@ -142,9 +214,13 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
 
       case 'n':
         node_x = gdl_new_graph_node (graph, NULL);
-        vcg_plugin_common.buf_print ("n\n");
+        value = XINT (x, i);
+        vcg_plugin_common.buf_print ("fld[%d]\n", i);
+        vcg_plugin_common.buf_print ("format: n\n");
+        vcg_plugin_common.buf_print ("rt_int: %d\n", value);
         vcg_plugin_common.buf_print ("----------\n");
-        vcg_plugin_common.buf_print ("%s", GET_NOTE_INSN_NAME (XINT (x, i)));
+        vcg_plugin_common.buf_print ("name: %s",
+                                     GET_NOTE_INSN_NAME (value));
         label = vcg_plugin_common.buf_finish ();
         gdl_set_node_label (node_x, label);
         gdl_set_node_horizontal_order (node_x, i + 1);
@@ -156,25 +232,14 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
       case 'u':
         node_x = gdl_new_graph_node (graph, NULL);
         sub = XEXP (x, i);
-        vcg_plugin_common.buf_print ("u\n");
-        vcg_plugin_common.buf_print ("----------\n");
-        vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) sub);
+        vcg_plugin_common.buf_print ("fld[%d]\n", i);
+        vcg_plugin_common.buf_print ("format: u\n");
+        vcg_plugin_common.buf_print ("rt_rtx: 0x%x", (unsigned) sub);
         if (sub)
           {
-            subc = GET_CODE (sub);
-            if (code == LABEL_REF)
-              {
-                if (subc == NOTE
-                    && NOTE_KIND (sub) == NOTE_INSN_DELETED_LABEL)
-                  {
-                    vcg_plugin_common.buf_print ("[%d deleted]\n", INSN_UID (sub));
-
-        //        if (subc != CODE_LABEL)
-        //          goto do_e;
-                  }
-              }
-
-            vcg_plugin_common.buf_print ("id: %d\n", INSN_UID (sub));
+            vcg_plugin_common.buf_print ("\n");
+            vcg_plugin_common.buf_print ("----------\n");
+            vcg_plugin_common.buf_print ("id: %d", INSN_UID (sub));
           }
 
         label = vcg_plugin_common.buf_finish ();
