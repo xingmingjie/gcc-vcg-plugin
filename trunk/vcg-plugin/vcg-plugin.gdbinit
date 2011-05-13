@@ -1,5 +1,21 @@
 # Define vcg plugin commands used in gdb. #
 
+define view-dominance
+  call vcg_plugin_view_dominance ()
+end
+document view-dominance
+Usage: view-dominance
+View the current dominance graph.
+end
+
+define dump-dominance
+  call vcg_plugin_dump_dominance ()
+end
+document dump-dominance
+Usage: dump-dominance
+Dump the current dominance graph.
+end
+
 define view-cgraph
   call vcg_plugin_view_cgraph ()
 end
