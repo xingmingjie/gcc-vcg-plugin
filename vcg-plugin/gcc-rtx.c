@@ -206,8 +206,19 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
         break;
 
       case 'e':
-      do_e:
-        node_x = create_rtx_node (graph, XEXP (x, i));
+        node_x = gdl_new_graph_node (graph, NULL);
+        sub = XEXP (x, i);
+        vcg_plugin_common.buf_print ("fld[%d]\n", i);
+        vcg_plugin_common.buf_print ("format: e\n");
+        vcg_plugin_common.buf_print ("rt_rtx: 0x%x\n", sub);
+        vcg_plugin_common.buf_print ("----------\n");
+        rewind (tmp_stream);
+        print_rtl_single (tmp_stream, sub);
+        fflush(tmp_stream);
+        vcg_plugin_common.buf_print ("%s", tmp_buf);
+        label = vcg_plugin_common.buf_finish ();
+        gdl_set_node_label (node_x, label);
+        gdl_set_node_horizontal_order (node_x, i + 1);
         gdl_new_graph_edge (graph, gdl_get_node_title (node),
                             gdl_get_node_title (node_x));
         break;
