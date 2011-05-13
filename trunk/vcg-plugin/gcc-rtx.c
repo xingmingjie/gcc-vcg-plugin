@@ -31,6 +31,17 @@ static FILE *tmp_stream;
 static char *tmp_buf;
 static size_t tmp_buf_size;
 
+static void
+buf_print_rtx (const_rtx x)
+{
+  rewind (tmp_stream);
+  print_rtl_single (tmp_stream, x);
+  fflush(tmp_stream);
+  vcg_plugin_common.buf_print ("%s", tmp_buf);
+
+  return;
+}
+
 static gdl_node *
 create_rtx_node (gdl_graph *graph, const_rtx x)
 {
@@ -44,6 +55,7 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
   rtx sub;
   enum rtx_code subc;
   basic_block bb;
+  tree tn;
 
   if (x == 0)
     return;
@@ -53,10 +65,7 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
   code = GET_CODE (x);
   format_ptr = GET_RTX_FORMAT (code);
   
-  rewind (tmp_stream);
-  print_rtl_single (tmp_stream, x);
-  fflush(tmp_stream);
-  vcg_plugin_common.buf_print ("%s", tmp_buf);
+  buf_print_rtx (x);
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) x);
   vcg_plugin_common.buf_print ("format: %s\n", format_ptr);
@@ -76,8 +85,6 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
   label = vcg_plugin_common.buf_finish ();
   gdl_set_node_label (node, label);
   
-//  node_x = gdl_new_graph_node (graph, NULL);
-
   for (i = 0; i < GET_RTX_LENGTH (code); i++)
     switch (*format_ptr++)
       {
@@ -164,6 +171,36 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
        
               }
           }
+        else if (i == 8 && JUMP_P (x) && JUMP_LABEL (x) != NULL)
+          {
+            sub = JUMP_LABEL (x);
+            vcg_plugin_common.buf_print ("rt_rtx: 0x%x\n", sub);
+            vcg_plugin_common.buf_print ("----------\n");
+            vcg_plugin_common.buf_print ("insn id: %d", INSN_UID (sub));
+          }
+        else if (i == 0 && code == VALUE)
+          {
+            //cselib_val *val = CSELIB_VAL_PTR (x);
+            vcg_plugin_common.buf_print ("rt_cselib: 0x%x\n", CSELIB_VAL_PTR (x));
+            vcg_plugin_common.buf_print ("----------\n");
+            //vcg_plugin_common.buf_print ("%u:%u", val->uid, val->hash);
+          }
+        else if (i == 0 && code == DEBUG_EXPR)
+          {
+            tn = DEBUG_EXPR_TREE_DECL (x);
+            vcg_plugin_common.buf_print ("rt_tree: 0x%x\n", tn);
+            vcg_plugin_common.buf_print ("----------\n");
+            vcg_plugin_common.buf_print ("DEBUG_TEMP_UID: %i", DEBUG_TEMP_UID (tn));
+          }
+        /*
+        else if (i == 0 && code == ENTRY_VALUE)
+          {
+            sub = ENTRY_VALUE_EXP (x);
+            vcg_plugin_common.buf_print ("rt_rtx: 0x%x\n", sub);
+            vcg_plugin_common.buf_print ("----------\n");
+            buf_print_rtx (x);
+          }
+        */
        
         label = vcg_plugin_common.buf_finish ();
         gdl_set_node_label (node_x, label);
@@ -212,10 +249,7 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
         vcg_plugin_common.buf_print ("format: e\n");
         vcg_plugin_common.buf_print ("rt_rtx: 0x%x\n", sub);
         vcg_plugin_common.buf_print ("----------\n");
-        rewind (tmp_stream);
-        print_rtl_single (tmp_stream, sub);
-        fflush(tmp_stream);
-        vcg_plugin_common.buf_print ("%s", tmp_buf);
+        buf_print_rtx (x);
         label = vcg_plugin_common.buf_finish ();
         gdl_set_node_label (node_x, label);
         gdl_set_node_horizontal_order (node_x, i + 1);
@@ -230,8 +264,7 @@ create_rtx_node (gdl_graph *graph, const_rtx x)
         vcg_plugin_common.buf_print ("format: n\n");
         vcg_plugin_common.buf_print ("rt_int: %d\n", value);
         vcg_plugin_common.buf_print ("----------\n");
-        vcg_plugin_common.buf_print ("name: %s",
-                                     GET_NOTE_INSN_NAME (value));
+        vcg_plugin_common.buf_print ("%s", GET_NOTE_INSN_NAME (value));
         label = vcg_plugin_common.buf_finish ();
         gdl_set_node_label (node_x, label);
         gdl_set_node_horizontal_order (node_x, i + 1);
