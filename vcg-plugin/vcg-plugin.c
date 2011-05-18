@@ -214,7 +214,7 @@ vcg_buf_finish (void)
 vcg_plugin_common_t vcg_plugin_common =
 {
   "VCG Plugin",
-  "1.2",
+  "1.3",
   "",
   "vcgview",
   "dump-temp.vcg",
