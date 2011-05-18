@@ -65,19 +65,19 @@ Dump the current call graph.
 end
 
 define view-function
-  call vcg_plugin_view_function ($arg0)
+  call vcg_plugin_view_function ()
 end
 document view-function
-Usage: view-function [tree FUNCTION_DECL_TREE]
-View the control flow graph of FUNCTION_DECL_TREE.
+Usage: view-function 
+View the control flow graph of the current function.
 end
 
 define dump-function
-  call vcg_plugin_dump_function ($arg0)
+  call vcg_plugin_dump_function ()
 end
 document dump-function
-Usage: dump-function [tree FUNCTION_DECL_TREE]
-Dump the control flow graph of FUNCTION_DECL_TREE.
+Usage: dump-function 
+Dump the control flow graph of the current function.
 end
 
 define view-gimple-hierarchy

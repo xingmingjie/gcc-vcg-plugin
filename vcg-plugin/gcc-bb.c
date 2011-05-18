@@ -170,6 +170,8 @@ dump_bb_to_file (char *fname, char *list)
 
   graph = vcg_plugin_common.top_graph;
 
+  mark_dfs_back_edges ();
+
   FOR_ALL_BB (bb)
     if (bb_index[bb->index])
       {
