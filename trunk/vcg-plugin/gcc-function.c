@@ -115,78 +115,15 @@ create_bb_graph (basic_block bb)
   return g;
 }
 
-int
-set_vertical_order_1 (gdl_graph *graph, int *distance, basic_block bb)
-{
-  int val, max = 0;
-  edge e;
-  edge_iterator ei;
-  gdl_graph *subgraph;
-  gdl_node *node;
-
-  if (distance[bb->index] != 0)
-    return distance[bb->index];
-
-  FOR_EACH_EDGE (e, ei, bb->preds)
-    {
-      if (e->flags & EDGE_DFS_BACK)
-        continue;
-
-      val = set_vertical_order_1 (graph, distance, e->src);
-      max = max > val ? max : val;
-    }
-  distance[bb->index] = max + 1;
-  subgraph = gdl_find_subgraph (graph, bb_graph_title[bb->index]); 
-  gdl_set_graph_vertical_order (subgraph, distance[bb->index]);
-  node = gdl_get_graph_node (subgraph);
-  gdl_set_node_vertical_order (node, distance[bb->index]);
- 
-  return distance[bb->index];
-}
-
 static void
-set_vertical_order (gdl_graph *graph)
-{
-  int val, max = 0;
-  int *distance;
-  basic_block bb;
-  gdl_graph *subgraph;
-  gdl_node *node;
-
-  calculate_dominance_info (CDI_DOMINATORS);
-  mark_dfs_back_edges ();
-
-  distance = (int *) xcalloc (n_basic_blocks, sizeof (int));
-
-  max = set_vertical_order_1 (graph, distance, EXIT_BLOCK_PTR);
-  FOR_EACH_BB (bb)
-    {
-      if (distance[bb->index] == 0)
-        {
-          val = set_vertical_order_1 (graph, distance, bb);
-          max = max > val ? max : val + 1;
-        }
-    }
-  subgraph = gdl_find_subgraph (graph,
-                                bb_graph_title[EXIT_BLOCK_PTR->index]); 
-  gdl_set_graph_vertical_order (subgraph, max);
-  node = gdl_get_graph_node (subgraph);
-  gdl_set_node_vertical_order (node, max);
-
-  free (distance);
-}
-
-static void
-dump_function_to_file (char *fname, tree fn)
+dump_function_to_file (char *fname)
 {
   basic_block bb;
   edge e;
   edge_iterator ei;
 
   gdl_graph *graph, *bb_graph;
-
-  /* Switch CFUN to point to FN.  */
-  push_cfun (DECL_STRUCT_FUNCTION (fn));
+  gdl_edge *edge;
 
   /* Create names for graphs and nodes.  */
   create_names (function_name, n_basic_blocks);
@@ -195,6 +132,8 @@ dump_function_to_file (char *fname, tree fn)
 
   graph = vcg_plugin_common.top_graph;
 
+  mark_dfs_back_edges ();
+
   FOR_ALL_BB (bb)
     {
       bb_graph = create_bb_graph (bb);
@@ -202,13 +141,12 @@ dump_function_to_file (char *fname, tree fn)
 
       FOR_EACH_EDGE (e, ei, bb->succs)
         {
-          gdl_new_graph_edge (graph, bb_graph_title[e->src->index],
+          edge = gdl_new_graph_edge (graph, bb_graph_title[e->src->index],
                               bb_graph_title[e->dest->index]);
+              if (e->flags & EDGE_DFS_BACK)
+                gdl_set_edge_type (edge, GDL_BACKEDGE);
         }
     }
-
-  /* Optimize the graph layout.  */
-  set_vertical_order (graph);
 
   vcg_plugin_common.dump (fname, graph);
 
@@ -221,18 +159,18 @@ dump_function_to_file (char *fname, tree fn)
 /* Public function to dump a gcc function FN.  */
 
 void
-vcg_plugin_dump_function (tree fn)
+vcg_plugin_dump_function (void)
 {
   char *fname;
 
   vcg_plugin_common.init ();
 
   /* Get the function name.  */
-  function_name = lang_hooks.decl_printable_name (fn, 2);
+  function_name = current_function_name ();
   /* Create the dump file name.  */
   asprintf (&fname, "dump-function-%s.vcg", function_name);
   vcg_plugin_common.tag (fname);
-  dump_function_to_file (fname, fn);
+  dump_function_to_file (fname);
 
   vcg_plugin_common.finish ();
 }
@@ -240,18 +178,18 @@ vcg_plugin_dump_function (tree fn)
 /* Public function to view a gcc function FN.  */
 
 void
-vcg_plugin_view_function (tree fn)
+vcg_plugin_view_function (void)
 {
   char *fname;
 
   vcg_plugin_common.init ();
 
   /* Get the function name.  */
-  function_name = lang_hooks.decl_printable_name (fn, 2);
+  function_name = current_function_name ();
   /* Get the temp file name.  */
   fname = vcg_plugin_common.temp_file_name;
 
-  dump_function_to_file (fname, fn);
+  dump_function_to_file (fname);
   vcg_plugin_common.show (fname);
 
   vcg_plugin_common.finish ();
