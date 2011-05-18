@@ -39,13 +39,12 @@ static int which_pass_list;
 static int id = 0;
 
 /* Point to the focused pass.  */
-static struct opt_pass *this_pass = NULL;
 static gdl_node *this_node = NULL;
 
 static void
-check_this_pass (struct opt_pass *pass, gdl_node *node)
+check_current_pass (struct opt_pass *pass, gdl_node *node)
 {
-  if (pass == this_pass)
+  if (pass == current_pass)
     this_node = node;
 }
 
@@ -79,7 +78,7 @@ create_sub_pass_list_graph (gdl_graph *graph, struct opt_pass *pass_list,
     {
       asprintf (&title, "%s.%d", name, id++);
       node = gdl_new_node (title);
-      check_this_pass (pass, node);
+      check_current_pass (pass, node);
       gdl_set_node_label (node, name);
       gdl_add_node (subgraph, node);
       try_create_edge (subgraph, prev_node, node);
@@ -98,7 +97,7 @@ create_sub_pass_list_graph (gdl_graph *graph, struct opt_pass *pass_list,
           asprintf (&title, "%s.%d", pass->name, id++);
           node = gdl_new_node (title);
           gdl_set_node_label (node, pass->name);
-          check_this_pass (pass, node);
+          check_current_pass (pass, node);
           gdl_add_node (subgraph, node);
           try_create_edge (subgraph, prev_node, node);
           prev_node = node;
@@ -134,7 +133,7 @@ create_pass_list_graph (gdl_graph *graph, struct opt_pass *pass_list,
           asprintf (&title, "%s.%d", pass->name, id++);
           node = gdl_new_node (title);
           gdl_set_node_label (node, pass->name);
-          check_this_pass (pass, node);
+          check_current_pass (pass, node);
           gdl_add_node (subgraph, node);
           try_create_edge (subgraph, prev_node, node);
           prev_node = node;
@@ -143,7 +142,7 @@ create_pass_list_graph (gdl_graph *graph, struct opt_pass *pass_list,
 }
 
 static void
-dump_passes_to_file (char *fname, struct opt_pass *pass)
+dump_passes_to_file (char *fname)
 {
   gdl_graph *graph, *g;
   gdl_graph *subgraph;
@@ -154,7 +153,6 @@ dump_passes_to_file (char *fname, struct opt_pass *pass)
 
   /* Do some initialization.  */
   id = 0;
-  this_pass = pass;
   this_node = NULL;
 
   for (i = 0; i < PASS_LIST_NUM; i++)
@@ -177,13 +175,13 @@ dump_passes_to_file (char *fname, struct opt_pass *pass)
 /* Public function to dump the gcc passes.  */
 
 void
-vcg_plugin_dump_passes (struct opt_pass *pass)
+vcg_plugin_dump_passes (void)
 {
   char *fname = "dump-passes.vcg";
 
   vcg_plugin_common.init ();
 
-  dump_passes_to_file (fname, pass);
+  dump_passes_to_file (fname);
 
   vcg_plugin_common.finish ();
 }
@@ -191,7 +189,7 @@ vcg_plugin_dump_passes (struct opt_pass *pass)
 /* Public function to view the gcc passes.  */
 
 void
-vcg_plugin_view_passes (struct opt_pass *pass)
+vcg_plugin_view_passes (void)
 {
   char *fname;
 
@@ -199,7 +197,7 @@ vcg_plugin_view_passes (struct opt_pass *pass)
 
   /* Get the temp file name.  */
   fname = vcg_plugin_common.temp_file_name;
-  dump_passes_to_file (fname, pass);
+  dump_passes_to_file (fname);
   vcg_plugin_common.show (fname);
 
   vcg_plugin_common.finish ();

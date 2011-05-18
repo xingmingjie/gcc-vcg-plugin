@@ -97,19 +97,19 @@ Dump the graph of gcc gimple statement structure hierarchy.
 end
 
 define view-passes
-  call vcg_plugin_view_passes ($arg0)
+  call vcg_plugin_view_passes ()
 end
 document view-passes
-Usage: view-passes [struct opt_pass * PASS]
-View the graph of gcc pass lists. If PASS exists, then show the PASS in red color.
+Usage: view-passes
+View the graph of gcc pass lists. If current_pass exists, then show the it in red color.
 end
 
 define dump-passes
-  call vcg_plugin_dump_passes ($arg0)
+  call vcg_plugin_dump_passes ()
 end
 document dump-passes
-Usage: dump-passes [struct opt_pass * PASS]
-Dump the graph of gcc pass lists. If PASS exists, then show the PASS in red color.
+Usage: dump-passes
+Dump the graph of gcc pass lists. If current_pass exists, then show the it in red color.
 end
 
 define view-rtx
