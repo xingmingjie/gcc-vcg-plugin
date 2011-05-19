@@ -15,27 +15,17 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */ 
 
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "gcc-plugin.h"
-#include "plugin.h"
-#include "plugin-version.h"
-
 #include "vcg-plugin.h"
 
 #define DEF_PASS_LIST(LIST) #LIST,
 /* Pass list names.  */
-static const char *pass_list_name[] =
+static char *pass_list_name[] =
 {
   GCC_PASS_LISTS
   NULL
 };
 #undef DEF_PASS_LIST
 
-/*  */
-static int which_pass_list;
 static int id = 0;
 
 /* Point to the focused pass.  */
@@ -63,7 +53,7 @@ create_sub_pass_list_graph (gdl_graph *graph, struct opt_pass *pass_list,
                             char *name, gdl_node *prev_node)
 {
   gdl_graph *subgraph;
-  gdl_node *node;
+  gdl_node *node = NULL, *prev = prev_node;
   char *title;
   struct opt_pass *pass = pass_list;
 
@@ -81,26 +71,24 @@ create_sub_pass_list_graph (gdl_graph *graph, struct opt_pass *pass_list,
       check_current_pass (pass, node);
       gdl_set_node_label (node, name);
       gdl_add_node (subgraph, node);
-      try_create_edge (subgraph, prev_node, node);
-      prev_node = node;
+      try_create_edge (subgraph, prev, node);
+      prev = node;
     }
 
   for (pass = pass->sub; pass; pass = pass->next)
     {
       if (pass->sub)
-        {
-          prev_node = create_sub_pass_list_graph (subgraph, pass, pass->name,
-                                                  prev_node);
-        }
+        prev = create_sub_pass_list_graph (subgraph, pass,
+                                           (char *) pass->name, prev);
       else
         {
           asprintf (&title, "%s.%d", pass->name, id++);
           node = gdl_new_node (title);
-          gdl_set_node_label (node, pass->name);
+          gdl_set_node_label (node, (char *) pass->name);
           check_current_pass (pass, node);
           gdl_add_node (subgraph, node);
-          try_create_edge (subgraph, prev_node, node);
-          prev_node = node;
+          try_create_edge (subgraph, prev, node);
+          prev = node;
         }
     }
   return node;
@@ -111,7 +99,7 @@ create_pass_list_graph (gdl_graph *graph, struct opt_pass *pass_list,
                         char *name, gdl_node *prev_node)
 {
   gdl_graph *subgraph;
-  gdl_node *node;
+  gdl_node *node = NULL, *prev = prev_node;
   char *title;
   struct opt_pass *pass;
 
@@ -124,19 +112,17 @@ create_pass_list_graph (gdl_graph *graph, struct opt_pass *pass_list,
   for (pass = pass_list; pass; pass = pass->next)
     {
       if (pass->sub)
-        {
-          prev_node = create_sub_pass_list_graph (subgraph, pass, pass->name,
-                                                  prev_node);
-        }
+        prev = create_sub_pass_list_graph (subgraph, pass,
+                                           (char *) pass->name, prev);
       else
         {
           asprintf (&title, "%s.%d", pass->name, id++);
           node = gdl_new_node (title);
-          gdl_set_node_label (node, pass->name);
+          gdl_set_node_label (node, (char *) pass->name);
           check_current_pass (pass, node);
           gdl_add_node (subgraph, node);
-          try_create_edge (subgraph, prev_node, node);
-          prev_node = node;
+          try_create_edge (subgraph, prev, node);
+          prev = node;
         }
     }
 }
@@ -145,7 +131,6 @@ static void
 dump_passes_to_file (char *fname)
 {
   gdl_graph *graph, *g;
-  gdl_graph *subgraph;
   int i;
 
   graph = vcg_plugin_common.top_graph;
@@ -191,12 +176,10 @@ vcg_plugin_dump_passes (void)
 void
 vcg_plugin_view_passes (void)
 {
-  char *fname;
+  char *fname = vcg_plugin_common.temp_file_name;
 
   vcg_plugin_common.init ();
 
-  /* Get the temp file name.  */
-  fname = vcg_plugin_common.temp_file_name;
   dump_passes_to_file (fname);
   vcg_plugin_common.show (fname);
 
