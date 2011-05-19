@@ -18,18 +18,25 @@
 #ifndef VCG_PLUGIN_H
 #define VCG_PLUGIN_H
 
+/* GNU extensions, asprintf */
+#define _GNU_SOURCE
+
+#include <stddef.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <ctype.h>
+
 /* gcc's header files */
 
-#include "system.h"
-#include "coretypes.h"
-#include "tm.h"
-#include "toplev.h"
+#include "gcc-plugin.h"
+#include "plugin.h"
+#include "plugin-version.h"
+
 #include "gimple.h"
 #include "tree-pass.h"
-#include "rtl.h"
-#include "intl.h"
-#include "langhooks.h"
-#include "cfghooks.h"
+#include "cfgloop.h"
+#include "cgraph.h"
 
 /* libgdl */
 #include "gdl.h"
@@ -71,6 +78,9 @@ extern void vcg_plugin_view_function (void);
 
 extern void vcg_plugin_dump_gimple_hierarchy (void);
 extern void vcg_plugin_view_gimple_hierarchy (void);
+
+extern void vcg_plugin_dump_loop (unsigned loop_id);
+extern void vcg_plugin_view_loop (unsigned loop_id);
 
 extern void vcg_plugin_dump_passes (void);
 extern void vcg_plugin_view_passes (void);
