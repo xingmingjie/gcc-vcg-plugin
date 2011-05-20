@@ -76,24 +76,10 @@ vcg_show (char *fname)
     }
 }
 
-typedef struct vcg_malloc_str vcg_malloc_str;
-struct vcg_malloc_str
-{
-  char *str;
-  vcg_malloc_str *next;
-};
-
-static vcg_malloc_str malloc_str;
-static vcg_malloc_str *current_malloc_str;
-
 static void
 vcg_init (void)
 {
   gdl_graph *graph;
-
-  malloc_str.str = NULL;
-  malloc_str.next = NULL;  
-  current_malloc_str = &malloc_str;
 
   graph = gdl_new_graph ("top graph");
   gdl_set_graph_node_borderwidth (graph, 1);
@@ -110,31 +96,9 @@ vcg_init (void)
 }
 
 static void
-vcg_tag (char *str)
-{
-  vcg_malloc_str *ms;
-
-  ms = (vcg_malloc_str *) xmalloc (sizeof (vcg_malloc_str));
-  ms->str = str;
-  ms->next = NULL;
-  current_malloc_str->next = ms;
-  current_malloc_str = ms;
-}
-
-static void
 vcg_finish (void)
 {
-  vcg_malloc_str *ms;
-
-  for (ms = &malloc_str; ms;)
-    {
-      current_malloc_str = ms;
-      ms = current_malloc_str->next;
-      free (current_malloc_str->str);
-      //free (current_malloc_str);
-    }
   gdl_free_graph (vcg_plugin_common.top_graph);
-
   obstack_free (&str_obstack, NULL);
 }
 
@@ -170,7 +134,6 @@ vcg_plugin_common_t vcg_plugin_common =
   vcg_error,
   vcg_dump,
   vcg_show,
-  vcg_tag,
   vcg_buf_print,
   vcg_buf_finish
 };
