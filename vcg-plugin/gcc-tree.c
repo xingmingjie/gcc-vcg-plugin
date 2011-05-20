@@ -723,7 +723,6 @@ vcg_plugin_dump_tree (tree node)
 
   vcg_plugin_common.init ();
 
-  vcg_plugin_common.tag (fname);
   dump_tree_to_file (fname, node);
 
   vcg_plugin_common.finish ();

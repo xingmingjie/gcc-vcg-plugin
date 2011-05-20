@@ -54,7 +54,6 @@ typedef struct
   void (*error) (const char *format, ...);
   void (*dump) (char *fname, gdl_graph *graph);
   void (*show) (char *fname);
-  void (*tag) (char *str);
   void (*buf_print) (char *fmt, ...);
   char *(*buf_finish) (void);
 } vcg_plugin_common_t;
