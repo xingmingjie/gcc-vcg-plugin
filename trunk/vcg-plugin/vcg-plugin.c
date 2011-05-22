@@ -17,11 +17,10 @@
 
 #include "vcg-plugin.h"
 
+/* Used as a string buffer.  */
 static struct obstack str_obstack;
 
-static void vcg_error (const char *format, ...);
-static void vcg_dump (char *fname, gdl_graph *graph);
-static void vcg_show (char *fname);
+/* Print error messages.  */
 
 static void
 vcg_error (const char *format, ...)
@@ -35,13 +34,12 @@ vcg_error (const char *format, ...)
   fputc ('\n', stderr);
 }
 
-/* Dump GRAPH into file.  If FP is NULL, then create a new file.  */
+/* Dump the top graph into file FNAME.  */
+
 static void
-vcg_dump (char *fname, gdl_graph *graph)
+vcg_dump (char *fname)
 {
   FILE *fp;
-
-  assert (graph != NULL);
 
   if ((fp = fopen (fname, "w")) == NULL)
     {
@@ -55,17 +53,17 @@ vcg_dump (char *fname, gdl_graph *graph)
                "// Home page: http://code.google.com/p/gcc-vcg-plugin\n" \
                "// %s", vcg_plugin_common.version, vcg_plugin_common.info);
 
-  gdl_dump_graph (fp, graph);
+  gdl_dump_graph (fp, vcg_plugin_common.top_graph);
   fclose (fp);
 }
+
+/* Show the top graph.  */
 
 static void
 vcg_show (char *fname)
 {
   char *cmd;
   pid_t pid;
-
-  assert (fname != NULL);
 
   cmd = concat (vcg_plugin_common.vcg_viewer, " ", fname, NULL);
   pid = fork ();
@@ -74,13 +72,17 @@ vcg_show (char *fname)
       system (cmd);
       exit (0);
     }
+  free (cmd);
 }
+
+/* Do the common initialization work for each view/dump command.  */
 
 static void
 vcg_init (void)
 {
   gdl_graph *graph;
 
+  /* Create the top graph.  */
   graph = gdl_new_graph ("top graph");
   gdl_set_graph_node_borderwidth (graph, 1);
   gdl_set_graph_edge_thickness (graph, 1);
@@ -89,30 +91,42 @@ vcg_init (void)
   gdl_set_graph_node_textcolor (graph, "white");
   gdl_set_graph_node_color (graph, "100");
   gdl_set_graph_edge_color (graph, "100");
-
   vcg_plugin_common.top_graph = graph;
 
+  /* Initialize the string obstack.  */
   obstack_init (&str_obstack);
+
+  /* Open the temp stream.  */
+  vcg_plugin_common.stream = open_memstream (&vcg_plugin_common.stream_buf,
+                                             &vcg_plugin_common.stream_buf_size);
 }
+
+/* Do the common cleanup work for each view/dump command.  */
 
 static void
 vcg_finish (void)
 {
   gdl_free_graph (vcg_plugin_common.top_graph);
   obstack_free (&str_obstack, NULL);
+  fclose (vcg_plugin_common.stream);
+  free (vcg_plugin_common.stream_buf);
 }
+
+/* Print into the string buffer.  */
 
 static void
 vcg_buf_print (char *fmt, ...)
 {
   va_list ap;
-  char buf[256];
+  char buf[512];
 
   va_start (ap, fmt);
   vsprintf (buf, fmt, ap);
   va_end (ap);
   obstack_grow (&str_obstack, buf, strlen (buf));
 }
+
+/* Finish a string and return the address.  */
 
 static char *
 vcg_buf_finish (void)
@@ -125,10 +139,13 @@ vcg_plugin_common_t vcg_plugin_common =
 {
   "VCG Plugin",
   "1.4",
-  "",
+  NULL,
   "vcgview",
+  NULL,
   "dump-temp.vcg",
   NULL,
+  NULL,
+  0,
   vcg_init,
   vcg_finish,
   vcg_error,
