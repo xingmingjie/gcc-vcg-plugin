@@ -22,11 +22,6 @@ static char **bb_graph_title;
 static char **bb_graph_label;
 static char **bb_node_title;
 
-/* Temp file stream, used to get the bb dump from gcc dump function. */
-static FILE *tmp_stream;
-static char *tmp_buf;
-static size_t tmp_buf_size;
-
 /* Initialize all of the names.  */
 static void
 create_names (void)
@@ -35,9 +30,9 @@ create_names (void)
   int bb_num = n_basic_blocks;
   const char *func_name = current_function_name ();
   
-  bb_graph_title = (char **) xmalloc (bb_num * sizeof (char *));
-  bb_graph_label = (char **) xmalloc (bb_num * sizeof (char *));
-  bb_node_title = (char **) xmalloc (bb_num * sizeof (char *));
+  bb_graph_title = XNEWVEC (char *, bb_num);
+  bb_graph_label = XNEWVEC (char *, bb_num);
+  bb_node_title = XNEWVEC (char *, bb_num);
 
   for (i = 0; i < bb_num; i++)
     {
@@ -97,11 +92,11 @@ create_bb_graph (basic_block bb)
   gdl_set_graph_folding (g, 1);
   gdl_set_graph_shape (g, "ellipse");
 
-  rewind (tmp_stream);
-  gimple_dump_bb (bb, tmp_stream, 0, TDF_VOPS|TDF_MEMSYMS|TDF_BLOCKS);
-  i = tmp_buf_size;
-  while (i > 1 && ISSPACE (tmp_buf[i - 1])) i--;
-  str = xstrndup (tmp_buf, i);
+  rewind (vcg_plugin_common.stream);
+  gimple_dump_bb (bb, vcg_plugin_common.stream, 0, TDF_VOPS|TDF_MEMSYMS|TDF_BLOCKS);
+  i = vcg_plugin_common.stream_buf_size;
+  while (i > 1 && ISSPACE (vcg_plugin_common.stream_buf[i - 1])) i--;
+  str = xstrndup (vcg_plugin_common.stream_buf, i);
   n = gdl_new_graph_node (g, bb_node_title[bb->index]);
   gdl_set_node_label (n, str);
 
@@ -121,8 +116,6 @@ dump_function_to_file (char *fname)
   /* Create names for graphs and nodes.  */
   create_names ();
 
-  tmp_stream = open_memstream (&tmp_buf, &tmp_buf_size);
-
   graph = vcg_plugin_common.top_graph;
 
   mark_dfs_back_edges ();
@@ -141,12 +134,10 @@ dump_function_to_file (char *fname)
         }
     }
 
-  vcg_plugin_common.dump (fname, graph);
+  vcg_plugin_common.dump (fname);
 
   /* Free names for graphs and nodes.  */
   free_names (n_basic_blocks);
-  fclose (tmp_stream);
-  free (tmp_buf);
 }
 
 /* Public function to dump a gcc function FN.  */
@@ -154,11 +145,9 @@ dump_function_to_file (char *fname)
 void
 vcg_plugin_dump_function (void)
 {
-  char *fname = "dump-function.vcg";
-
   vcg_plugin_common.init ();
 
-  dump_function_to_file (fname);
+  dump_function_to_file ("dump-function.vcg");
 
   vcg_plugin_common.finish ();
 }
@@ -168,12 +157,10 @@ vcg_plugin_dump_function (void)
 void
 vcg_plugin_view_function (void)
 {
-  char *fname = vcg_plugin_common.temp_file_name;
-
   vcg_plugin_common.init ();
 
-  dump_function_to_file (fname);
-  vcg_plugin_common.show (fname);
+  dump_function_to_file (vcg_plugin_common.temp_file_name);
+  vcg_plugin_common.show (vcg_plugin_common.temp_file_name);
 
   vcg_plugin_common.finish ();
 }

@@ -44,10 +44,11 @@ dump_cgraph_to_file (char *fname)
   struct cgraph_node *node;
 
   graph = vcg_plugin_common.top_graph;
+
   for (node = cgraph_nodes; node; node = node->next)
     create_node_and_edges (graph, node);
 
-  vcg_plugin_common.dump (fname, graph);
+  vcg_plugin_common.dump (fname);
 }
 
 /* Public function to dump call graph.  */
@@ -55,11 +56,9 @@ dump_cgraph_to_file (char *fname)
 void
 vcg_plugin_dump_cgraph (void)
 {
-  char *fname = "dump-cgraph.vcg";
-
   vcg_plugin_common.init ();
 
-  dump_cgraph_to_file (fname);
+  dump_cgraph_to_file ("dump-cgraph.vcg");
 
   vcg_plugin_common.finish ();
 }
@@ -69,12 +68,10 @@ vcg_plugin_dump_cgraph (void)
 void
 vcg_plugin_view_cgraph (void)
 {
-  char *fname = vcg_plugin_common.temp_file_name;
-
   vcg_plugin_common.init ();
 
-  dump_cgraph_to_file (fname);
-  vcg_plugin_common.show (fname);
+  dump_cgraph_to_file (vcg_plugin_common.temp_file_name);
+  vcg_plugin_common.show (vcg_plugin_common.temp_file_name);
 
   vcg_plugin_common.finish ();
 }
