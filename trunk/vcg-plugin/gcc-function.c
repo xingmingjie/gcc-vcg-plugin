@@ -103,6 +103,64 @@ create_bb_graph (basic_block bb)
   return g;
 }
 
+static int
+set_vertical_order_1 (gdl_graph *graph, int *distance, basic_block bb)
+{
+  int val, max = 0;
+  edge e;
+  edge_iterator ei;
+  gdl_graph *subgraph;
+  gdl_node *node;
+
+  if (distance[bb->index] != 0)
+    return distance[bb->index];
+
+  FOR_EACH_EDGE (e, ei, bb->preds)
+    {
+      if (e->flags & EDGE_DFS_BACK)
+        continue;
+
+      val = set_vertical_order_1 (graph, distance, e->src);
+      max = max > val ? max : val;
+    }
+  distance[bb->index] = max + 1;
+  subgraph = gdl_find_subgraph (graph, bb_graph_title[bb->index]); 
+  gdl_set_graph_vertical_order (subgraph, distance[bb->index]);
+  node = gdl_get_graph_node (subgraph);
+  gdl_set_node_vertical_order (node, distance[bb->index]);
+ 
+  return distance[bb->index];
+}
+
+static void
+set_vertical_order (gdl_graph *graph)
+{
+  int val, max = 0;
+  int *distance;
+  basic_block bb;
+  gdl_graph *subgraph;
+  gdl_node *node;
+
+  distance = XCNEWVEC (int, n_basic_blocks);
+
+  max = set_vertical_order_1 (graph, distance, EXIT_BLOCK_PTR);
+  FOR_EACH_BB (bb)
+    {
+      if (distance[bb->index] == 0)
+        {
+          val = set_vertical_order_1 (graph, distance, bb);
+          max = max > val ? max : val + 1;
+        }
+    }
+  subgraph = gdl_find_subgraph (graph,
+                                bb_graph_title[EXIT_BLOCK_PTR->index]); 
+  gdl_set_graph_vertical_order (subgraph, max);
+  node = gdl_get_graph_node (subgraph);
+  gdl_set_node_vertical_order (node, max);
+
+  free (distance);
+}
+
 static void
 dump_function_to_file (char *fname)
 {
@@ -133,6 +191,9 @@ dump_function_to_file (char *fname)
                 gdl_set_edge_type (edge, GDL_BACKEDGE);
         }
     }
+
+  /* Optimize the graph layout.  */
+  set_vertical_order (graph);
 
   vcg_plugin_common.dump (fname);
 
