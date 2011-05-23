@@ -151,7 +151,7 @@ dump_bb_to_file (char *fname, char *list)
   gdl_graph *graph, *bb_graph;
   gdl_edge *edge;
 
-  bb_index = XNEWVEC (int, n_basic_blocks);
+  bb_index = XCNEWVEC (int, n_basic_blocks);
   parse_bb_list (list);
 
   /* Create names for graphs and nodes.  */
