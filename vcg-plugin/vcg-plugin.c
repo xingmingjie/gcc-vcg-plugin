@@ -118,12 +118,10 @@ static void
 vcg_buf_print (char *fmt, ...)
 {
   va_list ap;
-  char buf[512];
 
   va_start (ap, fmt);
-  vsprintf (buf, fmt, ap);
+  obstack_vprintf (&str_obstack, fmt, ap);
   va_end (ap);
-  obstack_grow (&str_obstack, buf, strlen (buf));
 }
 
 /* Finish a string and return the address.  */
