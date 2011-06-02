@@ -20,6 +20,24 @@
 /* plugin license check */
 int plugin_is_GPL_compatible;
 
+/* Just a wrapper.  */
+
+static void *
+dump_cgraph_callback (void *gcc_data, void *user_data)
+{
+  vcg_plugin_dump_cgraph ();
+  return NULL;
+}
+
+/* Just a wrapper.  */
+
+static void *
+dump_cgraph_callee_callback (void *gcc_data, void *user_data)
+{
+  vcg_plugin_dump_cgraph_callee ();
+  return NULL;
+}
+
 /* Plugin initialization.  */
 
 int
@@ -50,7 +68,17 @@ plugin_init (struct plugin_name_args *plugin_info,
         {
           register_callback (plugin_info->base_name,
                              PLUGIN_ALL_IPA_PASSES_START,
-                             vcg_plugin_dump_cgraph, NULL);
+                             (plugin_callback_func) dump_cgraph_callback,
+                             NULL);
+        }
+
+      /* Dump callee graph.  */
+      if (strcmp (argv[i].key, "cgraph-callee") == 0)
+        {
+          register_callback (plugin_info->base_name,
+                             PLUGIN_ALL_IPA_PASSES_START,
+                             (plugin_callback_func) dump_cgraph_callee_callback,
+                             NULL);
         }
     }
   vcg_plugin_common.info = concat ("GCC: (GNU) ", version->basever,
