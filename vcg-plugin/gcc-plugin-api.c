@@ -20,33 +20,6 @@
 /* plugin license check */
 int plugin_is_GPL_compatible;
 
-/* Just a wrapper.  */
-
-static void *
-dump_cgraph_callback (void *gcc_data, void *user_data)
-{
-  vcg_plugin_dump_cgraph ();
-  return NULL;
-}
-
-/* Just a wrapper.  */
-
-static void *
-dump_cgraph_callee_callback (void *gcc_data, void *user_data)
-{
-  vcg_plugin_dump_cgraph_callee ();
-  return NULL;
-}
-
-/* Just a wrapper.  */
-
-static void *
-dump_cgraph_caller_callback (void *gcc_data, void *user_data)
-{
-  vcg_plugin_dump_cgraph_caller ();
-  return NULL;
-}
-
 /* Plugin initialization.  */
 
 int
@@ -77,7 +50,7 @@ plugin_init (struct plugin_name_args *plugin_info,
         {
           register_callback (plugin_info->base_name,
                              PLUGIN_ALL_IPA_PASSES_START,
-                             (plugin_callback_func) dump_cgraph_callback,
+                             (plugin_callback_func) vcg_plugin_callback_cgraph,
                              NULL);
         }
 
@@ -86,7 +59,7 @@ plugin_init (struct plugin_name_args *plugin_info,
         {
           register_callback (plugin_info->base_name,
                              PLUGIN_ALL_IPA_PASSES_START,
-                             (plugin_callback_func) dump_cgraph_callee_callback,
+                             (plugin_callback_func) vcg_plugin_callback_callee,
                              NULL);
         }
 
@@ -95,7 +68,24 @@ plugin_init (struct plugin_name_args *plugin_info,
         {
           register_callback (plugin_info->base_name,
                              PLUGIN_ALL_IPA_PASSES_START,
-                             (plugin_callback_func) dump_cgraph_caller_callback,
+                             (plugin_callback_func) vcg_plugin_callback_caller,
+                             NULL);
+        }
+
+      /* Dump pass list.  */
+      if (strcmp (argv[i].key, "passes") == 0)
+        {
+          register_callback (plugin_info->base_name,
+                             PLUGIN_START_UNIT,
+            	             (plugin_callback_func) vcg_plugin_callback_passes_start,
+                             NULL);
+          register_callback (plugin_info->base_name,
+                             PLUGIN_OVERRIDE_GATE,
+                             (plugin_callback_func) vcg_plugin_callback_pass,
+                             NULL);
+          register_callback (plugin_info->base_name,
+                             PLUGIN_FINISH_UNIT,
+                             (plugin_callback_func) vcg_plugin_callback_passes_finish,
                              NULL);
         }
     }
