@@ -136,7 +136,7 @@ vcg_buf_finish (void)
 vcg_plugin_common_t vcg_plugin_common =
 {
   "VCG Plugin",
-  "1.6",
+  "1.7",
   NULL,
   "vcgview",
   NULL,
