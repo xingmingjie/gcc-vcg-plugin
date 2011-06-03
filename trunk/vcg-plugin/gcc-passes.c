@@ -114,6 +114,7 @@ create_sub_pass_list_graph (gdl_graph *graph, struct opt_pass *pass_list,
   if (pass->execute)
     {
       node = create_node (subgraph, pass, NULL);
+      gdl_set_node_label (node, label);
       check_current_pass (pass, node);
       try_create_edge (subgraph, prev, node);
       prev = node;
@@ -126,6 +127,8 @@ create_sub_pass_list_graph (gdl_graph *graph, struct opt_pass *pass_list,
       else
         {
           node = create_node (subgraph, pass, NULL);
+          label = get_label (pass);
+          gdl_set_node_label (node, label);
           check_current_pass (pass, node);
           try_create_edge (subgraph, prev, node);
           prev = node;
@@ -141,6 +144,7 @@ create_pass_list_graph (gdl_graph *graph, struct opt_pass *pass_list,
   gdl_graph *subgraph;
   gdl_node *node = NULL, *prev = prev_node;
   struct opt_pass *pass;
+  char *label;
 
   subgraph = gdl_new_graph (name);
   gdl_set_graph_label (subgraph, name);
@@ -154,7 +158,9 @@ create_pass_list_graph (gdl_graph *graph, struct opt_pass *pass_list,
         prev = create_sub_pass_list_graph (subgraph, pass, prev);
       else
         {
+          label = get_label (pass);
           node = create_node (subgraph, pass, NULL);
+          gdl_set_node_label (node, label);
           check_current_pass (pass, node);
           try_create_edge (subgraph, prev, node);
           prev = node;
@@ -190,6 +196,41 @@ dump_passes_to_file (char *fname)
         }
     }
   vcg_plugin_common.dump (fname);
+}
+
+/* Public function to dump the gcc pass lists.  */
+
+void
+vcg_plugin_dump_pass_lists (void)
+{
+  vcg_plugin_common.init ();
+
+  dump_passes_to_file ("dump-pass-lists.vcg");
+
+  vcg_plugin_common.finish ();
+}
+
+/* Public function to view the gcc pass lists.  */
+
+void
+vcg_plugin_view_pass_lists (void)
+{
+  vcg_plugin_common.init ();
+
+  dump_passes_to_file (vcg_plugin_common.temp_file_name);
+  vcg_plugin_common.show (vcg_plugin_common.temp_file_name);
+
+  vcg_plugin_common.finish ();
+}
+
+/* Plugin callback function for PLUGIN_FINISH event.
+   Dump gcc pass lists.  */
+
+void *
+vcg_plugin_callback_pass_lists (void *gcc_data, void *user_data)
+{
+  vcg_plugin_dump_pass_lists ();
+  return NULL;
 }
 
 /* Plugin callback function for PLUGIN_START_UNIT event.
@@ -247,34 +288,5 @@ vcg_plugin_callback_passes_finish (void *gcc_data, void *user_data)
 
   vcg_plugin_common.finish ();
   return NULL;
-}
-
-/* Public function to dump the gcc passes.  */
-
-void
-vcg_plugin_dump_passes (void)
-{
-  char *fname;
-
-  vcg_plugin_common.init ();
-
-  fname = concat (dump_base_name, ".passes.vcg", NULL);
-  dump_passes_to_file (fname);
-  free (fname);
-
-  vcg_plugin_common.finish ();
-}
-
-/* Public function to view the gcc passes.  */
-
-void
-vcg_plugin_view_passes (void)
-{
-  vcg_plugin_common.init ();
-
-  dump_passes_to_file (vcg_plugin_common.temp_file_name);
-  vcg_plugin_common.show (vcg_plugin_common.temp_file_name);
-
-  vcg_plugin_common.finish ();
 }
 
