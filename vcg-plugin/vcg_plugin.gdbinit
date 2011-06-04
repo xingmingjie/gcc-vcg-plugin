@@ -147,7 +147,7 @@ end
 define view-pass-lists
   call vcg_plugin_view_pass_lists ()
 end
-document view-pass_lists
+document view-pass-lists
 Usage: view-pass-lists
 View the graph of gcc pass lists. If current_pass exists, then show the it in red color.
 end
@@ -206,6 +206,7 @@ end
 document dump-tree-hierarchy
 Usage: dump-tree-hierarchy
 Dump the graph of gcc tree structure hierarchy.
+end
 
 define view-tree-hierarchy-4-6
   call vcg_plugin_view_tree_hierarchy_4_6 ()
