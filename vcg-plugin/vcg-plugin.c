@@ -135,12 +135,21 @@ vcg_buf_finish (void)
 
 vcg_plugin_common_t vcg_plugin_common =
 {
+  /* The plugin name.  */
   "VCG Plugin",
+  /* The plugin version.  */
   "1.7",
+  /* The gcc base version.  */
   NULL,
+  /* Other information.  */
+  NULL,
+  /* The name of the vcg viewer tool.  */
   "vcgview",
+  /* The top graph.  */
   NULL,
+  /* Temp file name to dump/view a graph.  */
   "dump-temp.vcg",
+  /* Temp stream to get gcc dump.  */
   NULL,
   NULL,
   0,

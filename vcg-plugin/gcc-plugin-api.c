@@ -43,6 +43,21 @@ help (void)
   exit (0);
 }
 
+/* Version check.  */
+
+static bool
+version_check (struct plugin_gcc_version *gcc_version,
+              struct plugin_gcc_version *plugin_version)
+{
+  if (!gcc_version || !plugin_version)
+    return false;
+
+  if (strcmp (gcc_version->basever, plugin_version->basever))
+    return false;
+
+  return true;
+}
+
 /* Plugin initialization.  */
 
 int
@@ -53,9 +68,15 @@ plugin_init (struct plugin_name_args *plugin_info,
   int argc = plugin_info->argc;
   struct plugin_argument *argv = plugin_info->argv;
 
-  //if (!plugin_default_version_check (version, &gcc_version))
-  //  return 1;
+  if (!version_check (version, &gcc_version))
+    {
+      vcg_plugin_common.error ("version check failed. plugin compiled by gcc %s and used by %s.",
+                               version->basever, gcc_version.basever);
 
+      return 1;
+    }
+
+  vcg_plugin_common.gcc_basever = (char *) version->basever;
   vcg_plugin_common.info = concat ("GCC: (GNU) ", version->basever,
                                    " ", version->datestamp, " ",
                                    "(", version->devphase, ")\n", NULL);
@@ -140,6 +161,24 @@ plugin_init (struct plugin_name_args *plugin_info,
           register_callback (plugin_info->base_name,
                              PLUGIN_FINISH,
                              (plugin_callback_func) vcg_plugin_callback_tree_hierarchy,
+                             NULL);
+        }
+
+      /* Dump tree hierarchy graph.  */
+      if (strcmp (argv[i].key, "tree-hierarchy-4-6") == 0)
+        {
+          register_callback (plugin_info->base_name,
+                             PLUGIN_FINISH,
+                             (plugin_callback_func) vcg_plugin_callback_tree_hierarchy_4_6,
+                             NULL);
+        }
+
+      /* Dump tree hierarchy graph.  */
+      if (strcmp (argv[i].key, "tree-hierarchy-4-7") == 0)
+        {
+          register_callback (plugin_info->base_name,
+                             PLUGIN_FINISH,
+                             (plugin_callback_func) vcg_plugin_callback_tree_hierarchy_4_7,
                              NULL);
         }
 
