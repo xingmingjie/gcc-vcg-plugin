@@ -87,6 +87,7 @@ vcg_init (void)
   gdl_set_graph_node_borderwidth (graph, 1);
   gdl_set_graph_edge_thickness (graph, 1);
   gdl_set_graph_splines (graph, "yes");
+  gdl_set_graph_node_alignment (graph, "top");
   gdl_set_graph_colorentry (graph, 100, 70, 130, 180);
   gdl_set_graph_node_textcolor (graph, "white");
   gdl_set_graph_node_color (graph, "100");
