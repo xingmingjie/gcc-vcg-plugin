@@ -35,6 +35,8 @@ help (void)
 "  passes               dump the passes graph.\n" \
 "  pass-lists           dump the pass lists graph.\n" \
 "  tree-hierarchy       dump the tree hierarchy graph.\n" \
+"  tree-hierarchy-4-6   dump the tree hierarchy graph for gcc 4.6.\n" \
+"  tree-hierarchy-4-7   dump the tree hierarchy graph for gcc 4.7.\n" \
 "  viewer=name          set the vcg viewer, default is vcgview.\n" \
 "  \n" \
 "%s %s <http://code.google.com/p/gcc-vcg-plugin>\n",
