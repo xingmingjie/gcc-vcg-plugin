@@ -126,6 +126,12 @@ extern void vcg_plugin_view_rtx (const_rtx x);
 extern void vcg_plugin_dump_tree_hierarchy (void);
 extern void vcg_plugin_view_tree_hierarchy (void);
 
+extern void vcg_plugin_dump_tree_hierarchy_4_6 (void);
+extern void vcg_plugin_view_tree_hierarchy_4_6 (void);
+
+extern void vcg_plugin_dump_tree_hierarchy_4_7 (void);
+extern void vcg_plugin_view_tree_hierarchy_4_7 (void);
+
 extern void vcg_plugin_dump_tree (tree node);
 extern void vcg_plugin_view_tree (tree node);
 
