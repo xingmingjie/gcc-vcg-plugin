@@ -17,8 +17,11 @@
 
 #include "vcg-plugin.h"
 
+enum tree_node_structure_enum tns;
+
 #if GCC_VERSION == 4006
 
+/* Tree structure names based on treestruct.def.  */
 static const char *ts_names[] = {
   "tree_base",
   "tree_common",
@@ -700,6 +703,1484 @@ create_tree_node (gdl_graph *graph, tree tn, char *name, int nested_level)
   return node;
 }
 
+#elif GCC_VERSION == 4007
+
+/* Tree structure names based on treestruct.def.  */
+static const char *ts_names[] = {
+  "tree_base",
+  "tree_typed",
+  "tree_common",
+  "tree_int_cst",
+  "tree_real_cst",
+  "tree_fixed_cst",
+  "tree_vector",
+  "tree_string",
+  "tree_complex",
+  "tree_identifier",
+  "tree_decl_minimal",
+  "tree_decl_common",
+  "tree_decl_with_rtl",
+  "tree_decl_non_common",
+  "tree_decl_with_vis",
+  "tree_field_decl",
+  "tree_var_decl",
+  "tree_parm_decl",
+  "tree_label_decl",
+  "tree_result_decl",
+  "tree_const_decl",
+  "tree_label_decl",
+  "tree_function_decl",
+  "tree_translatin_unit_decl",
+  "tree_type",
+  "tree_list",
+  "tree_vec",
+  "tree_exp",
+  "tree_ssa_name",
+  "tree_block",
+  "tree_binfo",
+  "tree_statement_list",
+  "tree_constructor",
+  "tree_omp_clause",
+  "tree_optimization_option",
+  "tree_target_option"
+};
+
+static htab_t tree_table;
+
+static gdl_node *create_tree_node (gdl_graph *graph, tree tn);
+
+/* Create gdl edge and add it into GRAPH.  SN is source node,
+   TN is target node.  */
+
+static void
+create_edge (gdl_graph *graph, gdl_node *sn, gdl_node *tn)
+{
+  if (tn == NULL || sn == NULL)
+    return;
+
+  gdl_new_graph_edge (graph, gdl_get_node_title (sn), gdl_get_node_title (tn));
+}
+
+/* Like create_edge, but also set the line style as "dashed".  */
+
+static void
+create_dashed_edge (gdl_graph *graph, gdl_node *sn, gdl_node *tn)
+{
+  gdl_edge *edge;
+
+  if (tn == NULL || sn == NULL)
+    return;
+
+  edge = gdl_new_graph_edge (graph, gdl_get_node_title (sn),
+                             gdl_get_node_title (tn));
+  gdl_set_edge_linestyle (edge, "dashed");
+}
+
+/* Create gdl node for struct tree_base.  */
+
+static gdl_node *
+create_node_tree_base (gdl_graph *graph, tree tn, int level)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  tns = TS_BASE;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("...");
+
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_typed.  */
+
+static gdl_node *
+create_node_tree_typed (gdl_graph *graph, tree tn, int level)
+{
+  gdl_node *node, *anode;
+  char *label;
+  struct tree_typed *tx;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  tx = &tn->typed;
+  tns = TS_TYPED;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_base\n");
+  vcg_plugin_common.buf_print ("type: 0x%x", (unsigned) tx->type);
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  if (level > 0)
+    {
+      anode = create_tree_node (graph, tx.type, level - 1);
+      create_edge (graph, node, anode);
+    }
+
+  return node;
+}
+
+/* Create gdl node for struct tree_common.  */
+
+static gdl_node *
+create_node_tree_common (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+  struct tree_common *tx;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  tx = &tn->common;
+  tns = TS_COMMON;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("chain: 0x%x", (unsigned) tx->chain);
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  if (level > 0)
+    {
+      anode = create_node_tree_typed (graph, &tx->typed, level - 1);
+      create_edge (graph, node, anode);
+
+      node = create_node_tree_function_decl (graph, tn);
+      anode = create_common_node (graph, &tx.base, TS_BASE,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.chain, "chain", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.type, "type", nested_level + 1);
+      create_edge (graph, node, anode);
+    }
+
+  return node;
+}
+
+/* Create gdl node for struct tree_int_cst.  */
+
+static gdl_node *
+create_node_tree_int_cst (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->int_cst
+  tns = TS_INT_CST;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("int_cst: %ld", (unsigned) tx.int_cst);
+  #undef tx
+
+      vcg_plugin_common.buf_print ("\nvalue: %ld", tx.int_cst);
+      label = vcg_plugin_common.buf_finish ();
+      gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_real_cst.  */
+
+static gdl_node *
+create_node_tree_real_cst (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->int_cst
+  tns = TS_REAL_CST;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("real_cst_ptr: %ld", (unsigned) tx.real_cst_ptr);
+  #undef tx
+
+      vcg_plugin_common.buf_print ("\nreal_cst_ptr: 0x%x", (unsigned) tx.real_cst_ptr);
+      label = vcg_plugin_common.buf_finish ();
+      gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_fixed_cst.  */
+
+static gdl_node *
+create_node_tree_fixed_cst (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->int_cst
+  tns = TS_FIXED_CST;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("fixed_cst_ptr: %ld", (unsigned) tx.fixed_cst_ptr);
+  #undef tx
+
+      vcg_plugin_common.buf_print ("\nfixed_cst_ptr: 0x%x", (unsigned) tx.fixed_cst_ptr);
+      label = vcg_plugin_common.buf_finish ();
+      gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_string.  */
+
+static gdl_node *
+create_node_tree_string (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->string
+  tns = TS_STRING;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("length: %d\n", tx.length);
+  vcg_plugin_common.buf_print ("str: %s", tx.str);
+  #undef tx
+
+      sprintf (buf, "\nvalue: ");
+      strncat (buf, tx.str, tx.length);
+      vcg_plugin_common.buf_print ("%s", buf);
+      label = vcg_plugin_common.buf_finish ();
+      gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_complex.  */
+
+static gdl_node *
+create_node_tree_complex (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->complex
+  tns = TS_COMPLEX;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("real: 0x%x\n", (unsigned) tx.real);
+  vcg_plugin_common.buf_print ("imag: 0x%x", (unsigned) tx.imag);
+  #undef tx
+
+      label = vcg_plugin_common.buf_finish ();
+      gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.real, "real", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.imag, "imag", nested_level + 1);
+      create_edge (graph, node, anode);
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_vector.  */
+
+static gdl_node *
+create_node_tree_vector (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->vector
+  tns = TS_VECTOR;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("elements: 0x%x", (unsigned) tx.elements);
+  #undef tx
+
+      label = vcg_plugin_common.buf_finish ();
+      gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.elements, "elements",
+                                nested_level + 1);
+      create_edge (graph, node, anode);
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_identifier.  */
+
+static gdl_node *
+create_node_tree_identifier (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->identifier
+  tns = TS_IDENTIFIER;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_common\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("id: 0x%x", (unsigned) &tx.id);
+  #undef tx
+
+      vcg_plugin_common.buf_print ("\nvalue: %s", tx.id.str);
+      label = vcg_plugin_common.buf_finish ();
+      gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_list.  */
+
+static gdl_node *
+create_node_tree_list (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->list
+  tns = TS_LIST;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_common\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("purpose: 0x%x\n", (unsigned) tx.purpose);
+  vcg_plugin_common.buf_print ("value: 0x%x", (unsigned) tx.value);
+  #undef tx
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.purpose, "purpose", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.value, "value", nested_level + 1);
+      create_edge (graph, node, anode);
+
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_vec.  */
+
+static gdl_node *
+create_node_tree_vec (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->vec
+  tns = TS_VEC;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_common\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("length: %d\n", tx.length);
+  vcg_plugin_common.buf_print ("a[]: 0x%x", (unsigned) tx.a);
+  #undef tx
+
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      for (i = 0; i < tx.length; i++)
+        {
+          sprintf (buf, "a[%d]", i);
+          anode = create_tree_node (graph, tx.a[i], buf, nested_level + 1);
+          create_edge (graph, node, anode);
+        }
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_constructor.  */
+
+static gdl_node *
+create_node_tree_constructor (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->constructor
+  tns = TS_CONSTRUCTOR;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("elts: 0x%x", (unsigned) tx.elts);
+  #undef tx
+
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_exp.  */
+
+static gdl_node *
+create_node_tree_exp (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->exp
+  tns = TS_EXP;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("locus: 0x%x", (unsigned) tx.locus);
+  vcg_plugin_common.buf_print ("block: 0x%x", (unsigned) tx.block);
+  vcg_plugin_common.buf_print ("operands[]: 0x%x", (unsigned) tx.operands);
+  #undef tx
+
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.block, "block", nested_level + 1);
+      create_edge (graph, node, anode);
+      for (i = 0; i < TREE_OPERAND_LENGTH(tn); i++)
+        {
+          sprintf (buf, "operands[%d]", i);
+          anode = create_tree_node (graph, tx.operands[i], buf, nested_level + 1);
+          create_edge (graph, node, anode);
+        }
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_ssa_name.  */
+
+static gdl_node *
+create_node_tree_ssa_name (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->ssa_name
+  tns = TS_SSA_NAME;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("var: 0x%x\n", (unsigned) tx.var);
+  vcg_plugin_common.buf_print ("def_stmt: 0x%x\n", (unsigned) tx.def_stmt);
+  vcg_plugin_common.buf_print ("version: %d\n", tx.version);
+  vcg_plugin_common.buf_print ("...");
+  #undef tx
+
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.var, "var", nested_level + 1);
+      create_edge (graph, node, anode);
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_omp_clause.  */
+
+static gdl_node *
+create_node_tree_omp_clause (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->omp_clause
+  tns = TS_OMP_CLAUSE;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_common\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("ops[]: 0x%x", (unsigned) tx.ops);
+  vcg_plugin_common.buf_print ("...");
+  #undef tx
+
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_block.  */
+
+static gdl_node *
+create_node_tree_block (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->block
+  tns = TS_BLOCK;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_base\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("vars: 0x%x", (unsigned) tx.vars);
+  vcg_plugin_common.buf_print ("subblocks: 0x%x", (unsigned) tx.subblocks);
+  vcg_plugin_common.buf_print ("supercontext: 0x%x",
+                               (unsigned) tx.supercontext);
+  vcg_plugin_common.buf_print ("abstract_origin: 0x%x",
+                               (unsigned) tx.abstract_origin);
+  vcg_plugin_common.buf_print ("fragment_origin: 0x%x",
+                               (unsigned) tx.fragment_origin);
+  vcg_plugin_common.buf_print ("fragment_chain: 0x%x",
+                               (unsigned) tx.fragment_chain);
+  vcg_plugin_common.buf_print ("...");
+  #undef tx
+
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.vars, "vars", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.subblocks, "subblocks", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.supercontext, "supercontext", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.abstract_origin, "abstract_origin", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.fragment_origin, "fragment_origin", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.fragment_chain, "fragment_chain", nested_level + 1);
+      create_edge (graph, node, anode);
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_type_common.  */
+
+static gdl_node *
+create_node_tree_type_common (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->type_common
+  tns = TS_TYPE_COMMON;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_common\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("size: 0x%x", (unsigned) tx.size);
+  vcg_plugin_common.buf_print ("size_unit: 0x%x", (unsigned) tx.size_unit);
+  vcg_plugin_common.buf_print ("attributes: 0x%x", (unsigned) tx.attributes);
+  vcg_plugin_common.buf_print ("pointer_to: 0x%x", (unsigned) tx.pointer_to);
+  vcg_plugin_common.buf_print ("reference_to: 0x%x", (unsigned) tx.reference_to);
+  vcg_plugin_common.buf_print ("name: 0x%x", (unsigned) tx.name);
+  vcg_plugin_common.buf_print ("next_variant: 0x%x", (unsigned) tx.next_variant);
+  vcg_plugin_common.buf_print ("main_variant: 0x%x", (unsigned) tx.main_variant);
+  vcg_plugin_common.buf_print ("context: 0x%x", (unsigned) tx.context);
+  vcg_plugin_common.buf_print ("canonical: 0x%x", (unsigned) tx.canonical);
+  vcg_plugin_common.buf_print ("...");
+  #undef tx
+
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_type_with_lang_specific.  */
+
+static gdl_node *
+create_node_tree_type_with_lang_specific (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->type_with_lang_specific
+  tns = TS_TYPE_WITH_LANG_SPECIFIC;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_type_common\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("lang_specific: 0x%x",
+                               (unsigned) tx.lang_specific);
+  #undef tx
+
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_type_non_common.  */
+
+static gdl_node *
+create_node_tree_type_non_common (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->type_non_common
+  tns = TS_TYPE_NON_COMMON;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_type_with_lang_specific\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("values: 0x%x\n", (unsigned) tx.vaules);
+  vcg_plugin_common.buf_print ("minval: 0x%x\n", (unsigned) tx.minval);
+  vcg_plugin_common.buf_print ("maxval: 0x%x\n", (unsigned) tx.maxval);
+  vcg_plugin_common.buf_print ("binfo: 0x%x", (unsigned) tx.binfo);
+  #undef tx
+
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_decl_minimal.  */
+
+static gdl_node *
+create_node_tree_decl_minimal (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->decl_minimal
+  tns = TS_DECL_MINIMAL;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_common\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("name: 0x%x\n", (unsigned) tx.name);
+  vcg_plugin_common.buf_print ("context: 0x%x", (unsigned) tx.context);
+  #undef tx
+
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_decl_common.  */
+
+static gdl_node *
+create_node_tree_decl_common (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->decl_common
+  tns = TS_DECL_COMMON;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_decl_minimal\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("size: 0x%x\n", (unsigned) tx.size);
+  vcg_plugin_common.buf_print ("size_unit: 0x%x\n", (unsigned) tx.size_unit);
+  vcg_plugin_common.buf_print ("initial: 0x%x\n", (unsigned) tx.initial);
+  vcg_plugin_common.buf_print ("attributes: 0x%x\n", (unsigned) tx.attributes);
+  vcg_plugin_common.buf_print ("abstract_origin: 0x%x",
+                               (unsigned) tx.abstract_origin);
+  #undef tx
+
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_decl_with_rtl.  */
+
+static gdl_node *
+create_node_tree_decl_with_rtl (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->with_rtl
+  tns = TS_DECL_WRTL;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_decl_common\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("rtl: 0x%x", (unsigned) tx.rtl);
+  #undef tx
+
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_field_decl.  */
+
+static gdl_node *
+create_node_tree_field_decl (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->field_decl
+  tns = TS_FIELD_DECL;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_decl_common\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("offset: 0x%x\n", (unsigned) tx.offset);
+  vcg_plugin_common.buf_print ("bit_field_type: 0x%x\n", (unsigned) tx.bit_field_type);
+  vcg_plugin_common.buf_print ("qualifier: 0x%x\n", (unsigned) tx.qualifier);
+  vcg_plugin_common.buf_print ("bit_offset: 0x%x\n", (unsigned) tx.bit_offset);
+  vcg_plugin_common.buf_print ("fcontext: 0x%x", (unsigned) tx.fcontext);
+  #undef tx
+
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_label_decl.  */
+
+static gdl_node *
+create_node_tree_label_decl (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->label_decl
+  tns = TS_LABEL_DECL;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_decl_with_rtl\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("label_decl_uid: %d\n", tx.label_decl_uid);
+  vcg_plugin_common.buf_print ("eh_landing_pad_nr: 0x%x", tx.eh_landing_pad_nr);
+  #undef tx
+
+      #define tx tn->result_decl
+      vcg_plugin_common.buf_print ("\nann = 0x%x", (unsigned) tx.ann);
+      label = vcg_plugin_common.buf_finish ();
+      gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_DECL_WRTL,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      #undef tx
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_result_decl.  */
+
+static gdl_node *
+create_node_tree_result_decl (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->result_decl
+  tns = TS_RESULT_DECL;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_decl_with_rtl\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("ann: 0x%x", tx.ann);
+  #undef tx
+
+      anode = create_common_node (graph, &tx.common, TS_DECL_WRTL,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_parm_decl.  */
+
+static gdl_node *
+create_node_tree_parm_decl (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->parm_decl
+  tns = TS_PARM_DECL;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_decl_with_rtl\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("incoming_rtl: 0x%x", tx.incoming_rtl);
+  vcg_plugin_common.buf_print ("ann: 0x%x", tx.ann);
+  #undef tx
+
+      #define tx tn->parm_decl
+      vcg_plugin_common.buf_print ("\nann = 0x%x", (unsigned) tx.ann);
+      label = vcg_plugin_common.buf_finish ();
+      gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_DECL_WRTL,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      #undef tx
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_decl_with_vis.  */
+
+static gdl_node *
+create_node_tree_decl_with_vis (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->decl_with_vis
+  tns = TS_DECL_WITH_VIS;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_decl_with_rtl\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("assembler_name: 0x%x\n", tx.assembler_name);
+  vcg_plugin_common.buf_print ("section_name: 0x%x\n", tx.section_name);
+  vcg_plugin_common.buf_print ("comdat_group: 0x%x\n", tx.comdat_group);
+  vcg_plugin_common.buf_print ("...");
+  #undef tx
+
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_var_decl.  */
+
+static gdl_node *
+create_node_tree_var_decl (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0) return NULL;
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->val_decl
+  tns = TS_VAR_DECL;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_decl_with_vis\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("ann: 0x%x", tx.ann);
+  #undef tx
+
+      #define tx tn->var_decl
+      vcg_plugin_common.buf_print ("\nann = 0x%x", (unsigned) tx.ann);
+      label = vcg_plugin_common.buf_finish ();
+      gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_DECL_WITH_VIS,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      #undef tx
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_decl_non_common.  */
+
+static gdl_node *
+create_node_tree_decl_non_common (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+  enum tree_node_structure_enum tns;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->decl_non_common
+  tns = TS_DECL_NON_COMMON;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_decl_with_vis\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("saved_tree: 0x%x\n", (unsigned) tx.saved_tree);
+  vcg_plugin_common.buf_print ("arguments: 0x%x\n", (unsigned) tx.arguments);
+  vcg_plugin_common.buf_print ("result: 0x%x\n", (unsigned) tx.result);
+  vcg_plugin_common.buf_print ("vindex: 0x%x", (unsigned) tx.vindex);
+  #undef tx
+
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_translation_unit_decl.  */
+
+static gdl_node *
+create_node_tree_translation_unit_decl (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+  enum tree_node_structure_enum tns;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->translation_unit_decl
+  tns = TS_TRANSLATION_UNIT_DECL;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_decl_common\n");
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("language: %s", tx.language);
+  #undef tx
+
+      #define tx tn->translation_unit_decl
+      vcg_plugin_common.buf_print ("\nlanguage: %s", tx.language);
+      label = vcg_plugin_common.buf_finish ();
+      gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_DECL_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      #undef tx
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_type_decl.  */
+
+static gdl_node *
+create_node_tree_type_decl (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+  enum tree_node_structure_enum tns;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->type_decl
+  tns = TS_TYPE_DECL;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_decl_non_common");
+  #undef tx
+
+      #define tx tn->type_decl
+      label = vcg_plugin_common.buf_finish ();
+      gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_DECL_NON_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      #undef tx
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_function_decl.  */
+
+static gdl_node *
+create_node_tree_function_decl (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+  enum tree_node_structure_enum tns;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->function_decl
+  tns = TS_FUNCTION_DECL;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("common: struct tree_decl_non_common\n");
+  vcg_plugin_common.buf_print ("f: 0x%x\n", (unsigned) tx.f);
+  vcg_plugin_common.buf_print ("personality: 0x%x\n",
+                               (unsigned) tx.personality);
+  vcg_plugin_common.buf_print ("function_specific_target: 0x%x\n",
+                               (unsigned) tx.function_specific_target);
+  vcg_plugin_common.buf_print ("function_specific_optimization: 0x%x\n",
+                               (unsigned) tx.function_specific_optimization);
+  vcg_plugin_common.buf_print ("...");
+  #undef tx
+      #define tx tn->function_decl
+      if (htab_find (tree_table, tn))
+        break;
+
+      slot = htab_find_slot (tree_table, tn, INSERT);
+      *slot = tn;
+      anode = create_tree_node (graph, &tx.common, nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.personality, "personality",
+                                nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.function_specific_target,
+                                "function_specific_target", nested_level + 1);
+      create_edge (graph, node, anode);
+      anode = create_tree_node (graph, tx.function_specific_optimization,
+                                "function_specific_optimization",
+                                nested_level + 1);
+      create_edge (graph, node, anode);
+      #undef tx
+
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_statement_list.  */
+
+static gdl_node *
+create_node_tree_statement_list (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+  enum tree_node_structure_enum tns;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->function_decl
+  tns = TS_STATEMENT_LIST;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("head: 0x%x\n", (unsigned) tx.head);
+  vcg_plugin_common.buf_print ("tail: 0x%x", (unsigned) tx.tail);
+  #undef tx
+
+      #define tx tn->stmt_list
+      vcg_plugin_common.buf_print ("\nhead: 0x%x", (unsigned) tx.head);
+      vcg_plugin_common.buf_print ("\ntail: 0x%x", (unsigned) tx.tail);
+      label = vcg_plugin_common.buf_finish ();
+      gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      #undef tx
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_optimization_option.  */
+
+static gdl_node *
+create_node_tree_optimization_option (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+  enum tree_node_structure_enum tns;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->optimization_option
+  tns = TS_OPTIMIZATION;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_common\n");
+  vcg_plugin_common.buf_print ("opts: 0x%x", (unsigned) &tx.opts);
+  #undef tx
+
+      #define tx tn->optimization
+      vcg_plugin_common.buf_print ("\nopts: 0x%x", (unsigned) &tx.opts);
+      label = vcg_plugin_common.buf_finish ();
+      gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      #undef tx
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create gdl node for struct tree_target_option.  */
+
+static gdl_node *
+create_node_tree_target_option (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+  enum tree_node_structure_enum tns;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  #define tx tn->target_option
+  tns = TS_TARGET_OPTION;
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: 0x%x\n", (unsigned) tn);
+  vcg_plugin_common.buf_print ("----------\n");
+  vcg_plugin_common.buf_print ("tree_common\n");
+  vcg_plugin_common.buf_print ("opts: 0x%x", (unsigned) &tx.opts);
+  #undef tx
+
+      #define tx tn->target_option
+      vcg_plugin_common.buf_print ("\nopts: 0x%x", (unsigned) &tx.opts);
+      label = vcg_plugin_common.buf_finish ();
+      gdl_set_node_label (node, label);
+      anode = create_common_node (graph, &tx.common, TS_COMMON,
+                                  nested_level + 1);
+      create_dashed_edge (graph, node, anode);
+      #undef tx
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
+
+  return node;
+}
+
+/* Create a gdl node for tree TN and add it into GRAPH.  NESTED_LEVEL stands
+   for the current nested level for gcc tree structure data.  */
+
+static gdl_node *
+create_tree_node (gdl_graph *graph, tree tn)
+{
+  gdl_node *node, *anode;
+  enum tree_node_structure_enum tns;
+  char buf[256];
+  char *label;
+  void **slot;
+  int i;
+
+  tns = tree_node_structure (tn);
+  switch (tns)
+    {
+    case TS_BASE:
+      node = create_node_tree_base (graph, tn);
+      break;
+      
+    case TS_TYPED:
+      node = create_node_tree_typed (graph, tn);
+      break;
+
+    case TS_COMMON:
+      break;
+      
+    case TS_INT_CST:
+      break;
+      
+    case TS_REAL_CST:
+      break;
+      
+    case TS_FIXED_CST:
+      break;
+      
+    case TS_VECTOR:
+      break;
+      
+    case TS_STRING:
+      break;
+      
+    case TS_COMPLEX:
+      break;
+      
+    case TS_IDENTIFIER:
+      break;
+      
+    case TS_DECL_MINIMAL:
+    case TS_DECL_COMMON:
+    case TS_DECL_WRTL:
+    case TS_DECL_NON_COMMON:
+    case TS_DECL_WITH_VIS:
+      break;
+      
+    case TS_FIELD_DECL:
+      break;
+      
+    case TS_VAR_DECL:
+      break;
+      
+    case TS_PARM_DECL:
+      break;
+      
+    case TS_LABEL_DECL:
+      break;
+      
+    case TS_RESULT_DECL:
+      break;
+      
+    case TS_CONST_DECL:
+      break;
+      
+    case TS_TYPE_DECL:
+      break;
+      
+    case TS_FUNCTION_DECL:
+      break;
+      
+    case TS_TRANSLATION_UNIT_DECL:
+      break;
+      
+    case TS_TYPE:
+      break;
+      
+    case TS_LIST:
+      break;
+      
+    case TS_VEC:
+      break;
+      
+    case TS_EXP:
+      break;
+      
+    case TS_SSA_NAME:
+      break;
+      
+    case TS_BLOCK:
+      break;
+      
+    case TS_BINFO:
+      break;
+      
+    case TS_STATEMENT_LIST:
+      break;
+      
+    case TS_CONSTRUCTOR:
+      break;
+      
+    case TS_OMP_CLAUSE:
+      break;
+      
+    case TS_OPTIMIZATION:
+      break;
+      
+    case TS_TARGET_OPTION:
+      break;
+    case LAST_TS_ENUM:
+      abort ();
+    }
+  return node;
+}
+
+#endif
+
+/* Dump tree node NODE into the file FNAME.  */
+
+static void
+dump_tree_node_to_file (char *fname, tree node)
+{
+  gdl_graph *graph;
+
+  graph = vcg_plugin_common.top_graph;
+  create_tree_node (graph, node);
+  vcg_plugin_common.dump (fname);
+}
+
+#if 0
 /* Dump tree NODE into the file FNAME.  */
 
 static void
@@ -715,7 +2196,34 @@ dump_tree_to_file (char *fname, tree node)
 
   htab_delete (tree_table);
 }
+#endif
 
+/* Public function to dump a gcc tree NODE.  */
+
+void
+vcg_plugin_dump_tree_node (tree node)
+{
+  vcg_plugin_common.init ();
+
+  dump_tree_node_to_file ("dump-tree-node.vcg", node);
+
+  vcg_plugin_common.finish ();
+}
+
+/* Public function to view a gcc tree NODE.  */
+
+void
+vcg_plugin_view_tree_node (tree node)
+{
+  vcg_plugin_common.init ();
+
+  dump_tree_node_to_file (vcg_plugin_common.temp_file_name, node);
+  vcg_plugin_common.show (vcg_plugin_common.temp_file_name);
+
+  vcg_plugin_common.finish ();
+}
+
+#if 0
 /* Public function to dump a gcc tree NODE.  */
 
 void
@@ -740,5 +2248,4 @@ vcg_plugin_view_tree (tree node)
 
   vcg_plugin_common.finish ();
 }
-
 #endif
