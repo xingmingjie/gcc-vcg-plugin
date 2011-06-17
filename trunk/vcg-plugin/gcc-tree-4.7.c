@@ -46,10 +46,12 @@ static const char *ts_names[] = {
   "tree_label_decl",
   "tree_result_decl",
   "tree_const_decl",
-  "tree_label_decl",
+  "tree_type_decl",
   "tree_function_decl",
   "tree_translatin_unit_decl",
-  "tree_type",
+  "tree_type_common",
+  "tree_type_with_lang_specific",
+  "tree_type_non_common",
   "tree_list",
   "tree_vec",
   "tree_exp",
@@ -102,6 +104,27 @@ create_ellipsis_node (gdl_graph *graph)
 
   node = gdl_new_graph_node (graph, NULL);
   gdl_set_node_label (node, "...");
+
+  return node;
+}
+
+static gdl_node *
+create_duplicated_node (gdl_graph *graph, tree tn)
+{
+  gdl_node *node;
+  char *label;
+
+  if (tn == 0)
+    return NULL;
+
+  node = gdl_new_graph_node (graph, NULL);
+
+  tns = tree_node_structure (tn);
+  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
+  vcg_plugin_common.buf_print ("addr: %p\n", tn);
+  vcg_plugin_common.buf_print ("duplicated");
+  label = vcg_plugin_common.buf_finish ();
+  gdl_set_node_label (node, label);
 
   return node;
 }
@@ -607,8 +630,8 @@ create_tree_exp (gdl_graph *graph, tree tn, char *name, int level)
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_typed\n");
   vcg_plugin_common.buf_print ("----------\n");
-  vcg_plugin_common.buf_print ("locus: %p", tx.locus);
-  vcg_plugin_common.buf_print ("block: %p", tx.block);
+  vcg_plugin_common.buf_print ("locus: %p\n", tx.locus);
+  vcg_plugin_common.buf_print ("block: %p\n", tx.block);
   vcg_plugin_common.buf_print ("operands[]: %p", tx.operands);
   label = vcg_plugin_common.buf_finish ();
   gdl_set_node_label (node, label);
@@ -1337,7 +1360,7 @@ create_tree_parm_decl (gdl_graph *graph, tree tn, char *name, int level)
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_decl_with_rtl\n");
   vcg_plugin_common.buf_print ("----------\n");
-  vcg_plugin_common.buf_print ("incoming_rtl: %p", tx.incoming_rtl);
+  vcg_plugin_common.buf_print ("incoming_rtl: %p\n", tx.incoming_rtl);
   vcg_plugin_common.buf_print ("ann: %p", tx.ann);
   label = vcg_plugin_common.buf_finish ();
   gdl_set_node_label (node, label);
@@ -1707,27 +1730,6 @@ create_tree_target_option (gdl_graph *graph, tree tn, char *name, int level)
       create_dashed_edge (graph, node, anode);
     }
   #undef tx
-
-  return node;
-}
-
-static gdl_node *
-create_duplicated_node (gdl_graph *graph, tree tn)
-{
-  gdl_node *node;
-  char *label;
-
-  if (tn == 0)
-    return NULL;
-
-  node = gdl_new_graph_node (graph, NULL);
-
-  tns = tree_node_structure (tn);
-  vcg_plugin_common.buf_print ("%s\n", ts_names[tns]);
-  vcg_plugin_common.buf_print ("addr: %p\n", tn);
-  vcg_plugin_common.buf_print ("duplicated");
-  label = vcg_plugin_common.buf_finish ();
-  gdl_set_node_label (node, label);
 
   return node;
 }

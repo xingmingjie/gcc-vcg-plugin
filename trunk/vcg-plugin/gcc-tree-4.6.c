@@ -603,8 +603,8 @@ create_tree_exp (gdl_graph *graph, tree tn, char *name, int level)
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_common\n");
   vcg_plugin_common.buf_print ("----------\n");
-  vcg_plugin_common.buf_print ("locus: %p", tx.locus);
-  vcg_plugin_common.buf_print ("block: %p", tx.block);
+  vcg_plugin_common.buf_print ("locus: %p\n", tx.locus);
+  vcg_plugin_common.buf_print ("block: %p\n", tx.block);
   vcg_plugin_common.buf_print ("operands[]: %p", tx.operands);
   label = vcg_plugin_common.buf_finish ();
   gdl_set_node_label (node, label);
@@ -1260,7 +1260,7 @@ create_tree_parm_decl (gdl_graph *graph, tree tn, char *name, int level)
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_decl_with_rtl\n");
   vcg_plugin_common.buf_print ("----------\n");
-  vcg_plugin_common.buf_print ("incoming_rtl: %p", tx.incoming_rtl);
+  vcg_plugin_common.buf_print ("incoming_rtl: %p\n", tx.incoming_rtl);
   vcg_plugin_common.buf_print ("ann: %p", tx.ann);
   label = vcg_plugin_common.buf_finish ();
   gdl_set_node_label (node, label);
