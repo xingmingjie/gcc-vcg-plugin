@@ -174,6 +174,7 @@ create_tree_typed (gdl_graph *graph, tree tn, char *name, int level)
   vcg_plugin_common.buf_print ("name: %s\n", name);
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_base\n");
+  vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("type: %p", tx.type);
   label = vcg_plugin_common.buf_finish ();
   gdl_set_node_label (node, label);
@@ -208,6 +209,7 @@ create_tree_common (gdl_graph *graph, tree tn, char *name, int level)
   vcg_plugin_common.buf_print ("name: %s\n", name);
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("chain: %p", tx.chain);
   label = vcg_plugin_common.buf_finish ();
   gdl_set_node_label (node, label);
@@ -245,6 +247,7 @@ create_tree_int_cst (gdl_graph *graph, tree tn, char *name, int level)
   vcg_plugin_common.buf_print ("name: %s\n", name);
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("int_cst: %ld", tx.int_cst);
   label = vcg_plugin_common.buf_finish ();
   gdl_set_node_label (node, label);
@@ -279,6 +282,7 @@ create_tree_real_cst (gdl_graph *graph, tree tn, char *name, int level)
   vcg_plugin_common.buf_print ("name: %s\n", name);
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("real_cst_ptr: %p", tx.real_cst_ptr);
   label = vcg_plugin_common.buf_finish ();
   gdl_set_node_label (node, label);
@@ -313,6 +317,7 @@ create_tree_fixed_cst (gdl_graph *graph, tree tn, char *name, int level)
   vcg_plugin_common.buf_print ("name: %s\n", name);
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("fixed_cst_ptr: %p", tx.fixed_cst_ptr);
   label = vcg_plugin_common.buf_finish ();
   gdl_set_node_label (node, label);
@@ -347,6 +352,7 @@ create_tree_string (gdl_graph *graph, tree tn, char *name, int level)
   vcg_plugin_common.buf_print ("name: %s\n", name);
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("length: %d\n", tx.length);
   strncpy (buf, tx.str, tx.length);
   vcg_plugin_common.buf_print ("str: %s", buf);
@@ -383,6 +389,7 @@ create_tree_complex (gdl_graph *graph, tree tn, char *name, int level)
   vcg_plugin_common.buf_print ("name: %s\n", name);
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("real: %p\n", tx.real);
   vcg_plugin_common.buf_print ("imag: %p", tx.imag);
   label = vcg_plugin_common.buf_finish ();
@@ -424,6 +431,7 @@ create_tree_vector (gdl_graph *graph, tree tn, char *name, int level)
   vcg_plugin_common.buf_print ("name: %s\n", name);
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("elements: %p", tx.elements);
   label = vcg_plugin_common.buf_finish ();
   gdl_set_node_label (node, label);
@@ -1532,6 +1540,7 @@ create_tree_function_decl (gdl_graph *graph, tree tn, char *name, int level)
   vcg_plugin_common.buf_print ("name: %s\n", name);
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_decl_non_common\n");
+  vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("f: %p\n", tx.f);
   vcg_plugin_common.buf_print ("personality: %p\n", tx.personality);
   vcg_plugin_common.buf_print ("function_specific_target: %p\n",
@@ -1651,6 +1660,7 @@ create_tree_statement_list (gdl_graph *graph, tree tn, char *name, int level)
   vcg_plugin_common.buf_print ("name: %s\n", name);
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_typed\n");
+  vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("head: %p\n", tx.head);
   vcg_plugin_common.buf_print ("tail: %p", tx.tail);
   label = vcg_plugin_common.buf_finish ();
@@ -1686,6 +1696,7 @@ create_tree_optimization_option (gdl_graph *graph, tree tn, char *name, int leve
   vcg_plugin_common.buf_print ("name: %s\n", name);
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_common\n");
+  vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("&opts: %p", &tx.opts);
   label = vcg_plugin_common.buf_finish ();
   gdl_set_node_label (node, label);
@@ -1720,6 +1731,7 @@ create_tree_target_option (gdl_graph *graph, tree tn, char *name, int level)
   vcg_plugin_common.buf_print ("name: %s\n", name);
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_common\n");
+  vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("&opts: %p", &tx.opts);
   label = vcg_plugin_common.buf_finish ();
   gdl_set_node_label (node, label);

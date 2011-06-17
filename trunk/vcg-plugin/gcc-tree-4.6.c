@@ -1432,6 +1432,7 @@ create_tree_function_decl (gdl_graph *graph, tree tn, char *name, int level)
   vcg_plugin_common.buf_print ("name: %s\n", name);
   vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("tree_decl_non_common\n");
+  vcg_plugin_common.buf_print ("----------\n");
   vcg_plugin_common.buf_print ("f: %p\n", tx.f);
   vcg_plugin_common.buf_print ("personality: %p\n", tx.personality);
   vcg_plugin_common.buf_print ("function_specific_target: %p\n",
