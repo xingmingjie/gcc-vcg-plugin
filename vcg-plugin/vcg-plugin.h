@@ -39,6 +39,7 @@
 #include "tree-pass.h"
 #include "cfgloop.h"
 #include "cgraph.h"
+#include "options.h"
 
 /* Check gcc version.  */
 
@@ -96,9 +97,6 @@ typedef struct
 } vcg_plugin_common_t;
 
 extern vcg_plugin_common_t vcg_plugin_common; 
-
-/* From gcc source files.  */
-extern char *dump_base_name;
 
 /* These are available functins, which can be used to
    dump and view gcc internal data structures. */
