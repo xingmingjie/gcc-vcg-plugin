@@ -109,7 +109,7 @@ create_node_and_edges_specific (gdl_graph *graph, struct cgraph_node *node, int 
   int sp;
 
   /* Don't create the single node.  */
-  if ((callee_p && !node->callees) || !node->callers)
+  if ((callee_p && !node->callees) || (!callee_p && !node->callers))
     return;
 
   prefix = find_string (node, NULL);
